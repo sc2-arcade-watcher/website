@@ -4,9 +4,6 @@
             right
         >
             <v-tab v-for="(item, i) in regionList" :key="i">{{ item.title }} ({{ item.count }})</v-tab>
-            <!-- <v-tab key="t1">Item One</v-tab>
-            <v-tab key="t2">Item Two</v-tab>
-            <v-tab key="t3">Item Three</v-tab> -->
         </v-tabs>
         <v-card>
             <v-card-title>
@@ -28,7 +25,7 @@
                 hide-default-footer
             >
                 <template v-slot:item.image="{ item }">
-                    <router-link :to="{ name: 'map_info', params: { regionId: item.regionId, mapId: item.mapBnetId } }" class="">
+                    <router-link :to="{ name: 'map_info', params: { regionId: item.regionId, mapId: item.mapBnetId } }" class="" v-if="item.map">
                         <v-img
                             :src="$starc.bnetDepotImage(item.map.iconHash)"
                             max-width="80"
@@ -40,10 +37,10 @@
                 </template>
                 <template v-slot:item.map="{ item }">
                     <v-img class="d-inline-block float-right" :src="require(`../assets/region-${item.regionId}.png`)" max-width="20" />
-                    <router-link :to="{ name: 'map_info', params: { regionId: item.regionId, mapId: item.mapBnetId } }">
+                    <router-link v-if="item.map" :to="{ name: 'map_info', params: { regionId: item.regionId, mapId: item.mapBnetId } }">
                         {{ item.map.name }}
                     </router-link>
-                    <router-link v-if="item.extModBnetId" :to="{ name: 'map_info', params: { regionId: item.regionId, mapId: item.extModBnetId } }">
+                    <router-link v-if="item.extMod" :to="{ name: 'map_info', params: { regionId: item.regionId, mapId: item.extModBnetId } }">
                         <br>
                         {{ item.extMod.name }}
                     </router-link>
@@ -161,7 +158,7 @@ export default class OpenLobbiesView extends Vue {
         if (typeof search !== 'string') return false;
         search = search.toLowerCase();
         if (
-            item.map!.name.toLowerCase().indexOf(search) >= 0 ||
+            (item.map && item.map.name.toLowerCase().indexOf(search) >= 0) ||
             item.lobbyTitle.toLowerCase().indexOf(search) >= 0 ||
             item.hostName.toLowerCase().indexOf(search) >= 0
         ) {

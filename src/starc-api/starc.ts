@@ -144,7 +144,7 @@ export type StatsQueryOptions = {
     kind?: keyof typeof StatsPeriodKind;
 }
 
-export type GameListQueryOptions = {
+export type MapListQuery = {
     regionId?: number;
     type?: string;
     name?: string;
@@ -160,7 +160,21 @@ export type DefaultPaginationResult<T> = {
     results: T[];
 }
 
-export type MapListResponse = AxiosResponse<DefaultPaginationResult<Document>>;
+export type CursorPaginationQuery = {
+    before?: string;
+    after?: string;
+    limit?: number;
+}
+
+export type CursorPaginationResult<T> = {
+    page: {
+        prev: string | null;
+        next: string | null;
+    },
+    results: T[];
+}
+
+export type MapListResponse = AxiosResponse<CursorPaginationResult<Document>>;
 
 export class StarcAPI {
     axios: AxiosInstance;
@@ -172,11 +186,11 @@ export class StarcAPI {
     }
 
     bnetDepotImage(hash: string) {
-        return `//sc2arcade.talv.space/bnet/${hash}.jpg`;
+        return `${process.env.VUE_APP_STARC_WEBAPI_URL ?? '//sc2arcade.talv.space'}/bnet/${hash}.jpg`;
     }
 
-    getMapList(opts?: GameListQueryOptions & DefaultPaginationQueryOptions) {
-        return this.axios.get<DefaultPaginationResult<Document>>(`maps`, { params: opts });
+    getMapList(opts?: MapListQuery & CursorPaginationQuery) {
+        return this.axios.get<CursorPaginationResult<Document>>(`maps`, { params: opts });
     }
 
     getMapInfo(regionId: number, mapId: number) {
@@ -195,8 +209,8 @@ export class StarcAPI {
         return this.axios.get<GameLobbyData>(`lobbies/${regionId}/${bnetBucketId}/${bnetRecordId}`);
     }
 
-    getMapLobbiesHistory(regionId: number, mapId: number) {
-        return this.axios.get(`lobbies/history/map/${regionId}/${mapId}`);
+    getMapLobbiesHistory(regionId: number, mapId: number, params?: CursorPaginationQuery) {
+        return this.axios.get(`lobbies/history/map/${regionId}/${mapId}`, { params: params });
     }
 
     getStatsRegions(params?: StatsQueryOptions) {

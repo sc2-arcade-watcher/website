@@ -57,7 +57,10 @@ export default class MapLobbiesHistoryView extends Vue {
         const loading = this.$loading({ fullscreen: true });
         this.lobbiesHistory = (await this.$starc.getMapLobbiesHistory(
             Number(this.$route.params.regionId),
-            Number(this.$route.params.mapId)
+            Number(this.$route.params.mapId),
+            {
+                limit: 200,
+            }
         )).data.results;
         loading.close();
     }

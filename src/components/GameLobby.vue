@@ -56,10 +56,10 @@
                 <div>
                     <v-subheader>Map info</v-subheader>
                     <v-card outlined>
-                        <v-list-item two-line>
+                        <v-list-item two-line v-if="lobby.map">
                             <v-list-item-content>
                                 <v-list-item-title class="headline mb-1">{{ lobby.map.name }}</v-list-item-title>
-                                <div class="overline">v{{ lobby.map.currentMajorVersion }}.{{ lobby.map.currentMinorVersion }}</div>
+                                <div class="overline">v{{ lobby.mapMajorVersion }}.{{ lobby.mapMinorVersion }}</div>
                                 <v-btn text :to="{ name: 'map_info', params: { regionId: lobby.map.regionId, mapId: lobby.map.bnetId } }">Details</v-btn>
                             </v-list-item-content>
 
@@ -93,8 +93,8 @@
                 <v-list subheader v-for="currTeam in teamSlots" :key="currTeam.team" dense>
                     <v-subheader style="height: 30px; background: rgba(255,255,255,0.05);">{{ currTeam.name }}</v-subheader>
                     <v-list-item v-for="currSlot in currTeam.slots" :key="currSlot.slotNumber">
-                        <v-list-item-avatar v-if="currSlot.kind === 'human'">
-                            <v-img :src="$starc.bnetDepotImage('0c5d97468363ee743c534b160dd489731ec3ed9aa902de689fd466cc0f361b34')"></v-img>
+                        <v-list-item-avatar tile v-if="currSlot.kind === 'human'">
+                            <v-img :src="require('../assets/Kachinsky_SC2_Portrait1.jpg')"></v-img>
                         </v-list-item-avatar>
 
                         <v-list-item-title v-if="currSlot.kind === 'human'">
@@ -103,7 +103,7 @@
                             <span v-if="currSlot.name === lobby.hostName"> (host)</span>
                         </v-list-item-title>
                         <v-list-item-subtitle v-if="currSlot.kind !== 'human'" v-text="currSlot.kind.toUpperCase()"/>
-                        <v-list-item-subtitle v-if="currSlot.kind === 'human'">
+                        <v-list-item-subtitle v-if="currSlot.kind === 'human' && currSlot.joinInfo">
                             <v-tooltip top>
                                 <template v-slot:activator="{ on, attrs }">
                                     <span v-bind="attrs" v-on="on">
