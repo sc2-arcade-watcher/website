@@ -43,7 +43,7 @@ import * as starc from '@/starc-api/starc';
 
 @Component
 export default class MapBaseView extends Vue {
-    private mapInfo: starc.Document | null = null;
+    private mapInfo: starc.Map | null = null;
     private activeTab = null;
 
     private get tabs() {

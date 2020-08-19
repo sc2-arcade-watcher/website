@@ -8,8 +8,9 @@ export interface MapStatData {
     participantsUniqueTotal: number[];
 }
 
-enum DocumentType {
-    Map = 'map',
+export enum MapType {
+    MeleeMap = 'melee_map',
+    ArcadeMap = 'arcade_map',
     ExtensionMod = 'extension_mod',
     DependencyMod = 'dependency_mod',
 }
@@ -19,22 +20,14 @@ interface MapCategory {
     description: string;
 }
 
-export interface Document {
+export interface Map {
     regionId: number;
     bnetId: number;
-    type: DocumentType;
-    isArcade: boolean;
+    type: MapType;
     name: string;
-    category: MapCategory;
+    mainCategory: MapCategory;
     currentMajorVersion: number;
     currentMinorVersion: number;
-    iconHash: string;
-}
-
-export interface DocumentVersion {
-    document: Document;
-    majorVersion: number;
-    minorVersion: number;
     iconHash: string;
 }
 
@@ -146,8 +139,12 @@ export type StatsQueryOptions = {
 
 export type MapListQuery = {
     regionId?: number;
-    type?: string;
+    type?: MapType;
     name?: string;
+    mainCategoryId?: number;
+    showPrivate?: boolean;
+    orderDirection?: string;
+    orderBy?: string;
 }
 
 export type DefaultPaginationQueryOptions = {
@@ -174,7 +171,7 @@ export type CursorPaginationResult<T> = {
     results: T[];
 }
 
-export type MapListResponse = AxiosResponse<CursorPaginationResult<Document>>;
+export type MapListResponse = AxiosResponse<CursorPaginationResult<Map>>;
 
 export class StarcAPI {
     axios: AxiosInstance;
@@ -190,11 +187,11 @@ export class StarcAPI {
     }
 
     getMapList(opts?: MapListQuery & CursorPaginationQuery) {
-        return this.axios.get<CursorPaginationResult<Document>>(`maps`, { params: opts });
+        return this.axios.get<CursorPaginationResult<Map>>(`maps`, { params: opts });
     }
 
     getMapInfo(regionId: number, mapId: number) {
-        return this.axios.get<Document>(`maps/${regionId}/${mapId}`);
+        return this.axios.get<Map>(`maps/${regionId}/${mapId}`);
     }
 
     getMapStats(regionId: number, mapId: number, params?: StatsQueryOptions) {

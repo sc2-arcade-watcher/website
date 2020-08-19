@@ -10,7 +10,7 @@ import * as starc from '@/starc-api/starc';
 
 @Component
 export default class MapInfoView extends Vue {
-    private mapInfo: starc.Document | null = null;
+    private mapInfo: starc.Map | null = null;
 
     private async created() {
         // const loading = this.$loading({ fullscreen: true });
