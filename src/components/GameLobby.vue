@@ -125,6 +125,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
+import { SGuard } from '../helpers';
 
 @Component
 export default class GameLobby extends Vue {
@@ -161,10 +162,13 @@ export default class GameLobby extends Vue {
         this.refreshTimer = setTimeout(this.refresh.bind(this), 10000);
     }
 
-    private async created() {
-        const loading = this.$loading({ fullscreen: true });
+    @SGuard()
+    private async fetchData() {
         await this.refresh();
-        loading.close();
+    }
+
+    private async created() {
+        await this.fetchData();
     }
 
     private beforeDestroy() {

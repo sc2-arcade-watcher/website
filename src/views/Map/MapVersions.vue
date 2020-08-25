@@ -139,6 +139,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
+import { SGuard } from '../../helpers';
 
 @Component
 export default class MapVersionsView extends Vue {
@@ -178,14 +179,12 @@ export default class MapVersionsView extends Vue {
         });
     }
 
-    private async created() {
-        const loading = this.$loading({ fullscreen: true });
+    @SGuard()
+    private async fetchHistory() {
         this.versionHistory = (await this.$starc.getMapVersionHistory(
             Number(this.$route.params.regionId),
             Number(this.$route.params.mapId)
         )).data;
-        this.reloadMapDetails();
-        loading.close();
     }
 
     private async loadMapDetails() {
@@ -198,7 +197,6 @@ export default class MapVersionsView extends Vue {
             }
         )).data;
     }
-
     @Watch('$route')
     private reloadMapDetails() {
         if (typeof this.$route.query.majorVersion === 'number' && typeof this.$route.query.minorVersion === 'number') {
@@ -207,6 +205,11 @@ export default class MapVersionsView extends Vue {
         else {
             this.mapDetails = null;
         }
+    }
+
+    private async created() {
+        await this.fetchHistory();
+        await this.reloadMapDetails();
     }
 }
 </script>

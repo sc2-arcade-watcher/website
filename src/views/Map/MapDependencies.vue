@@ -52,6 +52,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
+import { SGuard } from '../../helpers';
 
 @Component
 export default class MapVersionsView extends Vue {
@@ -65,13 +66,16 @@ export default class MapVersionsView extends Vue {
         ;
     }
 
-    private async created() {
-        const loading = this.$loading({ fullscreen: true });
+    @SGuard()
+    private async fetchData() {
         this.mapDependency = (await this.$starc.getMapDependencies(
             Number(this.$route.params.regionId),
             Number(this.$route.params.mapId)
         )).data;
-        loading.close();
+    }
+
+    private async created() {
+        await this.fetchData();
     }
 }
 </script>

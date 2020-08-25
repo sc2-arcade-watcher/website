@@ -101,6 +101,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
+import { SGuard } from '../../helpers';
 
 @Component
 export default class MapInfoView extends Vue {
@@ -133,6 +134,7 @@ export default class MapInfoView extends Vue {
         return screenshots;
     }
 
+    @SGuard()
     private async created() {
         this.mapDetails = (await this.$starc.getMapDetails(
             Number(this.$route.params.regionId),

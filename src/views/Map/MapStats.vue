@@ -15,6 +15,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
+import { SGuard } from '../../helpers';
 
 @Component
 export default class MapStatsView extends Vue {
@@ -63,8 +64,8 @@ export default class MapStatsView extends Vue {
         },
     };
 
+    @SGuard()
     private async refresh() {
-        // const loading = this.$loading({ fullscreen: true });
         this.mapStats = (await this.$starc.getMapStats(
             Number(this.$route.params.regionId),
             Number(this.$route.params.mapId),
@@ -72,7 +73,6 @@ export default class MapStatsView extends Vue {
                 kind: this.periodItem as keyof typeof starc.StatsPeriodKind,
             }
         )).data;
-        // loading.close();
         const dKeys = {
             'lobbiesHosted': 'Lobbies Hosted',
             'lobbiesStarted': 'Lobbies Started',

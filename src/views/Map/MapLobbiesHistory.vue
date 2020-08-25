@@ -1,6 +1,6 @@
 
 <template>
-    <v-card class="py-2 px-2">
+    <v-card class="py-2 px-2 card-t1">
         <p>History</p>
         <v-simple-table dense>
             <template v-if="lobbiesHistory" v-slot:default>
@@ -48,13 +48,14 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
+import { SGuard } from '../../helpers';
 
 @Component
 export default class MapLobbiesHistoryView extends Vue {
     private lobbiesHistory: any[] | null = null;
 
-    private async created() {
-        const loading = this.$loading({ fullscreen: true });
+    @SGuard()
+    private async fetchData() {
         this.lobbiesHistory = (await this.$starc.getMapLobbiesHistory(
             Number(this.$route.params.regionId),
             Number(this.$route.params.mapId),
@@ -62,7 +63,10 @@ export default class MapLobbiesHistoryView extends Vue {
                 limit: 200,
             }
         )).data.results;
-        loading.close();
+    }
+
+    private async created() {
+        await this.fetchData();
     }
 }
 </script>

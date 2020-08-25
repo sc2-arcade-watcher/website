@@ -20,6 +20,7 @@
         </v-card>
 
         <v-tabs
+            v-show="mapInfo"
             v-model="activeTab"
             background-color="transparent"
             color="basil"
@@ -41,6 +42,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
+import { SGuard } from '../../helpers';
 
 @Component
 export default class MapBaseView extends Vue {
@@ -97,13 +99,12 @@ export default class MapBaseView extends Vue {
         ];
     }
 
+    @SGuard()
     private async loadMap() {
-        const loading = this.$loading({ fullscreen: false });
         this.mapInfo = (await this.$starc.getMapInfo(
             Number(this.$route.params.regionId),
             Number(this.$route.params.mapId)
         )).data;
-        loading.close();
     }
 
     private async created() {

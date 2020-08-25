@@ -69,6 +69,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
+import { SGuard } from '../helpers';
 
 @Component
 export default class OpenLobbiesView extends Vue {
@@ -167,10 +168,13 @@ export default class OpenLobbiesView extends Vue {
         return false;
     }
 
+    @SGuard()
+    private async fetchData() {
+        await this.refreshList();
+    }
+
     private created() {
-        const loading = this.$loading({ fullscreen: true });
-        this.refreshList();
-        loading.close();
+        this.fetchData();
     }
 
     private beforeDestroy() {

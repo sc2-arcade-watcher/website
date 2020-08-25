@@ -1,5 +1,9 @@
 <template>
     <v-app :class="`route ${$route.name}`">
+        <v-overlay :value="isLoading" ref="gloader">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
+
         <v-app-bar max-height="64px">
             <router-link :to="{ name: 'home' }">
                 <div class="d-flex align-center">
@@ -50,11 +54,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import * as starc from '@/starc-api/starc';
 
-export default Vue.extend({
-    name: 'App',
-});
+@Component
+export default class App extends Vue {
+    private isLoading = false;
+}
+
 </script>
 
 <style lang="scss">
