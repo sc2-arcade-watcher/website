@@ -25,7 +25,7 @@
                 hide-default-footer
             >
                 <template v-slot:item.image="{ item }">
-                    <router-link :to="{ name: 'map_info', params: { regionId: item.regionId, mapId: item.mapBnetId } }" class="" v-if="item.map">
+                    <router-link :to="{ name: 'map_details', params: { regionId: item.regionId, mapId: item.mapBnetId } }" class="" v-if="item.map">
                         <v-img
                             :src="$starc.bnetDepotImage(item.map.iconHash)"
                             max-width="80"
@@ -37,10 +37,10 @@
                 </template>
                 <template v-slot:item.map="{ item }">
                     <v-img class="d-inline-block float-right" :src="require(`../assets/region-${item.regionId}.png`)" max-width="20" />
-                    <router-link v-if="item.map" :to="{ name: 'map_info', params: { regionId: item.regionId, mapId: item.mapBnetId } }">
+                    <router-link v-if="item.map" :to="{ name: 'map_details', params: { regionId: item.regionId, mapId: item.mapBnetId } }">
                         {{ item.map.name }}
                     </router-link>
-                    <router-link v-if="item.extMod" :to="{ name: 'map_info', params: { regionId: item.regionId, mapId: item.extModBnetId } }">
+                    <router-link v-if="item.extMod" :to="{ name: 'map_details', params: { regionId: item.regionId, mapId: item.extModBnetId } }">
                         <br>
                         {{ item.extMod.name }}
                     </router-link>

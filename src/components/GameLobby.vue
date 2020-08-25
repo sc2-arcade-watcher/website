@@ -60,7 +60,7 @@
                             <v-list-item-content>
                                 <v-list-item-title class="headline mb-1">{{ lobby.map.name }}</v-list-item-title>
                                 <div class="overline">v{{ lobby.mapMajorVersion }}.{{ lobby.mapMinorVersion }}</div>
-                                <v-btn text :to="{ name: 'map_info', params: { regionId: lobby.map.regionId, mapId: lobby.map.bnetId } }">Details</v-btn>
+                                <v-btn text :to="{ name: 'map_details', params: { regionId: lobby.map.regionId, mapId: lobby.map.bnetId } }">Details</v-btn>
                             </v-list-item-content>
 
                             <v-list-item-avatar tile size="100" color="grey">
@@ -77,7 +77,7 @@
                             <v-list-item-content>
                                 <v-list-item-title class="headline mb-1">{{ lobby.extMod.name }}</v-list-item-title>
                                 <div class="overline">v{{ lobby.extMod.currentMajorVersion }}.{{ lobby.extMod.currentMinorVersion }}</div>
-                                <v-btn text :to="{ name: 'map_info', params: { regionId: lobby.extMod.regionId, mapId: lobby.extMod.bnetId } }">Details</v-btn>
+                                <v-btn text :to="{ name: 'map_details', params: { regionId: lobby.extMod.regionId, mapId: lobby.extMod.bnetId } }">Details</v-btn>
                             </v-list-item-content>
 
                             <v-list-item-avatar tile size="100" color="grey">

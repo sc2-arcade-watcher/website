@@ -23,6 +23,7 @@
             v-model="activeTab"
             background-color="transparent"
             color="basil"
+            show-arrows=""
         >
             <v-tab v-for="tab of tabs" :key="tab.name" :to="tab.route">
                 {{ tab.name }}
@@ -38,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
 
 @Component
@@ -51,18 +52,30 @@ export default class MapBaseView extends Vue {
             {
                 name: 'Details',
                 route: {
-                    name: 'map_info', params: {
+                    name: 'map_details', params: {
                         regionId: this.$route.params.regionId,
                         mapId: this.$route.params.mapId,
                     },
                 },
             },
-            // {
-            //     name: 'Screenshots',
-            // },
-            // {
-            //     name: 'Patch notes',
-            // },
+            {
+                name: 'Versions',
+                route: {
+                    name: 'map_versions', params: {
+                        regionId: this.$route.params.regionId,
+                        mapId: this.$route.params.mapId,
+                    },
+                },
+            },
+            {
+                name: 'Dependencies',
+                route: {
+                    name: 'map_dependencies', params: {
+                        regionId: this.$route.params.regionId,
+                        mapId: this.$route.params.mapId,
+                    },
+                },
+            },
             {
                 name: 'Stats',
                 route: {
@@ -84,13 +97,22 @@ export default class MapBaseView extends Vue {
         ];
     }
 
-    private async created() {
-        const loading = this.$loading({ fullscreen: true });
+    private async loadMap() {
+        const loading = this.$loading({ fullscreen: false });
         this.mapInfo = (await this.$starc.getMapInfo(
             Number(this.$route.params.regionId),
             Number(this.$route.params.mapId)
         )).data;
         loading.close();
+    }
+
+    private async created() {
+        await this.loadMap();
+    }
+
+    @Watch('$route')
+    private async watchRoute() {
+        await this.loadMap();
     }
 }
 </script>

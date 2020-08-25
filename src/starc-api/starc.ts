@@ -16,8 +16,23 @@ export enum MapType {
 }
 
 interface MapCategory {
+    id: number;
     name: string;
+    code: string;
     description: string;
+}
+
+export interface MapHeader {
+    regionId: number;
+    bnetId: number;
+    majorVersion: number;
+    minorVersion: number;
+    headerHash: string;
+    isPrivate: boolean;
+    isExtensionMod: boolean;
+    archiveHash: string;
+    archiveSize: number;
+    uploadedAt: string;
 }
 
 export interface Map {
@@ -30,6 +45,269 @@ export interface Map {
     currentMinorVersion: number;
     iconHash: string;
 }
+
+// ===
+// ===
+
+export enum GameRegion {
+    US = 1,
+    EU = 2,
+    KR = 3,
+}
+
+export enum GameLocale {
+    deDE = 'deDE',
+    enGB = 'enGB',
+    esES = 'esES',
+    frFR = 'frFR',
+    itIT = 'itIT',
+    plPL = 'plPL',
+    ptPT = 'ptPT',
+    ruRU = 'ruRU',
+    zhCN = 'zhCN',
+    zhTW = 'zhTW',
+    koKR = 'koKR',
+    enSG = 'enSG',
+    enUS = 'enUS',
+    esMX = 'esMX',
+    ptBR = 'ptBR',
+}
+
+export type DepotRegion = 'us' | 'eu' | 'kr';
+
+export type MapTags = 'BLIZ'
+    | 'TRIL'
+    | 'FEAT'
+    | 'PRGN'
+    | 'HotS'
+    | 'LotV'
+    | 'WoL'
+    | 'WoLX'
+    | 'HoSX'
+    | 'LoVX'
+    | 'HerX'
+    | 'Desc'
+    | 'Glue'
+    | 'Blnc'
+    | 'PREM'
+;
+
+export interface MapScreenshot<ET, MI> {
+    picture: MI;
+    caption: ET;
+}
+
+export enum ContentListTypeKind {
+    Bulleted = 'bulleted',
+    Numbered = 'numbered',
+    None = 'none',
+}
+
+export interface ContentSection<ET> {
+    title: ET;
+    listType: ContentListTypeKind;
+    subtitle: ET | null;
+    items: ET[];
+}
+
+export interface DocumentInstance {
+    id: number;
+    version: number;
+}
+
+export interface DepotFileHandle {
+    type: string;
+    region: DepotRegion;
+    hash: string;
+}
+
+export interface LocaleTable<DF> {
+    locale: GameLocale;
+    stringTable: DF[];
+}
+
+export interface MapSize {
+    horizontal: number;
+    vertical: number;
+}
+
+export interface PremiumInfo {
+    license: number;
+}
+
+export interface AttributeInstance {
+    namespace: number;
+    id: number;
+}
+
+export interface AttributeValue {
+    index: number;
+}
+
+export interface AttributeDefault {
+    attribute: AttributeInstance;
+    value: AttributeValue | AttributeValue[];
+}
+
+export interface AttributeLocked {
+    attribute: AttributeInstance;
+    lockedScopes: number;
+}
+
+export interface AttributeVisibility {
+    attribute: AttributeInstance;
+    hidden: number;
+}
+
+export interface AttributeVisual<ET, MI> {
+    text: ET | null;
+    tip: ET | null;
+    art: MI | null;
+}
+
+export interface AttributeValueDefinition<ET, MI> {
+    value: string;
+    visual: AttributeVisual<ET, MI>;
+}
+
+export enum AttributeRestrictionKind {
+    None = 'none',
+    Self = 'self',
+    Host = 'host',
+    All = 'all',
+}
+
+export interface AttributeDefinition<ET, MI> {
+    instance: AttributeInstance;
+    values: AttributeValueDefinition<ET, MI>[];
+    // TODO: requirements
+    arbitration: number;
+    visibility: AttributeRestrictionKind;
+    access: AttributeRestrictionKind;
+    options: number;
+    default: AttributeValue | AttributeValue[];
+    sortOrder: number;
+}
+
+export interface Variant<ET> {
+    categoryId: number;
+    modeId: number;
+    categoryName: ET;
+    modeName: ET;
+    categoryDescription: ET;
+    modeDescription: ET;
+    attributeDefaults: AttributeDefault[];
+    lockedAttributes: AttributeLocked[];
+    maxTeamSize: number;
+    attributeVisibility?: AttributeVisibility[];
+    achievementTags?: string[];
+    maxHumanPlayers?: number;
+    maxOpenSlots?: number;
+    premiumInfo?: PremiumInfo[];
+    teamNames?: ET[];
+}
+
+export interface WorkingSet<ET, MI, DF> {
+    name: ET;
+    description: ET;
+    thumbnail: MI | null;
+    bigMap: MI | null;
+    maxPlayers: number;
+    instances: AttributeDefault[];
+    visualFiles: DF[];
+    localeTable: LocaleTable<DF>[];
+}
+
+export interface PermissionEntry {
+    name: string;
+    id: number;
+}
+
+export interface TutorialLink {
+    variantIndex: number;
+    speed: string;
+    map: DocumentInstance;
+}
+
+export interface ArcadeInfo<ET, MI> {
+    gameInfoScreenshots: MapScreenshot<ET, MI>[];
+    howToPlayScreenshots: MapScreenshot<ET, MI>[];
+    howToPlaySections: ContentSection<ET>[];
+    patchNoteSections: ContentSection<ET>[];
+    mapIcon: MI | null;
+    tutorialLink: TutorialLink | null;
+    matchmakerTags: string[];
+    website: ET | null;
+}
+
+export interface MapHeaderData<ET = string | null, MI = MapImage, DF = string> {
+    header: DocumentInstance;
+    filename: string;
+    archiveHandle: DF;
+    mapNamespace: number;
+    workingSet: WorkingSet<ET, MI, DF>;
+    attributes: AttributeDefinition<ET, MI>[];
+    localeTable: LocaleTable<DF>[];
+    mapSize: MapSize | null;
+    tileset: ET | null;
+    defaultVariantIndex: number;
+    variants: Variant<ET>[];
+    extraDependencies?: DocumentInstance[];
+    addDefaultPermissions?: boolean;
+    relevantPermissions?: PermissionEntry[];
+    specialTags?: MapTags[];
+    arcadeInfo?: ArcadeInfo<ET, MI> | null;
+    addMultiMod?: boolean;
+}
+
+export interface MapImage {
+    hash: string;
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+}
+
+export interface MapImageResolved extends MapImage {
+    url: string;
+}
+
+export interface MapDetails extends MapHeader {
+    info: {
+        meta: {
+            region: DepotRegion;
+            locale: GameLocale;
+        }
+    } & MapHeaderData;
+}
+
+// ===
+// ===
+
+export interface MapVersionHistory {
+    regionId: number;
+    bnetId: number;
+    versions: MapHeader[];
+}
+
+// ===
+// ===
+
+export interface MapDependencyEntry {
+    map: Map;
+    mapHeader: MapHeader;
+    requestedVersion: number;
+    tags: MapTags[];
+}
+
+export interface MapDependencyInfo {
+    regionId: number;
+    bnetId: number;
+    list: MapDependencyEntry[];
+}
+
+// ===
+// ===
 
 interface Profile {
     updatedAt: Date;
@@ -127,6 +405,12 @@ abstract class StarcAPIModule {
     }
 }
 
+export interface MapDetailsParams {
+    majorVersion?: number;
+    minorVersion?: number;
+    locale?: GameLocale;
+}
+
 export enum StatsPeriodKind {
     'daily',
     'weekly',
@@ -146,6 +430,9 @@ export type MapListQuery = {
     orderDirection?: string;
     orderBy?: string;
 }
+
+// ===
+// ===
 
 export type DefaultPaginationQueryOptions = {
     offset?: number;
@@ -186,12 +473,46 @@ export class StarcAPI {
         return `${process.env.VUE_APP_STARC_WEBAPI_URL ?? '//sc2arcade.talv.space'}/bnet/${hash}.jpg`;
     }
 
+    depotImage(img: MapImage, region: DepotRegion): MapImageResolved {
+        return {
+            ...img,
+            url: `${process.env.VUE_APP_STARC_WEBAPI_URL ?? '//sc2arcade.talv.space'}/depot/${region}/${img.hash}.jpg`,
+        };
+    }
+
+    encodeMapVersion(majorVersion: number, minorVersion: number) {
+        return ((majorVersion & 0xFFFF) << 16) | minorVersion & 0xFFFF;
+    }
+
+    decodeMapVersion(version: number) {
+        return [(version >> 16) & 0xFFFF, (version) & 0xFFFF];
+    }
+
+    depotLink(hash: string, filetype: string, region: DepotRegion | number) {
+        if (typeof region === 'number') {
+            region = GameRegion[region].toLowerCase() as DepotRegion;
+        }
+        return `http://${region}.depot.battle.net:1119/${hash}.${filetype}`;
+    }
+
     getMapList(opts?: MapListQuery & CursorPaginationQuery) {
         return this.axios.get<CursorPaginationResult<Map>>(`maps`, { params: opts });
     }
 
     getMapInfo(regionId: number, mapId: number) {
         return this.axios.get<Map>(`maps/${regionId}/${mapId}`);
+    }
+
+    getMapDetails(regionId: number, mapId: number, params?: MapDetailsParams) {
+        return this.axios.get<MapDetails>(`maps/${regionId}/${mapId}/details`, { params: params });
+    }
+
+    getMapVersionHistory(regionId: number, mapId: number) {
+        return this.axios.get<MapVersionHistory>(`maps/${regionId}/${mapId}/versions`);
+    }
+
+    getMapDependencies(regionId: number, mapId: number) {
+        return this.axios.get<MapDependencyInfo>(`maps/${regionId}/${mapId}/dependencies`);
     }
 
     getMapStats(regionId: number, mapId: number, params?: StatsQueryOptions) {

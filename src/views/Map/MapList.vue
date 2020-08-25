@@ -58,7 +58,7 @@
 
         <div class="search-content">
             <div class="d-flex flex-wrap">
-                <v-card class="mx-auto mt-2 flex-grow-1 mr-1 ml-1" width="350" max-width="500" outlined v-for="(item, i) in mapResults" :key="i" :to="{ name: 'map_info', params: { regionId: item.regionId, mapId: item.bnetId } }">
+                <v-card class="mx-auto mt-2 flex-grow-1 mr-1 ml-1" width="350" max-width="500" outlined v-for="(item, i) in mapResults" :key="i" :to="{ name: 'map_details', params: { regionId: item.regionId, mapId: item.bnetId } }">
                     <v-list-item two-line>
                         <v-list-item-content>
                             <v-img class="mb-2" :src="require(`../../assets/region-${item.regionId}.png`)" max-width="24" />
@@ -124,6 +124,8 @@ export default class MapListView extends Vue {
     private sortByList = [
         { value: 'updated,desc', text: 'Updated: Newest first' },
         { value: 'updated,asc', text: 'Updated: Oldest first' },
+        { value: 'published,desc', text: 'Published: Newest first' },
+        { value: 'published,asc', text: 'Published: Oldest first' },
         { value: 'name,asc', text: 'Name: A-Z' },
         { value: 'name,desc', text: 'Name: Z-A' },
         { value: 'popularity,desc', text: 'Popularity' },
@@ -152,7 +154,7 @@ export default class MapListView extends Vue {
         this.currentPaginationParams = {
             before: this.$route.query?.before ? String(this.$route.query?.before) : void 0,
             after: this.$route.query?.after ? String(this.$route.query?.after) : void 0,
-            limit: this.$route.query?.limit ? Number(this.$route.query?.limit) : 30,
+            limit: this.$route.query?.limit ? Number(this.$route.query?.limit) : 60,
         };
         this.sortByValue = [this.mapQueryParams.orderBy, this.mapQueryParams.orderDirection].join(',');
     }

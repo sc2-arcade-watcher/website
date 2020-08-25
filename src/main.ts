@@ -15,6 +15,8 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify';
 import { StarcAPI } from './starc-api/starc';
 import * as dfns from 'date-fns';
+import { formatBytes } from './helpers';
+import './custom.scss';
 
 Vue.config.productionTip = false
 Vue.use(Element, { locale })
@@ -238,7 +240,9 @@ Vue.use({
 
         Object.defineProperty(Vue.prototype, '$helpers', {
             get() {
-                return {};
+                return {
+                    formatBytes,
+                };
             }
         });
 

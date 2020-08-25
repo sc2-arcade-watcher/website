@@ -49,8 +49,18 @@ const routes: RouteConfig[] = [
         children: [
             {
                 path: '/map/:regionId/:mapId/details',
-                name: 'map_info',
-                component: require('@/views/Map/MapInfo.vue').default,
+                name: 'map_details',
+                component: require('@/views/Map/MapDetails.vue').default,
+            },
+            {
+                path: '/map/:regionId/:mapId/versions',
+                name: 'map_versions',
+                component: require('@/views/Map/MapVersions.vue').default,
+            },
+            {
+                path: '/map/:regionId/:mapId/dependencies',
+                name: 'map_dependencies',
+                component: require('@/views/Map/MapDependencies.vue').default,
             },
             {
                 path: '/map/:regionId/:mapId/stats',
