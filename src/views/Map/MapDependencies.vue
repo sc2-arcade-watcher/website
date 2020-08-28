@@ -22,7 +22,7 @@
                 <span>v{{ item.mapHeader.majorVersion }}.{{ item.mapHeader.minorVersion }}</span>
             </v-list-item-subtitle>
             <v-list-item-subtitle>
-                <span title="Latest" v-if="item.requestedVersion === 0"><v-icon small left color="primary">fas fa-file-upload</v-icon></span>
+                <v-icon small left color="primary">fas fa-file-upload</v-icon>
                 {{ $dfns.lightFormat(new Date(item.mapHeader.uploadedAt), 'yyyy-MM-dd HH:mm') }}
             </v-list-item-subtitle>
             <v-list-item-subtitle class="text-sm-right justify-sm-end">

@@ -1,22 +1,21 @@
 <template>
     <v-card class="py-2 px-2 card-t1" v-if="mapDetails !== null">
-        <v-row>
+        <v-row v-if="mapInfo.arcadeInfo">
             <v-col md="5" sm="12">
-                <v-card outlined>
-                    <v-list-item>
-                        <v-list-item-title>Description</v-list-item-title>
-                        <v-list-item-subtitle>{{ mapInfo.workingSet.description }}</v-list-item-subtitle>
-                    </v-list-item>
-                    <v-list-item>
-                        <v-list-item-title>Max players</v-list-item-title>
-                        <v-list-item-subtitle>{{ mapInfo.workingSet.maxPlayers }}</v-list-item-subtitle>
-                    </v-list-item>
-                    <v-list-item v-if="mapInfo.arcadeInfo && mapInfo.arcadeInfo.website">
-                        <v-list-item-title>Website</v-list-item-title>
-                        <v-list-item-subtitle>
-                            <a :href="mapInfo.arcadeInfo.website" target="_blank">{{ mapInfo.arcadeInfo.website }}</a>
-                        </v-list-item-subtitle>
-                    </v-list-item>
+                <v-card class="mb-2" v-for="(section, i) in mapInfo.arcadeInfo.howToPlaySections" :key="i" tile raised>
+                    <v-card-title class="headline">
+                        <span>{{ section.title }}</span>
+                    </v-card-title>
+                    <v-card-subtitle v-if="section.subtitle">
+                        <span>{{ section.subtitle }}</span>
+                    </v-card-subtitle>
+                    <v-card-text>
+                        <ul>
+                            <li v-for="(line, l) in section.items" :key="l">
+                                <span v-html="line.replace('\n', '<br>')"/>
+                            </li>
+                        </ul>
+                    </v-card-text>
                 </v-card>
             </v-col>
             <v-col md="7" sm="12">
@@ -32,6 +31,26 @@
                 </v-carousel>
             </v-col>
         </v-row>
+
+        <template v-if="mapInfo.arcadeInfo && mapInfo.arcadeInfo.patchNoteSections">
+            <h4 class="display-1 mb-1 pb-1">Patch notes</h4>
+            <v-divider/>
+            <v-card class="mt-1" v-for="(section, i) in mapInfo.arcadeInfo.patchNoteSections" :key="i" tile raised outlined color="transparent">
+                <v-card-title class="">
+                    <span>{{ section.title }}</span>
+                </v-card-title>
+                <v-card-subtitle v-if="section.subtitle">
+                    <span>{{ section.subtitle }}</span>
+                </v-card-subtitle>
+                <v-card-text>
+                    <ul>
+                        <li v-for="(line, l) in section.items" :key="l" style="list-style-type: none;">
+                            <span v-html="line.replace('\n', '<br>')"/>
+                        </li>
+                    </ul>
+                </v-card-text>
+            </v-card>
+        </template>
 
         <v-divider></v-divider>
         <v-subheader>Variants</v-subheader>

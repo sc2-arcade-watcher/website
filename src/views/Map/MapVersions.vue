@@ -131,7 +131,9 @@
         </v-data-iterator>
 
         <div v-if="mapDetails">
-            <pre>{{ JSON.stringify(mapDetails, void 0, '\t') }}</pre>
+            <h3>Version {{ mapDetails.majorVersion }}.{{ mapDetails.minorVersion }}</h3>
+            <v-divider/>
+            <pre class="my-4" style="max-width: 100%; overflow-x: scroll; font-size: 0.9rem; border: 2px solid #111;">{{ JSON.stringify(mapDetails, void 0, '\t') }}</pre>
         </div>
     </v-card>
 </template>
@@ -199,7 +201,7 @@ export default class MapVersionsView extends Vue {
     }
     @Watch('$route')
     private reloadMapDetails() {
-        if (typeof this.$route.query.majorVersion === 'number' && typeof this.$route.query.minorVersion === 'number') {
+        if (typeof this.$route.query.majorVersion !== 'undefined' && typeof this.$route.query.minorVersion !== 'undefined') {
             this.loadMapDetails();
         }
         else {

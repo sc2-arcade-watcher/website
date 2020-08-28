@@ -1,22 +1,39 @@
 <template>
     <div>
-        <v-card v-if="mapInfo" color="basil" class="">
-            <v-list-item three-line>
-                <v-list-item-content>
-                    <v-list-item-title class="headline mb-1">{{ mapInfo.name }}</v-list-item-title>
-                    <div class="overline">
-                        v{{ mapInfo.currentMajorVersion }}.{{ mapInfo.currentMinorVersion }}
-                        |
-                        {{ mapInfo.type }}
-                    </div>
-                    <!-- <v-list-item-subtitle>{{ mapInfo.type }}</v-list-item-subtitle> -->
-                    <v-img :src="require(`../../assets/region-${mapInfo.regionId}.png`)" max-width="24" />
-                </v-list-item-content>
+        <h2 class="display-1" v-if="mapInfo">{{ mapInfo.name }}</h2>
+        <v-card v-if="mapInfo" class="map-base-card mt-2 d-flex flex-wrap flex-sm-nowrap justify-space-between" raised>
+            <v-container fluid>
+                <div class="row">
+                    <v-list-item class="py-0">
+                        <v-list-item-subtitle class="d-flex flex-wrap flex-sm-nowrap justify-space-between align-center mr-3">
+                            <v-chip color="primary" outlined>{{ mapInfo.type.toUpperCase() }}</v-chip>
+                            &nbsp;
+                            <v-btn small outlined text :href="$starc.battleMapLink(mapInfo.regionId, mapInfo.bnetId)">
+                                {{ $starc.battleMapLink(mapInfo.regionId, mapInfo.bnetId) }}
+                            </v-btn>
+                        </v-list-item-subtitle>
+                        <v-list-item-action-text class="justify-sm-end" style="min-width: 80px;">
+                            v{{ mapInfo.currentMajorVersion }}.{{ mapInfo.currentMinorVersion }}
+                            <v-img class="d-inline-block float-right" :src="require(`../../assets/region-${mapInfo.regionId}.png`)" width="20" height="20" />
+                        </v-list-item-action-text>
+                    </v-list-item>
+                </div>
+                <dl class="row">
+                    <dt class="col-12 col-sm-3 col-md-2">Description</dt>
+                    <dd class="col-12 col-sm-9 col-md-10">
+                        <span v-html="mapInfo.description.replace('\n', '<br>')"/>
+                    </dd>
 
-                <v-list-item-avatar tile min-width="200" max-width="300" height="140">
-                    <v-img :src="$starc.bnetDepotImage(mapInfo.iconHash)" contain></v-img>
-                </v-list-item-avatar>
-            </v-list-item>
+                    <dt class="col-12 col-sm-3 col-md-2">Max players</dt>
+                    <dd class="col-12 col-sm-9 col-md-10">{{ mapInfo.maxPlayers }}</dd>
+
+                    <template v-if="mapInfo.website">
+                        <dt class="col-12 col-sm-3 col-md-2">Website</dt>
+                        <dd class="col-12 col-sm-9 col-md-10"><a href="" target="_blank">{{ mapInfo.website }}</a></dd>
+                    </template>
+                </dl>
+            </v-container>
+            <img class="d-inline-block my-2 mx-2" :src="$starc.bnetDepotImage(mapInfo.iconHash)"/>
         </v-card>
 
         <v-tabs
@@ -118,12 +135,33 @@ export default class MapBaseView extends Vue {
 }
 </script>
 
-<style>
-/* Helper classes */
-.basil {
-    /* background-color: #FFFBE6 !important; */
-}
-.basil--text {
-    /* color: #356859 !important; */
+<style lang="scss">
+.map-base-card {
+    .row {
+    }
+
+    .row >* {
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+    }
+
+    dt, dd {
+        border-top: 1px dashed #333;
+    }
+
+    dt {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    dd {
+        font-size: 1rem;
+    }
+
+    >img {
+        align-self: center;
+        border: 2px solid rgba(#000, 0.2);
+        box-shadow: 1px 1px 3px rgba(#000, 0.35);
+    }
 }
 </style>

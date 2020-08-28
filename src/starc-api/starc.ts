@@ -480,6 +480,10 @@ export class StarcAPI {
         };
     }
 
+    battleMapLink(regionId: number, mapId: number) {
+        return `battlenet:://starcraft/map/${regionId}/${mapId}`;
+    }
+
     encodeMapVersion(majorVersion: number, minorVersion: number) {
         return ((majorVersion & 0xFFFF) << 16) | minorVersion & 0xFFFF;
     }

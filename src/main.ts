@@ -15,6 +15,7 @@ import { formatBytes } from './helpers';
 
 import './plugins/highcharts';
 import './plugins/loading';
+import './plugins/toasts';
 import vuetify from './plugins/vuetify';
 import router from './router';
 

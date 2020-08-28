@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import { TYPE } from 'vue-toastification';
 
 export function formatBytes(bytes: number, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
@@ -27,12 +28,32 @@ export function SGuard(options?: {}) {
             try {
                 fnResult = fn.apply(this, args);
                 if (isPromise(fnResult)) {
-                    console.log(fnResult);
                     fnResult = await fnResult;
                 }
             }
             catch (err) {
-                console.log('err', err);
+                let msg: string[] = [];
+
+                if (err.response) {
+                    msg.push(`[${err.response.status}] ${err.response.statusText}`)
+
+                    if (typeof err.response.data === 'object') {
+                        msg.push(err.response.data.message);
+                    }
+                }
+                // else if (err.request instanceof XMLHttpRequest) {
+                //     console.log((<XMLHttpRequest>err.request).responseText);
+                // }
+                else {
+                    console.error(err);
+                    msg = [err.message];
+                }
+
+                this.$toast(msg.join('\n'), {
+                    type: TYPE.ERROR,
+                    timeout: false,
+                    closeOnClick: false,
+                });
             }
             l.hide();
             return fnResult;
