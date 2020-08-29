@@ -53,7 +53,7 @@
                     </v-list-item>
                 </v-card>
 
-                <div>
+                <div v-if="lobby.map">
                     <v-subheader>Map info</v-subheader>
                     <v-card
                         class="map-card"
@@ -86,6 +86,25 @@
 
                             <v-list-item-avatar tile size="100" color="grey">
                                 <v-img :src="$starc.bnetDepotImage(lobby.extMod.iconHash)"></v-img>
+                            </v-list-item-avatar>
+                        </v-list-item>
+                    </v-card>
+                </div>
+
+                <div v-if="lobby.multiMod">
+                    <v-subheader>Multi mod info</v-subheader>
+                    <v-card
+                        class="map-card"
+                        outlined
+                        :to="{ name: 'map_details', params: { regionId: lobby.multiMod.regionId, mapId: lobby.multiMod.bnetId } }"
+                    >
+                        <v-list-item>
+                            <v-list-item-content>
+                                <v-list-item-title class="headline">{{ lobby.multiMod.name }}</v-list-item-title>
+                            </v-list-item-content>
+
+                            <v-list-item-avatar tile size="100" color="grey">
+                                <v-img :src="$starc.bnetDepotImage(lobby.multiMod.iconHash)"></v-img>
                             </v-list-item-avatar>
                         </v-list-item>
                     </v-card>
