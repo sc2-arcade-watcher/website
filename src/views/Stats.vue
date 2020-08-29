@@ -5,14 +5,33 @@
                 <span>Global activity</span>
             </v-card-title>
             <div class="mt-2 mr-2">
-                <v-select :items="periodItemKinds" v-model="periodItem" solo dense @change="onPeriodChange"></v-select>
+                <v-select
+                    solo
+                    hide-details
+                    prepend-icon="fa-calendar-week"
+                    label="Period"
+                    style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600;"
+                    :items="periodItemKinds"
+                    v-model="periodItem"
+                    @change="onPeriodChange"
+                />
             </div>
         </v-card>
+
         <div class="chart-wrapper" @mousemove="onChartSyncMove" ref="chartWrapper" v-if="regionStats">
-            <highcharts :constructorType="'chart'" :options="getChartOptions('lobbiesStarted')" :callback="chartInit"></highcharts>
-            <highcharts :constructorType="'chart'" :options="getChartOptions('participantsTotal')" :callback="chartInit"></highcharts>
-            <highcharts :constructorType="'chart'" :options="getChartOptions('participantsUniqueTotal')" :callback="chartInit"></highcharts>
+            <highcharts class="mt-5" :constructorType="'chart'" :options="lobbiesChart" :callback="chartInit"></highcharts>
+            <highcharts class="mt-5" :constructorType="'chart'" :options="participantsChart" :callback="chartInit"></highcharts>
+            <highcharts class="mt-5" :constructorType="'chart'" :options="participantsUniqueChart" :callback="chartInit"></highcharts>
         </div>
+
+        <v-container fluid>
+            <v-card color="primary darken-3">
+                <blockquote class="py-2 px-2">
+                    <strong>Zoom</strong>: Press and hold <kbd>LMB</kbd> to designate area you want to enlarge.<br>
+                    <strong>Navigate</strong>: Hold <kbd>SHIFT</kbd> while dragging to pan around.
+                </blockquote>
+            </v-card>
+        </v-container>
     </v-card>
 </template>
 
@@ -31,71 +50,97 @@ export default class StatsView extends Vue {
     ];
     private periodItem = 'weekly';
 
-    private getChartOptions(name: 'lobbiesStarted' | 'participantsUniqueTotal') {
-        const dKeys = {
-            'lobbiesHosted': 'Lobbies Hosted',
-            'lobbiesStarted': 'Lobbies Started',
-            'participantsTotal': 'Participants Total',
-            'participantsUniqueTotal': 'Participants Unique Total',
-        };
-        const opts: Highcharts.Options = {
-            chart: {
-                marginLeft: 60,
-                spacingTop: 15,
-                spacingBottom: 15,
-                height: 310,
+    private dKeys = {
+        'lobbiesHosted': 'Lobbies Hosted',
+        'lobbiesStarted': 'Lobbies Started',
+        'participantsTotal': 'Participants Total',
+        'participantsUniqueTotal': 'Participants Unique Total',
+    };
+
+    private baseOpts: Highcharts.Options = {
+        chart: {
+            zoomType: 'x',
+            panKey: 'shift',
+            panning: {
+                enabled: true,
+                type: 'x',
             },
+        },
+        title: {
+            text: '-',
+        },
+        legend: {
+            enabled: true
+        },
+        tooltip: {
+            shared: true,
+            split: true,
+        },
+        xAxis: {
+            crosshair: true,
+        },
+        yAxis: {
             title: {
-                text: dKeys[name],
-                align: 'left',
-                margin: 0,
-                x: 40,
-                y: 8,
+                text: null
             },
-            credits: {
-                enabled: false
-            },
-            legend: {
-                enabled: false
-            },
-            tooltip: {
-                positioner: function () {
-                    return {
-                        // right aligned
-                        x: this.chart.chartWidth - (this as any).label.width,
-                        y: 10 // align to title
-                    };
-                },
+        },
+        series: [],
+    }
+
+    private get lobbiesChart() {
+        const opts: Highcharts.Options = Object.assign({}, this.$helpers.deepCopy(this.baseOpts));
+
+        const name = 'lobbiesStarted';
+        opts.title!.text = this.dKeys[name];
+        (opts.xAxis as any).categories = this.regionStats!.date;
+
+        for (const k of ['US', 'EU', 'KR']) {
+            (opts.series as Highcharts.SeriesColumnOptions[]).push({
+                type: 'column',
+                name: k,
+                data: (this.regionStats as any)[name + k] as number[],
                 borderWidth: 0,
-                backgroundColor: 'none',
-                // pointFormat: '{point.y}',
-                // shared: true,
-                headerFormat: '',
-                shadow: false,
-                style: {
-                    fontSize: '18px'
-                },
-            },
-            xAxis: {
-                crosshair: true,
-                categories: this.regionStats!.date,
-            },
-            yAxis: {
-                title: {
-                    text: null
-                },
-            },
-            series: [
-            ],
-        };
+            });
+        }
+
+        return opts;
+    }
+
+    private get participantsChart() {
+        const opts: Highcharts.Options = Object.assign({}, this.$helpers.deepCopy(this.baseOpts));
+
+        const name = 'participantsTotal';
+        opts.title!.text = this.dKeys[name];
+        (opts.xAxis as any).categories = this.regionStats!.date;
+
         for (const k of ['US', 'EU', 'KR']) {
             (opts.series as Highcharts.SeriesAreaOptions[]).push({
                 type: 'area',
                 name: k,
                 data: (this.regionStats as any)[name + k] as number[],
-                fillOpacity: 0.2,
+                fillOpacity: 0.25,
             });
         }
+
+        return opts;
+    }
+
+    private get participantsUniqueChart() {
+        const opts: Highcharts.Options = Object.assign({}, this.$helpers.deepCopy(this.baseOpts));
+
+        const name = 'participantsUniqueTotal';
+        opts.title!.text = this.dKeys[name];
+        (opts.xAxis as any).categories = this.regionStats!.date;
+
+        for (const k of ['US', 'EU', 'KR']) {
+            (opts.series as Highcharts.SeriesAreaOptions[]).push({
+                type: 'area',
+                name: k,
+                data: (this.regionStats as any)[name + k] as number[],
+                fillOpacity: 0.25,
+            });
+        }
+
         return opts;
     }
 

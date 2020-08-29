@@ -57,6 +57,7 @@ Vue.use({
 declare module 'vue/types/vue' {
     interface Vue {
         $starc: StarcAPI;
+        $helpers: typeof helpers;
         $dfns: typeof dfns;
     }
 }

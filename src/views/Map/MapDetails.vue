@@ -189,18 +189,6 @@ export default class MapInfoView extends Vue {
 
 <style lang="scss">
 .map-details {
-    .section-title {
-        margin-bottom: 0.7rem;
-        padding-left: 0.7rem;
-        border-left: 10px solid rgba(#fff, 1);
-        // border-bottom: 4px solid rgba(#000, 0.15);
-        text-shadow: 2px 2px 3px rgba(#fff, 0.2);
-        font-size: 1.6rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
-
     .v-data-table {
         background: transparent !important;
     }

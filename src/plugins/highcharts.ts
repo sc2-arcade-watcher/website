@@ -1,12 +1,13 @@
 import Vue from 'vue';
 import Highcharts from 'highcharts';
 // import Stock from 'highcharts/modules/stock';
+import Exporting from 'highcharts/modules/exporting';
 import HighchartsVue from 'highcharts-vue';
 // import highchartsTheme from 'highcharts/themes/dark-unica';
 
 // highchartsTheme(Highcharts);
 // Stock(Highcharts);
-Vue.use(HighchartsVue);
+Exporting(Highcharts);
 
 Highcharts.createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Maven Pro',
@@ -125,6 +126,7 @@ Highcharts.setOptions({
         },
     },
     credits: {
+        enabled: false,
         style: {
             color: '#666'
         }
@@ -210,3 +212,5 @@ Highcharts.setOptions({
         trackBorderColor: '#404043'
     }
 });
+
+Vue.use(HighchartsVue);

@@ -31,6 +31,10 @@ export function isPromise(val: any): val is Promise<any> {
     return !!val && typeof val === 'object' && typeof val.then === 'function' && typeof val.catch === 'function';
 }
 
+export function deepCopy<T>(a: T): T {
+    return JSON.parse(JSON.stringify(a));
+}
+
 export function SGuard(options?: {}) {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         const fn = <Function>descriptor.value;
