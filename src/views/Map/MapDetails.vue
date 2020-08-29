@@ -1,7 +1,8 @@
 <template>
-    <v-card class="py-2 px-2 card-t1" v-if="mapDetails !== null">
+    <v-card class="py-2 px-2 card-t1 map-details" v-if="mapDetails !== null">
         <v-row v-if="mapInfo.arcadeInfo">
-            <v-col md="5" sm="12">
+            <v-col md="5" sm="12" v-if="mapInfo.arcadeInfo.howToPlaySections && mapInfo.arcadeInfo.howToPlaySections.length">
+                <h4 class="section-title">How to play</h4>
                 <v-card class="mb-2" v-for="(section, i) in mapInfo.arcadeInfo.howToPlaySections" :key="i" tile raised>
                     <v-card-title class="headline">
                         <span>{{ section.title }}</span>
@@ -18,11 +19,12 @@
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col md="7" sm="12">
+            <v-col md="7" sm="12" v-if="arcadeScreenshots">
+                <h4 class="section-title">Screenshots</h4>
                 <!-- <v-img :src="mapThumbnail.url" :max-width="mapThumbnail.width" contain></v-img> -->
                 <v-carousel v-if="arcadeScreenshots" cycle interval="8000" style="max-width: 800px" height="600">
                     <v-carousel-item
-                        v-for="(item,i) in arcadeScreenshots"
+                        v-for="(item, i) in arcadeScreenshots"
                         :key="i"
                         :src="item.picture.url"
                     >
@@ -32,11 +34,10 @@
             </v-col>
         </v-row>
 
-        <template v-if="mapInfo.arcadeInfo && mapInfo.arcadeInfo.patchNoteSections">
-            <h4 class="display-1 mb-1 pb-1">Patch notes</h4>
-            <v-divider/>
-            <v-card class="mt-1" v-for="(section, i) in mapInfo.arcadeInfo.patchNoteSections" :key="i" tile raised outlined color="transparent">
-                <v-card-title class="">
+        <template v-if="patchNotes && patchNotes.length">
+            <h4 class="section-title">Patch notes</h4>
+            <v-card class="mt-1 mb-3" v-for="(section) in patchNotes" :key="section.subtitle" tile raised outlined color="transparent">
+                <v-card-title>
                     <span>{{ section.title }}</span>
                 </v-card-title>
                 <v-card-subtitle v-if="section.subtitle">
@@ -52,43 +53,49 @@
             </v-card>
         </template>
 
-        <v-divider></v-divider>
-        <v-subheader>Variants</v-subheader>
-        <v-card raised outlined>
-            <v-simple-table dense>
-                <template v-slot:default>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Genre</th>
-                            <th>Max team size</th>
-                            <th>Max human players</th>
-                            <th>Max open slots</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item, i) in mapInfo.variants" :key="i">
-                            <td>{{ item.modeName }}</td>
-                            <td>{{ item.modeDescription }}</td>
-                            <td>{{ item.categoryName }}</td>
-                            <td>{{ item.maxTeamSize }}</td>
-                            <td>{{ item.maxHumanPlayers }}</td>
-                            <td>{{ item.maxOpenSlots }}</td>
-                        </tr>
-                    </tbody>
-                </template>
-            </v-simple-table>
-        </v-card>
+        <template v-if="mapInfo.variants && mapInfo.variants.length">
+            <h4 class="section-title">Game Variants</h4>
 
-        <v-divider></v-divider>
-        <v-subheader>Attributes</v-subheader>
-        <v-card raised outlined>
+            <v-list-item
+                class="mb-3"
+                dense
+                v-for="(item, i) in mapInfo.variants"
+                :key="i"
+            >
+                <v-list-item-title>
+                    <span class="overline">{{ item.modeName }}</span>
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                    {{ item.modeDescription }}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle>
+                    {{ item.categoryName }}
+                </v-list-item-subtitle>
+                <v-list-item-action-text>
+                    <v-chip-group>
+                        <v-chip small title="Max team size">
+                            <v-icon x-small left>fas fa-clone</v-icon>
+                            <strong>{{ item.maxTeamSize }}</strong>
+                        </v-chip>
+                        <v-chip small title="Max human players">
+                            <v-icon x-small left>fas fa-users</v-icon>
+                            <strong>{{ item.maxHumanPlayers }}</strong>
+                        </v-chip>
+                        <v-chip small title="Max open slots">
+                            <v-icon x-small left>fas fa-sitemap</v-icon>
+                            <strong>{{ item.maxOpenSlots }}</strong>
+                        </v-chip>
+                    </v-chip-group>
+                </v-list-item-action-text>
+            </v-list-item>
+        </template>
+
+        <template v-if="publicAttributes && publicAttributes.length">
+            <h4 class="section-title">Game Attributes</h4>
             <v-simple-table dense>
                 <template v-slot:default>
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Name</th>
                             <th>Tip</th>
                             <th>Values</th>
@@ -96,24 +103,31 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(item, i) in mapInfo.attributes" :key="i">
-                            <td>{{ item.instance.namespace }}/{{ item.instance.id }}</td>
-                            <td>{{ item.visual.text }}</td>
+                        <tr v-for="(item, i) in publicAttributes" :key="i">
+                            <td>
+                                {{ item.visual.text }}
+                                <br>
+                                <small>[{{ item.instance.namespace }}/{{ item.instance.id }}]</small>
+                            </td>
                             <td>{{ item.visual.tip }}</td>
                             <td>
                                 <ul class="my-2">
-                                    <li v-for="(subitem, i) in item.values" :key="i">
+                                    <li v-for="subitem in item.values" :key="subitem.value">
                                         {{ subitem.visual.text }}
-                                        <code class="float-right">{{ subitem.value }}</code>
+                                        <!-- <code class="float-right">{{ subitem.value }}</code> -->
                                     </li>
                                 </ul>
                             </td>
-                            <td>{{ item.access }}</td>
+                            <td>
+                                <v-chip small outlined style="text-transform: uppercase;">
+                                    {{ item.access }}
+                                </v-chip>
+                            </td>
                         </tr>
                     </tbody>
                 </template>
             </v-simple-table>
-        </v-card>
+        </template>
     </v-card>
 </template>
 
@@ -153,6 +167,16 @@ export default class MapInfoView extends Vue {
         return screenshots;
     }
 
+    private get patchNotes() {
+        if (!this.mapInfo || !this.mapInfo.arcadeInfo || !this.mapInfo.arcadeInfo.patchNoteSections) return null;
+        return this.mapInfo.arcadeInfo.patchNoteSections.reverse();
+    }
+
+    private get publicAttributes() {
+        if (!this.mapInfo) return null;
+        return this.mapInfo.attributes.filter(x => x.access !== starc.AttributeRestrictionKind.None);
+    }
+
     @SGuard()
     private async created() {
         this.mapDetails = (await this.$starc.getMapDetails(
@@ -162,3 +186,23 @@ export default class MapInfoView extends Vue {
     }
 }
 </script>
+
+<style lang="scss">
+.map-details {
+    .section-title {
+        margin-bottom: 0.7rem;
+        padding-left: 0.7rem;
+        border-left: 10px solid rgba(#fff, 1);
+        // border-bottom: 4px solid rgba(#000, 0.15);
+        text-shadow: 2px 2px 3px rgba(#fff, 0.2);
+        font-size: 1.6rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .v-data-table {
+        background: transparent !important;
+    }
+}
+</style>

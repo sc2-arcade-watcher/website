@@ -1,5 +1,148 @@
 import Axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
+export const availableCategories: MapCategory[] = [
+    {
+        id: 1,
+        code: "Custom",
+        name: "Other",
+        description: "Unclassified game type.",
+        isMelee: false
+    },
+    {
+        id: 2,
+        code: "Melee",
+        name: "Melee",
+        description: "Standard melee games against other players",
+        isMelee: true
+    },
+    {
+        id: 3,
+        code: "Coop",
+        name: "Co-op VS A.I.",
+        description: "Games played cooperatively against the A.I.",
+        isMelee: true
+    },
+    {
+        id: 4,
+        code: "TowerDefense",
+        name: "Tower Defense",
+        description: "Build towers to defend against waves of enemies.",
+        isMelee: false
+    },
+    {
+        id: 5,
+        code: "TugOfWar",
+        name: "Tug Of War",
+        description: "Build structures which send units to attack the enemy base.",
+        isMelee: false
+    },
+    {
+        id: 6,
+        code: "Misc",
+        name: "Miscellaneous",
+        description: "Miscellaneous game types",
+        isMelee: true
+    },
+    {
+        id: 7,
+        code: "Training",
+        name: "Training",
+        description: "Games designed for learning and practicing",
+        isMelee: true
+    },
+    {
+        id: 8,
+        code: "Observer",
+        name: "Melee Spectator",
+        description: "Melee games with spectating functionality",
+        isMelee: true
+    },
+    {
+        id: 9,
+        code: "HeroBattle",
+        name: "Hero Battle",
+        description: "Teams of heroes join in constant assaults on the enemy stronghold.",
+        isMelee: false
+    },
+    {
+        id: 10,
+        code: "Puzzle",
+        name: "Puzzle",
+        description: "Test your ingenuity with puzzle-based gameplay.",
+        isMelee: false
+    },
+    {
+        id: 11,
+        code: "RPG",
+        name: "RPG",
+        description: "Level up and explore in roleplaying games.",
+        isMelee: false
+    },
+    {
+        id: 12,
+        code: "Monobattle",
+        name: "Monobattle",
+        description: "Melee games where each player may only build a single unit type",
+        isMelee: true
+    },
+    {
+        id: 13,
+        code: "Arena",
+        name: "Arena",
+        description: "Evenly matched groups of units face off in arena combat.",
+        isMelee: false
+    },
+    {
+        id: 14,
+        code: "Action",
+        name: "Action",
+        description: "Games which focus on quick action-packed gameplay.",
+        isMelee: false
+    },
+    {
+        id: 15,
+        code: "Strategy",
+        name: "Strategy",
+        description: "Games which focus on strategic planning.",
+        isMelee: false
+    },
+    {
+        id: 16,
+        code: "Survival",
+        name: "Survival",
+        description: "Stay alive as long as possible among hordes of enemies.",
+        isMelee: false
+    },
+    {
+        id: 17,
+        code: "Tandem",
+        name: "Archon",
+        description: "Share control as an Archon against other players",
+        isMelee: true
+    },
+    {
+        id: 18,
+        code: "Single_Player",
+        name: "Single Player",
+        description: "Games designed specifically for one player.",
+        isMelee: false
+    },
+    {
+        id: 19,
+        code: "TandemCoop",
+        name: "Archon Co-op VS A.I.",
+        description: "Share control as an Archon cooperatively against the A.I.",
+        isMelee: true
+    },
+    {
+        id: 20,
+        code: "Campaign",
+        name: "Campaign",
+        description: "Story-driven campaigns that usually spans across multiple maps.",
+        isMelee: false
+    }
+];
+
 export interface MapStatData {
     date: string[];
     lobbiesHosted: number[];
@@ -15,11 +158,12 @@ export enum MapType {
     DependencyMod = 'dependency_mod',
 }
 
-interface MapCategory {
+export interface MapCategory {
     id: number;
     name: string;
     code: string;
     description: string;
+    isMelee: boolean;
 }
 
 export interface MapHeader {
@@ -41,6 +185,7 @@ export interface Map {
     type: MapType;
     name: string;
     mainCategory: MapCategory;
+    mainCategoryId: number;
     currentMajorVersion: number;
     currentMinorVersion: number;
     iconHash: string;

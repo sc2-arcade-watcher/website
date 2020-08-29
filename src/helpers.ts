@@ -16,9 +16,13 @@ export function formatBytes(bytes: number, decimals = 2) {
 const reURL = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g;
 
 export function formatDescription(s: string) {
-    s = s.replace('\n', '<br>');
+    s = s.trim().replace(/\n/g, '<br>');
     s = s.replace(reURL, (substring) => {
-        return `<a href="${substring}" target="_blank">${substring}</a>`;
+        let href = substring;
+        if (!href.startsWith('http')) {
+            href = `//${href}`;
+        }
+        return `<a href="${href}" target="_blank">${substring}</a>`;
     });
     return s;
 }
