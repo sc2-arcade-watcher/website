@@ -55,12 +55,14 @@
 
                 <div>
                     <v-subheader>Map info</v-subheader>
-                    <v-card outlined>
-                        <v-list-item two-line v-if="lobby.map">
+                    <v-card
+                        class="map-card"
+                        outlined
+                        :to="{ name: 'map_details', params: { regionId: lobby.map.regionId, mapId: lobby.map.bnetId } }"
+                    >
+                        <v-list-item v-if="lobby.map">
                             <v-list-item-content>
-                                <v-list-item-title class="headline mb-1">{{ lobby.map.name }}</v-list-item-title>
-                                <div class="overline">v{{ lobby.mapMajorVersion }}.{{ lobby.mapMinorVersion }}</div>
-                                <v-btn text :to="{ name: 'map_details', params: { regionId: lobby.map.regionId, mapId: lobby.map.bnetId } }">Details</v-btn>
+                                <v-list-item-title class="headline">{{ lobby.map.name }}</v-list-item-title>
                             </v-list-item-content>
 
                             <v-list-item-avatar tile size="100" color="grey">
@@ -72,12 +74,14 @@
 
                 <div v-if="lobby.extMod">
                     <v-subheader>Extension mod info</v-subheader>
-                    <v-card outlined>
-                        <v-list-item two-line>
+                    <v-card
+                        class="map-card"
+                        outlined
+                        :to="{ name: 'map_details', params: { regionId: lobby.extMod.regionId, mapId: lobby.extMod.bnetId } }"
+                    >
+                        <v-list-item>
                             <v-list-item-content>
-                                <v-list-item-title class="headline mb-1">{{ lobby.extMod.name }}</v-list-item-title>
-                                <div class="overline">v{{ lobby.extMod.currentMajorVersion }}.{{ lobby.extMod.currentMinorVersion }}</div>
-                                <v-btn text :to="{ name: 'map_details', params: { regionId: lobby.extMod.regionId, mapId: lobby.extMod.bnetId } }">Details</v-btn>
+                                <v-list-item-title class="headline">{{ lobby.extMod.name }}</v-list-item-title>
                             </v-list-item-content>
 
                             <v-list-item-avatar tile size="100" color="grey">
@@ -103,17 +107,28 @@
                             <span v-if="currSlot.name === lobby.hostName"> (host)</span>
                         </v-list-item-title>
                         <v-list-item-subtitle v-if="currSlot.kind !== 'human'" v-text="currSlot.kind.toUpperCase()"/>
-                        <v-list-item-subtitle v-if="currSlot.kind === 'human' && currSlot.joinInfo">
-                            <v-tooltip top>
-                                <template v-slot:activator="{ on, attrs }">
-                                    <span v-bind="attrs" v-on="on">
-                                        {{ $dfns.formatDistanceStrict(new Date(currSlot.joinInfo.joinedAt), new Date(), {
-                                            addSuffix: true,
-                                            roundingMethod: 'floor'}) }}
-                                    </span>
-                                </template>
-                                <span>{{ $dfns.formatISO9075(new Date(currSlot.joinInfo.joinedAt), { representation: 'complete' }) }}</span>
-                            </v-tooltip>
+                        <v-list-item-subtitle v-if="currSlot.kind === 'human' && currSlot.profile">
+                            {{ $starc.playerHandle(currSlot.profile) }}
+                        </v-list-item-subtitle>
+                    </v-list-item>
+                </v-list>
+
+                <v-subheader>Join history</v-subheader>
+                <v-list class="join-history">
+                    <v-list-item v-for="(jevent, i) in joinEvents" :key="i" dense>
+                        <v-list-item-title>
+                            <v-icon color="green" small left v-if="jevent.type === 'joined'">fas fa-sign-in-alt</v-icon>
+                            <v-icon color="red" small left v-if="jevent.type === 'left'">fas fa-sign-out-alt</v-icon>
+                            <span style="font-weight: 300;">{{ joinEvents.length - i }}. </span>
+                            <a v-if="jevent.profile" :href="`https://starcraft2.com/en-us/profile/${jevent.profile.regionId}/${jevent.profile.realmId}/${jevent.profile.profileId}`" target="_blank">{{ jevent.profile.name }}</a>
+                        </v-list-item-title>
+                        <v-list-item-subtitle>
+                            {{ $dfns.formatISO9075(new Date(jevent.date), { representation: 'complete' }) }}
+                        </v-list-item-subtitle>
+                        <v-list-item-subtitle>
+                            {{ $dfns.formatDistanceStrict(new Date(jevent.date), new Date(), {
+                                addSuffix: true,
+                                roundingMethod: 'floor'}) }}
                         </v-list-item-subtitle>
                     </v-list-item>
                 </v-list>
@@ -126,6 +141,12 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
 import { SGuard } from '../helpers';
+
+interface JoinLeaveEvent {
+    type: 'joined' | 'left';
+    profile: starc.Profile;
+    date: Date;
+}
 
 @Component
 export default class LobbyView extends Vue {
@@ -150,6 +171,27 @@ export default class LobbyView extends Vue {
             results[currSlot.team].slots.push(currSlot);
         }
         return results;
+    }
+
+    private get joinEvents() {
+        const events: JoinLeaveEvent[] = [];
+
+        for (const item of this.lobby!.joinHistory!) {
+            events.push({
+                type: 'joined',
+                date: new Date(item.joinedAt),
+                profile: item.profile,
+            });
+            if (item.leftAt) {
+                events.push({
+                    type: 'left',
+                    date: new Date(item.leftAt),
+                    profile: item.profile,
+                });
+            }
+        }
+
+        return events.sort((a, b) => a.date.getTime() - b.date.getTime()).reverse();
     }
 
     private async refresh() {
@@ -182,3 +224,30 @@ export default class LobbyView extends Vue {
     }
 }
 </script>
+
+<style lang="scss">
+.map-card {
+    .v-list-item {
+        padding-right: 5px;
+    }
+
+    .v-list-item__title {
+        white-space: normal;
+    }
+
+    .v-list-item__avatar {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .v-avatar {
+    }
+}
+
+.join-history {
+    .v-list-item {
+        min-height: 30px;
+        border-bottom: 1px dashed rgba(#fff, 0.05);
+    }
+}
+</style>

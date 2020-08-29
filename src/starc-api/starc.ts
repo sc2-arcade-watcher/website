@@ -309,7 +309,7 @@ export interface MapDependencyInfo {
 // ===
 // ===
 
-interface Profile {
+export interface Profile {
     updatedAt: Date;
     regionId: number;
     realmId: number;
@@ -320,8 +320,8 @@ interface Profile {
 
 interface GameLobbyPlayerJoin {
     profile: Profile;
-    joinedAt: Date;
-    leftAt: Date;
+    joinedAt: string;
+    leftAt: string;
 }
 
 enum GameLobbySlotKind {
@@ -364,14 +364,8 @@ export interface GameLobbyData {
     status: GameLobbyStatus;
 
     mapBnetId: number;
-    mapMajorVersion: number;
-    mapMinorVersion: number;
     extModBnetId: number;
-    extModMajorVersion: number;
-    extModMinorVersion: number;
     multiModBnetId: number;
-    multiModMajorVersion: number;
-    multiModMinorVersion: number;
     mapVariantIndex: number;
     mapVariantMode: string;
 
@@ -494,6 +488,10 @@ export class StarcAPI {
 
     battleMapLink(regionId: number, mapId: number) {
         return `battlenet:://starcraft/map/${regionId}/${mapId}`;
+    }
+
+    playerHandle(profile: Profile) {
+        return `${profile.regionId}-S2-${profile.realmId}-${profile.profileId}`;
     }
 
     encodeMapVersion(majorVersion: number, minorVersion: number) {
