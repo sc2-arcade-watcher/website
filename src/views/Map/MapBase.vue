@@ -21,7 +21,7 @@
                 <dl class="row">
                     <dt class="col-12 col-sm-3 col-md-2">Description</dt>
                     <dd class="col-12 col-sm-9 col-md-10">
-                        <span v-html="mapInfo.description.replace('\n', '<br>')"/>
+                        <span v-html="$helpers.formatDescription(mapInfo.description)"/>
                     </dd>
 
                     <dt class="col-12 col-sm-3 col-md-2">Max players</dt>
@@ -29,7 +29,12 @@
 
                     <template v-if="mapInfo.website">
                         <dt class="col-12 col-sm-3 col-md-2">Website</dt>
-                        <dd class="col-12 col-sm-9 col-md-10"><a href="" target="_blank">{{ mapInfo.website }}</a></dd>
+                        <dd class="col-12 col-sm-9 col-md-10">
+                            <v-btn color="primary" small outlined :href="mapInfo.website" target="_blank">
+                                <v-icon small left>fas fa-globe</v-icon>
+                                {{ mapInfo.website }}
+                            </v-btn>
+                        </dd>
                     </template>
                 </dl>
             </v-container>
@@ -40,8 +45,7 @@
             v-show="mapInfo"
             v-model="activeTab"
             background-color="transparent"
-            color="basil"
-            show-arrows=""
+            show-arrows
         >
             <v-tab v-for="tab of tabs" :key="tab.name" :to="tab.route">
                 {{ tab.name }}
@@ -67,7 +71,8 @@ export default class MapBaseView extends Vue {
     private activeTab = null;
 
     private get tabs() {
-        return [
+        if (!this.mapInfo) return [];
+        const tabs = [
             {
                 name: 'Details',
                 route: {
@@ -95,7 +100,10 @@ export default class MapBaseView extends Vue {
                     },
                 },
             },
-            {
+        ];
+
+        if (this.mapInfo.type !== starc.MapType.DependencyMod) {
+            tabs.push({
                 name: 'Stats',
                 route: {
                     name: 'map_stats', params: {
@@ -103,8 +111,8 @@ export default class MapBaseView extends Vue {
                         mapId: this.$route.params.mapId,
                     },
                 },
-            },
-            {
+            });
+            tabs.push({
                 name: 'Recent lobbies',
                 route: {
                     name: 'map_recent_lobbies', params: {
@@ -112,8 +120,10 @@ export default class MapBaseView extends Vue {
                         mapId: this.$route.params.mapId,
                     },
                 },
-            },
-        ];
+            });
+        }
+
+        return tabs;
     }
 
     @SGuard()
@@ -130,7 +140,13 @@ export default class MapBaseView extends Vue {
 
     @Watch('$route')
     private async watchRoute() {
-        await this.loadMap();
+        if (
+            !this.mapInfo ||
+            this.mapInfo.regionId !== Number(this.$route.params.regionId) ||
+            this.mapInfo.bnetId !== Number(this.$route.params.mapId)
+        ) {
+            await this.loadMap();
+        }
     }
 }
 </script>
@@ -162,6 +178,7 @@ export default class MapBaseView extends Vue {
         align-self: center;
         border: 2px solid rgba(#000, 0.2);
         box-shadow: 1px 1px 3px rgba(#000, 0.35);
+        max-width: calc(100% - 15px);
     }
 }
 </style>

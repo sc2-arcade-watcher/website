@@ -11,7 +11,7 @@ import * as dfns from 'date-fns';
 import '@mdi/font/css/materialdesignicons.css';
 
 import { StarcAPI } from './starc-api/starc';
-import { formatBytes } from './helpers';
+import * as helpers from './helpers';
 
 import './plugins/highcharts';
 import './plugins/loading';
@@ -42,9 +42,7 @@ Vue.use({
 
         Object.defineProperty(Vue.prototype, '$helpers', {
             get() {
-                return {
-                    formatBytes,
-                };
+                return helpers;
             }
         });
 

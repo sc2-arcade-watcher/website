@@ -101,6 +101,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
+import { SGuard } from '../../helpers';
 
 @Component
 export default class MapListView extends Vue {
@@ -159,6 +160,7 @@ export default class MapListView extends Vue {
         this.sortByValue = [this.mapQueryParams.orderBy, this.mapQueryParams.orderDirection].join(',');
     }
 
+    @SGuard()
     private async refreshList() {
         this.mapsResponse = (await this.$starc.getMapList({
             ...this.mapQueryParams,
@@ -186,10 +188,6 @@ export default class MapListView extends Vue {
             this.currentPaginationParams.before = this.mapsResponse!.data.page.prev;
         }
         else return;
-        this.renavigate();
-    }
-
-    private onPageChage(page: number) {
         this.renavigate();
     }
 

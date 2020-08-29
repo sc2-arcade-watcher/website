@@ -13,6 +13,16 @@ export function formatBytes(bytes: number, decimals = 2) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
+const reURL = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g;
+
+export function formatDescription(s: string) {
+    s = s.replace('\n', '<br>');
+    s = s.replace(reURL, (substring) => {
+        return `<a href="${substring}" target="_blank">${substring}</a>`;
+    });
+    return s;
+}
+
 export function isPromise(val: any): val is Promise<any> {
     return !!val && typeof val === 'object' && typeof val.then === 'function' && typeof val.catch === 'function';
 }

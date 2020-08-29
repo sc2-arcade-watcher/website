@@ -473,7 +473,19 @@ export class StarcAPI {
         return `${process.env.VUE_APP_STARC_WEBAPI_URL ?? '//sc2arcade.talv.space'}/bnet/${hash}.jpg`;
     }
 
-    depotImage(img: MapImage, region: DepotRegion): MapImageResolved {
+    depotImage(img: MapImage | string, region: DepotRegion | number): MapImageResolved {
+        if (typeof region === 'number') {
+            region = GameRegion[region].toLowerCase() as DepotRegion;
+        }
+        if (typeof img === 'string') {
+            img = {
+                hash: img,
+                top: 0,
+                left: 0,
+                width: 0,
+                height: 0,
+            };
+        }
         return {
             ...img,
             url: `${process.env.VUE_APP_STARC_WEBAPI_URL ?? '//sc2arcade.talv.space'}/depot/${region}/${img.hash}.jpg`,

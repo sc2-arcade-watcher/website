@@ -12,7 +12,7 @@
                     <v-card-text>
                         <ul>
                             <li v-for="(line, l) in section.items" :key="l">
-                                <span v-html="line.replace('\n', '<br>')"/>
+                                <span v-html="$helpers.formatDescription(line)"/>
                             </li>
                         </ul>
                     </v-card-text>
@@ -45,7 +45,7 @@
                 <v-card-text>
                     <ul>
                         <li v-for="(line, l) in section.items" :key="l" style="list-style-type: none;">
-                            <span v-html="line.replace('\n', '<br>')"/>
+                            <span v-if="typeof line === 'string'" v-html="$helpers.formatDescription(line)"/>
                         </li>
                     </ul>
                 </v-card-text>

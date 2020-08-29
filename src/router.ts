@@ -1,10 +1,5 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
-import Home from '@/views/Home.vue'
-import Lobby from '@/views/Lobby.vue'
-import MapBaseView from '@/views/Map/MapBase.vue';
-import MapStatsView from '@/views/Map/MapStats.vue';
-import OpenLobbiesView from '@/views/OpenLobbies.vue';
 
 Vue.use(VueRouter)
 
@@ -12,30 +7,27 @@ const routes: RouteConfig[] = [
     {
         path: '/',
         name: 'home',
-        component: Home
+        component: require('@/views/Home.vue').default,
     },
     {
         path: '/open-lobbies',
         name: 'open_lobbies',
-        component: OpenLobbiesView
+        component: require('@/views/OpenLobbies.vue').default,
     },
     {
         path: '/about',
         name: 'about',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue')
+        component: require('@/views/About.vue').default,
     },
     {
         path: '/stats',
         name: 'stats',
-        component: () => import(/* webpackChunkName: "stats" */ '@/views/Stats.vue')
+        component: require('@/views/Stats.vue').default,
     },
     {
         path: '/lobby/:regionId/:bnetBucketId/:bnetRecordId',
         name: 'lobby',
-        component: Lobby,
+        component: require('@/views/Lobby.vue').default,
     },
     {
         path: '/map-list',
@@ -45,7 +37,7 @@ const routes: RouteConfig[] = [
     {
         path: '/map/:regionId/:mapId',
         name: 'map_base',
-        component: MapBaseView,
+        component: require('@/views/Map/MapBase.vue').default,
         children: [
             {
                 path: '/map/:regionId/:mapId/details',
@@ -65,7 +57,7 @@ const routes: RouteConfig[] = [
             {
                 path: '/map/:regionId/:mapId/stats',
                 name: 'map_stats',
-                component: MapStatsView,
+                component: require('@/views/Map/MapStats.vue').default,
             },
             {
                 path: '/map/:regionId/:mapId/recent-lobbies',
