@@ -29,13 +29,15 @@
                         </dd>
                     </template>
 
+                    <template v-if="mapInfo.type === 'arcade_map' || mapInfo.type === 'melee_map'">
+                        <dt class="col-12 col-sm-3 col-md-2">Max players</dt>
+                        <dd class="col-12 col-sm-9 col-md-10">{{ mapInfo.maxPlayers }}</dd>
+                    </template>
+
                     <dt class="col-12 col-sm-3 col-md-2">Description</dt>
                     <dd class="col-12 col-sm-9 col-md-10">
                         <span v-html="$helpers.formatDescription(mapInfo.description)"/>
                     </dd>
-
-                    <dt class="col-12 col-sm-3 col-md-2">Max players</dt>
-                    <dd class="col-12 col-sm-9 col-md-10">{{ mapInfo.maxPlayers }}</dd>
 
                     <template v-if="mapInfo.website">
                         <dt class="col-12 col-sm-3 col-md-2">Website</dt>
