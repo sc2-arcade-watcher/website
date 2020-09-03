@@ -58,7 +58,7 @@
 
         <div class="search-content">
             <div class="d-flex flex-wrap">
-                <v-card class="mx-auto mt-2 flex-grow-1 mr-1 ml-1" width="350" max-width="500" outlined v-for="(item, i) in mapResults" :key="i" :to="{ name: 'map_details', params: { regionId: item.regionId, mapId: item.bnetId } }">
+                <v-card class="mx-auto mt-2 flex-grow-1 mr-1 ml-1" width="350" max-width="500" outlined v-for="(item, i) in mapResults" :key="i" :to="{ name: 'map_base', params: { regionId: item.regionId, mapId: item.bnetId } }">
                     <v-list-item two-line>
                         <v-list-item-content>
                             <v-img class="mb-2" :src="require(`../../assets/region-${item.regionId}.png`)" max-width="24" />

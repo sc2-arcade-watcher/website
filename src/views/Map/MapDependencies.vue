@@ -3,7 +3,7 @@
         <v-list-item v-for="item in mapDependency.list" :key="item.mapHeader.id" class="" dense>
             <v-list-item-title>
                 <router-link :to="{
-                    name: 'map_details',
+                    name: 'map_base',
                     params: {
                         regionId: item.map.regionId,
                         mapId: item.map.bnetId,

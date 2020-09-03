@@ -58,7 +58,7 @@
                     <v-card
                         class="map-card"
                         outlined
-                        :to="{ name: 'map_details', params: { regionId: lobby.map.regionId, mapId: lobby.map.bnetId } }"
+                        :to="{ name: 'map_base', params: { regionId: lobby.map.regionId, mapId: lobby.map.bnetId } }"
                     >
                         <v-list-item v-if="lobby.map">
                             <v-list-item-content>
@@ -77,7 +77,7 @@
                     <v-card
                         class="map-card"
                         outlined
-                        :to="{ name: 'map_details', params: { regionId: lobby.extMod.regionId, mapId: lobby.extMod.bnetId } }"
+                        :to="{ name: 'map_base', params: { regionId: lobby.extMod.regionId, mapId: lobby.extMod.bnetId } }"
                     >
                         <v-list-item>
                             <v-list-item-content>
@@ -96,7 +96,7 @@
                     <v-card
                         class="map-card"
                         outlined
-                        :to="{ name: 'map_details', params: { regionId: lobby.multiMod.regionId, mapId: lobby.multiMod.bnetId } }"
+                        :to="{ name: 'map_base', params: { regionId: lobby.multiMod.regionId, mapId: lobby.multiMod.bnetId } }"
                     >
                         <v-list-item>
                             <v-list-item-content>

@@ -171,10 +171,10 @@ export interface MapHeader {
     bnetId: number;
     majorVersion: number;
     minorVersion: number;
-    headerHash: string;
+    headerHash: string | null;
     isPrivate: boolean;
     isExtensionMod: boolean;
-    archiveHash: string;
+    archiveHash: string | null;
     archiveSize: number;
     uploadedAt: string;
 }
@@ -183,12 +183,18 @@ export interface Map {
     regionId: number;
     bnetId: number;
     type: MapType;
+    mainLocale: GameLocale;
+    mainLocaleHash: string | null;
+    iconHash: string;
     name: string;
+    description: string;
+    website: string;
     mainCategory: MapCategory;
     mainCategoryId: number;
-    currentMajorVersion: number;
-    currentMinorVersion: number;
-    iconHash: string;
+    maxPlayers: number;
+    updatedAt: string;
+    publishedAt: string;
+    currentVersion: MapHeader;
 }
 
 // ===
@@ -496,8 +502,6 @@ export interface GameLobbyDocument {
     bnetId: number;
     name: string;
     iconHash: string;
-    currentMajorVersion: number;
-    currentMinorVersion: number;
 }
 
 export interface GameLobbyData {

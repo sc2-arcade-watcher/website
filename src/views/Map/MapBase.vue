@@ -16,7 +16,7 @@
                             </v-btn>
                         </v-list-item-subtitle>
                         <v-list-item-action-text class="justify-sm-end" style="min-width: 80px;">
-                            v{{ mapInfo.currentMajorVersion }}.{{ mapInfo.currentMinorVersion }}
+                            v{{ mapInfo.currentVersion.majorVersion }}.{{ mapInfo.currentVersion.minorVersion }}
                             <v-img class="d-inline-block float-right" :src="require(`../../assets/region-${mapInfo.regionId}.png`)" width="20" height="20" />
                         </v-list-item-action-text>
                     </v-list-item>
@@ -78,7 +78,7 @@
         </v-card>
 
         <v-tabs
-            v-show="mapInfo"
+            v-if="isPublic"
             v-model="activeTab"
             background-color="transparent"
             show-arrows
@@ -88,7 +88,7 @@
             </v-tab>
         </v-tabs>
 
-        <v-flex>
+        <v-flex v-if="isPublic">
             <transition name="fade">
                 <router-view></router-view>
             </transition>
@@ -105,6 +105,11 @@ import { SGuard } from '../../helpers';
 export default class MapBaseView extends Vue {
     private mapInfo: starc.Map | null = null;
     private activeTab = null;
+
+    private get isPublic() {
+        if (!this.mapInfo) return null;
+        return !this.mapInfo.currentVersion.isPrivate;
+    }
 
     private get mapCategory() {
         if (this.mapInfo === null) return null;
@@ -177,6 +182,15 @@ export default class MapBaseView extends Vue {
 
     private async created() {
         await this.loadMap();
+        if (this.$route.name === 'map_base' && this.isPublic) {
+            await this.$router.replace({
+                name: 'map_details',
+                params: {
+                    regionId: this.$route.params.regionId,
+                    mapId: this.$route.params.mapId,
+                },
+            });
+        }
     }
 
     @Watch('$route')
