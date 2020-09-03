@@ -206,7 +206,7 @@ export default class MapLobbiesHistoryView extends Vue {
         this.$router.push({
             name: this.$route.name!,
             query: {
-                ...(Object.fromEntries(Object.entries(this.currentPaginationParams).filter(x => x[1] !== null && x[1] !== void 0).map<[string, string]>(x => [ x[0], String(x[1]) ]))),
+                ...this.$helpers.stringifyQueryParams(this.currentPaginationParams),
             },
         });
     }

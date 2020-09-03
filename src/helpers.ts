@@ -78,3 +78,7 @@ export function SGuard(options?: {}) {
         };
     };
 }
+
+export function stringifyQueryParams(o: any) {
+    return Object.fromEntries(Object.entries(o).filter(x => x[1] !== null && x[1] !== void 0).map<[string, string]>(x => [ x[0], String(x[1]) ]));
+}

@@ -1,100 +1,229 @@
 <template>
-    <div class="d-flex" style="position: relative;">
-        <div class="search-panel">
+    <div class="search-container">
+        <v-card class="search-panel" elevation raised>
             <v-container>
+                <h2 class="overline mb-2">Search & filter</h2>
                 <v-form @submit.prevent="onSubmit">
-                    <v-select
-                        v-model="mapQueryParams.regionId"
-                        :items="regionsList"
-                        label="Region"
-                        clearable
-                        chips
-                        @change="onSubmit"
-                    ></v-select>
-                    <v-select
-                        v-model="mapQueryParams.type"
-                        :items="mapTypesList"
-                        label="Type"
-                        clearable
-                        @change="onSubmit"
-                    ></v-select>
                     <v-text-field
-                        v-model="mapQueryParams.name"
+                        dense
+                        solo
+                        hide-details
                         label="Name"
                         clearable
+                        v-model="mapQueryParams.name"
                         @blur="onSubmit"
-                    ></v-text-field>
-                    <v-switch
-                        v-model="mapQueryParams.showPrivate"
-                        label="Show private"
-                        @change="onSubmit"
-                    ></v-switch>
+                    />
                     <v-select
+                        dense
+                        solo
+                        hide-details
+                        append-outer-icon="fa-globe-americas"
+                        label="Region"
+                        chips
+                        deletable-chips
+                        v-model="mapQueryParams.regionId"
+                        :items="regionsList"
+                        @change="onSubmit"
+                    ></v-select>
+                    <v-select
+                        dense
+                        solo
+                        hide-details
+                        append-outer-icon="fa-archive"
+                        label="Type"
+                        clearable
+                        v-model="mapQueryParams.type"
+                        :items="mapTypesList"
+                        @change="onSubmit"
+                    ></v-select>
+                    <v-select
+                        dense
+                        solo
+                        hide-details
+                        append-outer-icon="fa-layer-group"
+                        label="Genre"
+                        clearable
+                        v-model="mapQueryParams.mainCategoryId"
+                        :items="arcadeCategories"
+                        item-text="name"
+                        item-value="id"
+                        @change="onSubmit"
+                    ></v-select>
+                    <v-switch
+                        hide-details
+                        append-icon="fa-unlock-alt"
+                        v-model="mapQueryParams.showPrivate"
+                        @change="onSubmit"
+                    >
+                        <template v-slot:label>
+                            <span class="overline">Include private maps</span>
+                        </template>
+                    </v-switch>
+                    <v-select
+                        dense
+                        solo
+                        hide-details
+                        append-outer-icon="fa-filter"
+                        label="Sort by"
                         v-model="sortByValue"
                         :items="sortByList"
-                        label="Sort by"
                         required
                         @change="onSubmit"
                     ></v-select>
-                    <v-btn type="submit" block style="display: none;">Search</v-btn>
+                    <!-- <v-divider/> -->
+                    <v-btn
+                        class="d-none"
+                        type="submit"
+                        small
+                        tile
+                        color="primary darken-3"
+                        @click="refresh">
+                        Refresh
+                    </v-btn>
+                    <!-- <div class="d-flex justify-end mt-2">
+                        <v-btn
+                            small
+                            tile
+                            @click="reset"
+                        >
+                            Clear form
+                        </v-btn>
+                    </div> -->
                 </v-form>
             </v-container>
+        </v-card>
 
-            <v-row justify="center" align="center">
-                <v-col class="text-left" cols="6">
-                    <v-btn block tile :disabled="mapsResponse === null || !mapsResponse.data.page.prev" @click="pageGo('prev')">
-                        <v-icon left>fa-chevron-left</v-icon>
-                        Previous
-                    </v-btn>
-                </v-col>
-                <v-col class="text-right" cols="6">
-                    <v-btn block tile :disabled="mapsResponse === null || !mapsResponse.data.page.next" @click="pageGo('next')">
-                        Next
-                        <v-icon right>fa-chevron-right</v-icon>
-                    </v-btn>
-                </v-col>
-            </v-row>
-        </div>
+        <div class="search-content" v-if="mapResults.length">
+            <div class="search-results">
+                <v-card
+                    class="search-item"
+                    tile
+                    v-for="(item, i) in mapResults"
+                    :key="i"
+                    :to="{ name: 'map_base', params: { regionId: item.regionId, mapId: item.bnetId } }"
+                >
+                    <v-img
+                        :src="$starc.depotImage(item.iconHash, item.regionId).url"
+                        :lazy-src="require('@/assets/UI_Arcade_IconTBattlecruiser.png')"
+                        :key="item.id"
+                        aspect-ratio="1.5"
+                        height="150"
+                        class="map-icon"
+                        cover
+                    >
+                        <template v-slot:placeholder>
+                            <v-row
+                                class="fill-height ma-0"
+                                align="center"
+                                justify="center"
+                            >
+                                <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                            </v-row>
+                        </template>
+                    </v-img>
+                    <div class="map-info">
+                        <h4 class="title">
+                            {{ item.name }}
+                        </h4>
+                    </div>
+                    <div class="map-footer">
+                        <span class="region-code">
+                            {{ regionsList.find(x => x.value === item.regionId).text }}
+                        </span>
 
-        <div class="search-content">
-            <div class="d-flex flex-wrap">
-                <v-card class="mx-auto mt-2 flex-grow-1 mr-1 ml-1" width="350" max-width="500" outlined v-for="(item, i) in mapResults" :key="i" :to="{ name: 'map_base', params: { regionId: item.regionId, mapId: item.bnetId } }">
-                    <v-list-item two-line>
-                        <v-list-item-content>
-                            <v-img class="mb-2" :src="require(`../../assets/region-${item.regionId}.png`)" max-width="24" />
-                            <v-list-item-title class="mb-1">{{ item.name }}</v-list-item-title>
-                            <v-list-item-subtitle>v{{ item.currentVersion.majorVersion }}.{{ item.currentVersion.minorVersion }}</v-list-item-subtitle>
-                            <v-list-item-subtitle>
-                            </v-list-item-subtitle>
-                        </v-list-item-content>
+                        <span class="version">
+                            v{{ item.currentVersion.majorVersion }}.{{ item.currentVersion.minorVersion }}
+                        </span>
 
-                        <v-list-item-avatar tile size="120">
-                            <v-img :src="$starc.bnetDepotImage(item.iconHash)" contain></v-img>
-                        </v-list-item-avatar>
-                    </v-list-item>
+                        <span class="date" :title="$dfns.lightFormat(new Date(item.updatedAt), 'yyyy-MM-dd HH:mm')">
+                            {{ $dfns.formatDistanceStrict(
+                                new Date(item.updatedAt),
+                                new Date(),
+                                {
+                                    addSuffix: true,
+                                    roundingMethod: 'floor'
+                                }) }}
+                        </span>
+
+                        <span
+                            v-if="item.currentVersion.isPrivate"
+                            class="private"
+                            title="Private map"
+                        >
+                            <v-icon right x-small color="grey accent-4">fas fa-user-secret</v-icon>
+                        </span>
+                    </div>
                 </v-card>
             </div>
 
-            <div class="text-center">
-                <v-container style="max-width: 500px;">
-                    <v-row justify="center" align="center">
-                        <v-col class="text-left" cols="5">
-                            <v-btn block tile large :disabled="mapsResponse === null || !mapsResponse.data.page.prev" @click="pageGo('prev')">
-                                <v-icon left>fa-chevron-left</v-icon>
-                                Previous
+            <v-container fluid>
+                <v-divider/>
+                <v-row class="mt-2 px-4" align="center" justify="center">
+                    <span class="grey--text">Items per page</span>
+                    <v-menu offset-y>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                                dark
+                                text
+                                color="primary"
+                                class="ml-2"
+                                v-bind="attrs"
+                                v-on="on"
+                            >
+                                {{ currentPaginationParams.limit }}
+                                <v-icon>mdi-chevron-down</v-icon>
                             </v-btn>
-                        </v-col>
-                        <v-col class="text-left" cols="2"/>
-                        <v-col class="text-right" cols="5">
-                            <v-btn block tile large :disabled="mapsResponse === null || !mapsResponse.data.page.next" @click="pageGo('next')">
-                                Next
-                                <v-icon right>fa-chevron-right</v-icon>
-                            </v-btn>
-                        </v-col>
-                    </v-row>
-                </v-container>
-            </div>
+                        </template>
+                        <v-list>
+                            <v-list-item
+                                v-for="(number, index) in itemsPerPageArray"
+                                :key="index"
+                                @click="updateItemsPerPage(number)"
+                            >
+                                <v-list-item-title>{{ number }}</v-list-item-title>
+                            </v-list-item>
+                        </v-list>
+                    </v-menu>
+
+                    <v-spacer></v-spacer>
+
+                    <v-btn
+                        color="blue darken-4"
+                        tile
+                        large
+                        class="mr-1"
+                        :disabled="mapList === null || !mapList.page.prev"
+                        @click="pageGo('prev')"
+                    >
+                        <v-icon>mdi-chevron-left</v-icon>
+                    </v-btn>
+                    <v-btn
+                        color="blue darken-4"
+                        tile
+                        large
+                        class="ml-1"
+                        :disabled="mapList === null || !mapList.page.next"
+                        @click="pageGo('next')"
+                    >
+                        <v-icon>mdi-chevron-right</v-icon>
+                    </v-btn>
+                </v-row>
+            </v-container>
         </div>
+
+        <template v-if="mapList && mapResults.length === 0">
+            <v-banner>
+                <v-avatar
+                    slot="icon"
+                    color="primary darken-2"
+                    size="40"
+                >
+                    <v-icon>fas fa-search-minus</v-icon>
+                </v-avatar>
+
+                There are no results matching given criteria.
+            </v-banner>
+        </template>
     </div>
 </template>
 
@@ -105,11 +234,11 @@ import { SGuard } from '../../helpers';
 
 @Component
 export default class MapListView extends Vue {
-    private currentPage = Number(this.$route.query?.page ?? 1);
-    private mapsResponse: starc.MapListResponse | null = null;
+    private itemsPerPageArray = [40, 80, 120, 160, 200, 300];
+    private mapList: starc.MapListResponse | null = null;
     private mapQueryParams!: starc.MapListQuery
-    private sortByValue!: string;
     private currentPaginationParams!: starc.CursorPaginationQuery;
+    private sortByValue!: string;
 
     private regionsList = [
         { value: 1, text: 'US' },
@@ -132,9 +261,13 @@ export default class MapListView extends Vue {
         { value: 'popularity,desc', text: 'Popularity' },
     ];
 
+    private get arcadeCategories() {
+        return starc.availableCategories.filter(x => !x.isMelee);
+    }
+
     private get mapResults() {
-        if (!this.mapsResponse) return [];
-        return this.mapsResponse.data.results;
+        if (!this.mapList) return [];
+        return this.mapList.results;
     }
 
     private created() {
@@ -142,13 +275,18 @@ export default class MapListView extends Vue {
         this.refreshList();
     }
 
+    private updateItemsPerPage(n: number) {
+        this.currentPaginationParams.limit = n;
+        this.renavigate();
+    }
+
     private applyParamsFromRouteQuery() {
         this.mapQueryParams = {
             regionId: this.$route.query?.regionId ? (Number(this.$route.query.regionId)) : void 0,
             type: this.$route.query?.type ? (String(this.$route.query.type) as starc.MapType) : void 0,
             name: String(this.$route.query?.name ?? ''),
-            // mainCategoryId
-            showPrivate: Boolean(this.$route.query?.showPrivate ?? false),
+            mainCategoryId: this.$route.query?.mainCategoryId ? (Number(this.$route.query.mainCategoryId)) : void 0,
+            showPrivate: this.$route.query?.showPrivate === 'true',
             orderBy: this.$route.query?.orderBy ? String(this.$route.query.orderBy) : 'updated',
             orderDirection: this.$route.query?.orderDirection ? String(this.$route.query.orderDirection) : 'desc',
         };
@@ -162,18 +300,18 @@ export default class MapListView extends Vue {
 
     @SGuard()
     private async refreshList() {
-        this.mapsResponse = (await this.$starc.getMapList({
+        this.mapList = (await this.$starc.getMapList({
             ...this.mapQueryParams,
             ...this.currentPaginationParams,
-        }));
+        })).data;
     }
 
     private renavigate() {
         this.$router.push({
             name: this.$route.name!,
             query: {
-                ...(Object.fromEntries(Object.entries(this.mapQueryParams).filter(x => x[1] !== null && x[1] !== void 0).map<[string, string]>(x => [ x[0], (x[1] as string) ]))),
-                ...(Object.fromEntries(Object.entries(this.currentPaginationParams).filter(x => x[1] !== null && x[1] !== void 0).map<[string, string]>(x => [ x[0], String(x[1]) ]))),
+                ...this.$helpers.stringifyQueryParams(this.mapQueryParams),
+                ...this.$helpers.stringifyQueryParams(this.currentPaginationParams),
             },
         })
     }
@@ -181,11 +319,11 @@ export default class MapListView extends Vue {
     private pageGo(where: 'prev' | 'next') {
         this.currentPaginationParams.before = void 0;
         this.currentPaginationParams.after = void 0;
-        if (where === 'next' && this.mapsResponse!.data.page.next) {
-            this.currentPaginationParams.after = this.mapsResponse!.data.page.next;
+        if (where === 'next' && this.mapList!.page.next) {
+            this.currentPaginationParams.after = this.mapList!.page.next;
         }
-        else if (where === 'prev' && this.mapsResponse!.data.page.prev) {
-            this.currentPaginationParams.before = this.mapsResponse!.data.page.prev;
+        else if (where === 'prev' && this.mapList!.page.prev) {
+            this.currentPaginationParams.before = this.mapList!.page.prev;
         }
         else return;
         this.renavigate();
@@ -198,6 +336,15 @@ export default class MapListView extends Vue {
         this.renavigate();
     }
 
+    private refresh(ev: Event) {
+        ev.preventDefault();
+        this.refreshList();
+    }
+
+    private reset() {
+        this.$router.push({ name: this.$route.name as string });
+    }
+
     @Watch('$route')
     private watchRoute() {
         this.applyParamsFromRouteQuery();
@@ -207,13 +354,137 @@ export default class MapListView extends Vue {
 </script>
 
 <style lang="scss">
+@import '~vuetify/src/styles/settings/_index';
+
+.search-container {
+}
+
 .search-panel {
-    background: rgba(#fff, 0.08);
-    position: sticky;
-    top: 0px;
-    bottom: 0;
-    margin-left: -12px;
-    align-self: flex-start;
-    min-width: 250px;
+    background: rgba(#fff, 0.04);
+    // border: 1px solid map-get($grey, 'darken-3') !important;
+
+    form {
+        >div {
+            margin-top: 0 !important;
+            margin-bottom: 0.55rem !important;
+        }
+    }
+
+    .v-input__control {
+        margin: 0 !important;
+    }
+
+    .v-input__append-inner {
+        // display: none;
+        .v-icon {
+            font-size: 20px;
+            color: #555;
+        }
+    }
+
+    .v-input__append-outer {
+        .v-icon {
+            font-size: 20px;
+        }
+    }
+}
+
+.search-content {
+}
+
+.search-results {
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax(190px, 1fr) );
+    gap: 10px;
+}
+
+.search-item {
+    display: flex;
+    flex-direction: column;
+
+    .map-icon {
+        // max-height: 150px;
+        flex-grow: 0;
+    }
+
+    .map-info {
+        display: flex;
+        align-items: center;
+        margin: 0.5rem;
+        margin-bottom: 0;
+        font-size: 1.0rem;
+        flex-grow: 1;
+        // height: 2.6em;
+
+        .title {
+            font-weight: 400;
+            font-size: 1.0rem !important;
+            line-height: 1.3em;
+            // letter-spacing: -0.02em !important;
+            // height: 2.6em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .version {
+            display: none;
+        }
+    }
+
+    .map-footer {
+        margin: 0 0.4rem;
+        margin-top: 0.1rem;
+
+        >span {
+            font-size: 0.8rem !important;
+            font-weight: 300;
+        }
+
+        .version,
+        .date,
+        .private {
+            color: map-get($grey, 'base');
+            letter-spacing: -1px !important;
+        }
+
+        .date {
+            &::before {
+                content: '|';
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+        }
+
+        .region-code {
+            float: right;
+            font-weight: 500;
+            color: map-get($grey, 'accent-1');
+        }
+    }
+}
+
+@media #{map-get($display-breakpoints, 'md-and-up')} {
+    .search-container {
+        display: flex;
+    }
+
+    .search-content {
+        flex-grow: 1;
+    }
+
+    .search-panel {
+        top: 12px;
+        position: sticky;
+        min-width: 250px;
+        max-width: 300px;
+        margin-right: 1rem;
+        align-self: flex-start;
+    }
+}
+
+@media #{map-get($display-breakpoints, 'lg-and-up')} {
+    .search-results {
+        grid-template-columns: repeat( auto-fit, minmax(210px, 1fr) );
+    }
 }
 </style>

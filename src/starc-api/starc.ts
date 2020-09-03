@@ -601,7 +601,7 @@ export type CursorPaginationResult<T> = {
     results: T[];
 }
 
-export type MapListResponse = AxiosResponse<CursorPaginationResult<Map>>;
+export type MapListResponse = CursorPaginationResult<Map>;
 
 export class StarcAPI {
     axios: AxiosInstance;
@@ -659,7 +659,7 @@ export class StarcAPI {
     }
 
     getMapList(opts?: MapListQuery & CursorPaginationQuery) {
-        return this.axios.get<CursorPaginationResult<Map>>(`maps`, { params: opts });
+        return this.axios.get<MapListResponse>(`maps`, { params: opts });
     }
 
     getMapInfo(regionId: number, mapId: number) {
