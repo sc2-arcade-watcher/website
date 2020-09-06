@@ -249,9 +249,9 @@ export interface MapScreenshot<ET, MI> {
 }
 
 export enum ContentListTypeKind {
-    Bulleted = 'bulleted',
-    Numbered = 'numbered',
-    None = 'none',
+    Bulleted = 0,
+    Numbered = 1,
+    None     = 2,
 }
 
 export interface ContentSection<ET> {
@@ -321,21 +321,32 @@ export interface AttributeValueDefinition<ET, MI> {
     visual: AttributeVisual<ET, MI>;
 }
 
+export enum AttributeArbitrationKind {
+    Always = 0,
+    FCFS   = 1,
+}
+
 export enum AttributeRestrictionKind {
-    None = 'none',
-    Self = 'self',
-    Host = 'host',
-    All = 'all',
+    None   = 0,
+    Self   = 1,
+    Host   = 2,
+    All    = 3,
+}
+
+export enum AttributeOptionsFlag {
+    Unknown          = 0x01,
+    LockedWhenPublic = 0x02,
+    Hidden           = 0x04,
 }
 
 export interface AttributeDefinition<ET, MI> {
     instance: AttributeInstance;
     values: AttributeValueDefinition<ET, MI>[];
     // TODO: requirements
-    arbitration: number;
+    arbitration: AttributeArbitrationKind;
     visibility: AttributeRestrictionKind;
     access: AttributeRestrictionKind;
-    options: number;
+    options: AttributeOptionsFlag;
     default: AttributeValue | AttributeValue[];
     sortOrder: number;
 }
@@ -352,9 +363,9 @@ export interface Variant<ET> {
     maxTeamSize: number;
     attributeVisibility?: AttributeVisibility[];
     achievementTags?: string[];
-    maxHumanPlayers?: number;
-    maxOpenSlots?: number;
-    premiumInfo?: PremiumInfo[];
+    maxHumanPlayers?: number | null;
+    maxOpenSlots?: number | null;
+    premiumInfo?: PremiumInfo | null;
     teamNames?: ET[];
 }
 
@@ -406,7 +417,7 @@ export interface MapHeaderData<ET = string | null, MI = MapImage, DF = string> {
     extraDependencies?: DocumentInstance[];
     addDefaultPermissions?: boolean;
     relevantPermissions?: PermissionEntry[];
-    specialTags?: MapTags[];
+    specialTags: MapTags[];
     arcadeInfo?: ArcadeInfo<ET, MI> | null;
     addMultiMod?: boolean;
 }

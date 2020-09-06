@@ -120,7 +120,7 @@
                             </td>
                             <td>
                                 <v-chip small outlined style="text-transform: uppercase;">
-                                    {{ item.access }}
+                                    {{ attributeRestrictionLabel(item.access) }}
                                 </v-chip>
                             </td>
                         </tr>
@@ -139,6 +139,10 @@ import { SGuard } from '../../helpers';
 @Component
 export default class MapInfoView extends Vue {
     private mapDetails: starc.MapDetails | null = null;
+
+    private attributeRestrictionLabel(kind: starc.AttributeRestrictionKind) {
+        return starc.AttributeRestrictionKind[kind];
+    }
 
     private get mapInfo() {
         if (!this.mapDetails) return null;
