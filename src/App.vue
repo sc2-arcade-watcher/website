@@ -29,13 +29,7 @@
             <v-btn :to="{ name: 'stats' }" text>
                 <span>Global stats</span>
             </v-btn>
-            <v-btn
-                href="https://github.com/SC2-Arcade-Watcher"
-                target="_blank"
-                text
-            >
-                <v-icon>fab fa-github</v-icon>
-            </v-btn>
+            <user-nav/>
         </v-app-bar>
 
         <v-content>
@@ -46,9 +40,46 @@
             </v-container>
         </v-content>
 
-        <v-footer>
+        <!-- <v-footer>
             <v-spacer></v-spacer>
             <small>Not affiliated with Blizzard Entertainment.</small>
+        </v-footer> -->
+
+        <v-footer
+            padless
+        >
+            <v-row
+                justify="center"
+                no-gutters
+            >
+                <v-col
+                    class="grey darken-4 px-4 text-center white--text"
+                    cols="7"
+                >
+                    <v-btn
+                        v-for="link in links"
+                        :key="link"
+                        color="white"
+                        text
+                        class="my-1"
+                    >
+                        {{ link }}
+                    </v-btn>
+                    <v-btn
+                        href="https://github.com/sc2-arcade-watcher"
+                        target="_blank"
+                        text
+                    >
+                        <v-icon>fab fa-github</v-icon>
+                    </v-btn>
+                </v-col>
+                <v-col
+                    class="grey darken-4 px-4 text-right"
+                    cols="5"
+                >
+                    <small>Not affiliated with Blizzard Entertainment.</small>
+                </v-col>
+            </v-row>
         </v-footer>
     </v-app>
 </template>
@@ -56,10 +87,43 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
+import UserNav from './components/UserNav.vue';
 
-@Component
+@Component({
+    components: {
+        UserNav,
+    },
+})
 export default class App extends Vue {
     private isLoading = false;
+
+    private links = [
+        'Home',
+        'About',
+        'API',
+        'Github',
+    ];
+
+    async created() {
+        const userToken = localStorage.getItem('user_token');
+
+        if (userToken) {
+            this.$starc.axios.defaults.headers['Authorization'] = `Bearer ${userToken}`;
+            try {
+                const response = (await this.$starc.accountInfo()).data;
+                this.$store.battleAccount = response.battleAccount;
+            }
+            catch (err) {
+                if (this.$helpers.isAxiosError(err) && err.response!.status == 401) {
+                    localStorage.removeItem('user_token');
+                    this.$store.battleAccount = null;
+                }
+                else {
+                    throw err;
+                }
+            }
+        }
+    }
 }
 
 </script>

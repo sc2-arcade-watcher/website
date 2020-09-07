@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import { TYPE } from 'vue-toastification';
+import { AxiosError } from 'axios';
 
 export function formatBytes(bytes: number, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
@@ -33,6 +34,10 @@ export function isPromise(val: any): val is Promise<any> {
 
 export function deepCopy<T>(a: T): T {
     return JSON.parse(JSON.stringify(a));
+}
+
+export function isAxiosError(err: any): err is AxiosError {
+    return err instanceof Error && (err as AxiosError).isAxiosError === true;
 }
 
 export function SGuard(options?: {}) {

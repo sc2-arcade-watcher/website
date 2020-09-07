@@ -18,6 +18,7 @@ import './plugins/loading';
 import './plugins/toasts';
 import vuetify from './plugins/vuetify';
 import router from './router';
+import store from './plugins/appStore';
 
 import App from './App.vue'
 import './custom.scss';
@@ -51,6 +52,12 @@ Vue.use({
                 return dfns;
             }
         });
+
+        Object.defineProperty(Vue.prototype, '$store', {
+            get() {
+                return store;
+            }
+        });
     },
 });
 
@@ -59,6 +66,7 @@ declare module 'vue/types/vue' {
         $starc: StarcAPI;
         $helpers: typeof helpers;
         $dfns: typeof dfns;
+        $store: typeof store;
     }
 }
 

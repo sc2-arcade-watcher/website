@@ -20,6 +20,21 @@ const routes: RouteConfig[] = [
         component: require('@/views/About.vue').default,
     },
     {
+        path: '/account',
+        name: 'account_info',
+        component: require('@/views/Account/Info.vue').default,
+    },
+    {
+        path: '/account/auth',
+        name: 'account_auth',
+        component: require('@/views/Account/Auth.vue').default,
+    },
+    {
+        path: '/account/settings',
+        name: 'account_settings',
+        component: require('@/views/Account/Settings.vue').default,
+    },
+    {
         path: '/stats',
         name: 'stats',
         component: require('@/views/Stats.vue').default,

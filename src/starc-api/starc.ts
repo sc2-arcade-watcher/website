@@ -143,6 +143,29 @@ export const availableCategories: MapCategory[] = [
     }
 ];
 
+export const regionsList = [
+    {
+        id: 1,
+        code: 'US',
+        name: 'Americas',
+    },
+    {
+        id: 2,
+        code: 'EU',
+        name: 'Europe',
+    },
+    {
+        id: 3,
+        code: 'KR',
+        name: 'Asia',
+    },
+    {
+        id: 5,
+        code: 'CN',
+        name: 'China',
+    },
+];
+
 export interface MapStatData {
     date: string[];
     lobbiesHosted: number[];
@@ -182,6 +205,7 @@ export interface MapHeader {
 export interface Map {
     regionId: number;
     bnetId: number;
+    author: Profile | null;
     type: MapType;
     mainLocale: GameLocale;
     mainLocaleHash: string | null;
@@ -473,12 +497,14 @@ export interface MapDependencyInfo {
 // ===
 
 export interface Profile {
-    updatedAt: Date;
+    nameUpdatedAt: Date | null;
     regionId: number;
     realmId: number;
     profileId: number;
-    name: string;
-    discriminator: number;
+    name: string | null;
+    discriminator: number | null;
+    deleted: boolean;
+    avatarURL: string | null;
 }
 
 interface GameLobbyPlayerJoin {
@@ -589,6 +615,36 @@ export type MapListQuery = {
 // ===
 // ===
 
+export interface AccountAuthBnetParams {
+    redirectUri: string;
+    code: string;
+}
+
+export interface AccountAuthResponse {
+    accessToken: string;
+    battleAccount: AccountBattleInfo;
+}
+
+export interface AccountInfoResponse {
+    battleAccount: AccountBattleInfo;
+}
+
+export interface AccountBattleInfo {
+    id: number;
+    battleTag: string;
+    profiles: Profile[];
+}
+
+export interface MapAuthorPreferences {
+    mapPubDownload: boolean | null;
+    mapPrivDownload: boolean | null;
+    mapPrivDetails: boolean | null;
+    mapPrivListed: boolean | null;
+}
+
+// ===
+// ===
+
 export type DefaultPaginationQueryOptions = {
     offset?: number;
     limit?: number;
@@ -673,6 +729,26 @@ export class StarcAPI {
         else {
             return `http://${region}.depot.battle.net:1119/${hash}.${filetype}`;
         }
+    }
+
+    accountAuthBnet(params: AccountAuthBnetParams) {
+        return this.axios.post<AccountAuthResponse>(`account/auth/bnet`, params);
+    }
+
+    accountLogout() {
+        return this.axios.get(`account/logout`);
+    }
+
+    accountInfo() {
+        return this.axios.get<AccountInfoResponse>(`account/info`);
+    }
+
+    getAccontSettings() {
+        return this.axios.get<MapAuthorPreferences>(`account/settings`);
+    }
+
+    saveAccontSettings(settings: MapAuthorPreferences) {
+        return this.axios.post(`account/settings`, settings);
     }
 
     getMapList(opts?: MapListQuery & CursorPaginationQuery) {

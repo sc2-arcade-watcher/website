@@ -7,8 +7,8 @@
                     <v-list-item class="py-0">
                         <v-list-item-subtitle class="d-flex flex-wrap flex-md-nowrap justify-space-between align-center mr-3">
                             <v-chip-group class="map-tags">
-                                <v-chip color="primary" small>{{ mapInfo.type.replace('_', ' ') }}</v-chip>
-                                <v-chip color="blue-grey darken-2" small v-if="mapInfo.currentVersion.isPrivate">Private</v-chip>
+                                <v-chip outlined color="primary" small>{{ mapInfo.type.replace('_', ' ') }}</v-chip>
+                                <v-chip outlined color="blue-grey darken-2" small v-if="mapInfo.currentVersion.isPrivate">Private</v-chip>
                             </v-chip-group>
                             &nbsp;
                             <v-btn small outlined text :href="$starc.battleMapLink(mapInfo.regionId, mapInfo.bnetId)">
@@ -22,6 +22,16 @@
                     </v-list-item>
                 </div>
                 <dl class="row">
+                    <dt class="col-12 col-sm-3 col-md-2">Author</dt>
+                    <dd class="col-12 col-sm-9 col-md-10">
+                        <template v-if="author">
+                            <router-link :to="{ name: 'home' }">
+                                <span v-if="author.deleted" v-html="`${$starc.playerHandle(author)}`"></span>
+                                <span v-else v-html="author.name"></span>
+                            </router-link>
+                        </template>
+                    </dd>
+
                     <template v-if="mapInfo.type === 'arcade_map'">
                         <dt class="col-12 col-sm-3 col-md-2">Genre</dt>
                         <dd class="col-12 col-sm-9 col-md-10">
@@ -105,6 +115,11 @@ import { SGuard } from '../../helpers';
 export default class MapBaseView extends Vue {
     private mapInfo: starc.Map | null = null;
     private activeTab = null;
+
+    private get author() {
+        if (!this.mapInfo) return null;
+        return this.mapInfo.author;
+    }
 
     private get isPublic() {
         if (!this.mapInfo) return null;
