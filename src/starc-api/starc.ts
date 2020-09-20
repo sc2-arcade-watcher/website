@@ -204,6 +204,7 @@ export enum GameRegion {
     US = 1,
     EU = 2,
     KR = 3,
+    CN = 5,
 }
 
 export enum GameLocale {
@@ -224,7 +225,7 @@ export enum GameLocale {
     ptBR = 'ptBR',
 }
 
-export type DepotRegion = 'us' | 'eu' | 'kr';
+export type DepotRegion = 'us' | 'eu' | 'kr' | 'cn';
 
 export type MapTags = 'BLIZ'
     | 'TRIL'
@@ -666,7 +667,12 @@ export class StarcAPI {
         if (typeof region === 'number') {
             region = GameRegion[region].toLowerCase() as DepotRegion;
         }
-        return `http://${region}.depot.battle.net:1119/${hash}.${filetype}`;
+        if (region === 'cn') {
+            return `http://${region}.depot.battlenet.com.cn:1119/${hash}.${filetype}`;
+        }
+        else {
+            return `http://${region}.depot.battle.net:1119/${hash}.${filetype}`;
+        }
     }
 
     getMapList(opts?: MapListQuery & CursorPaginationQuery) {

@@ -51,7 +51,10 @@
                     </router-link>
                 </template>
                 <template v-slot:item.slotsStatus="{ item }">
-                    <span>{{ item.slots.filter(x => x.kind !== 'open').length }}/{{ item.slots.length }}</span>
+                    <span v-if="item.slots.length">
+                        {{ item.slots.filter(x => x.kind === 'human').length }}/{{ item.slots.filter(x => x.kind !== 'ai').length }}
+                    </span>
+                    <span v-else>{{ item.slotsHumansTaken }}/{{ item.slotsHumansTotal }}</span>
                 </template>
                 <template v-slot:item.createdAt="{ item }">
                     <span>
@@ -96,6 +99,11 @@ export default class OpenLobbiesView extends Vue {
         {
             regionId: 3,
             title: 'Asia',
+            count: 0,
+        },
+        {
+            regionId: 5,
+            title: 'China',
             count: 0,
         },
     ];
@@ -150,7 +158,7 @@ export default class OpenLobbiesView extends Vue {
             recentlyClosedThreshold: 0,
         })).data;
         this.regionList.forEach(x => x.count = 0);
-        this.activeLobbies.forEach(x => ++this.regionList[x.regionId].count);
+        this.activeLobbies.forEach(x => ++this.regionList.find(y => x.regionId === y.regionId)!.count);
         this.regionList[0].count = this.activeLobbies.length;
         this.refreshTimer = setTimeout(this.refreshList.bind(this), 10000);
     }

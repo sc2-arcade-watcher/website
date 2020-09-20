@@ -64,7 +64,7 @@ export function SGuard(options?: {}) {
                 // }
                 else {
                     console.error(err);
-                    msg = [err.message];
+                    msg = ['Oops, something went wrong.', err?.message ?? ''];
                 }
 
                 this.$toast(msg.join('\n'), {

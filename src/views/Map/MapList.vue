@@ -244,6 +244,7 @@ export default class MapListView extends Vue {
         { value: 1, text: 'US' },
         { value: 2, text: 'EU' },
         { value: 3, text: 'KR' },
+        { value: 5, text: 'CN' },
     ];
     private mapTypesList = [
         { value: starc.MapType.MeleeMap, text: 'Melee Map' },
