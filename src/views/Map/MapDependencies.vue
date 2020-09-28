@@ -28,11 +28,25 @@
             <v-list-item-subtitle class="text-sm-right justify-sm-end">
                 <!-- <v-img :src="require('../../assets/ui_battlenet_glues_login_blizzlogo.png')" class="d-inline-block" max-width="56" v-if="item.tags.indexOf('BLIZ') !== -1"/> -->
                 <!-- <v-chip small color="primary" outlined dense v-if="item.tags.indexOf('BLIZ') !== -1">BLIZ</v-chip> -->
-                <small style="text-transform: uppercase;" color="primary" v-if="item.tags.indexOf('BLIZ') !== -1">Built-in</small>
+                <small
+                    v-if="item.mapHeader.archiveSize < 256"
+                    style="text-transform: uppercase;"
+                    color="primary"
+                >
+                    Built-in
+                </small>
                 <v-chip small color="green" outlined v-else>{{ $helpers.formatBytes(item.mapHeader.archiveSize) }}</v-chip>
             </v-list-item-subtitle>
             <v-list-item-action-text style="min-width: 50px;">
-                <v-btn v-if="item.tags.indexOf('BLIZ') === -1" fab small text color="primary" :href="$starc.depotLink(item.mapHeader.archiveHash, 's2ma', mapDependency.regionId)" target="_blank">
+                <v-btn
+                    v-if="item.mapHeader.archiveSize >= 256 && item.mapHeader.archiveHash"
+                    :href="$starc.depotLink(item.mapHeader.archiveHash, 's2ma', mapDependency.regionId)"
+                    fab
+                    small
+                    text
+                    color="primary"
+                    target="_blank"
+                >
                     <v-icon small>fas fa-download</v-icon>
                 </v-btn>
             </v-list-item-action-text>
@@ -52,7 +66,8 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
-import { SGuard } from '../../helpers';
+import { SGuard, isAxiosError } from '../../helpers';
+import MapBaseView from './MapBase.vue';
 
 @Component
 export default class MapVersionsView extends Vue {
@@ -66,12 +81,25 @@ export default class MapVersionsView extends Vue {
         ;
     }
 
-    @SGuard()
+    @SGuard({
+        expectedHttpErrorCodes: [403],
+    })
     private async fetchData() {
-        this.mapDependency = (await this.$starc.getMapDependencies(
-            Number(this.$route.params.regionId),
-            Number(this.$route.params.mapId)
-        )).data;
+        try {
+            this.mapDependency = (await this.$starc.getMapDependencies(
+                Number(this.$route.params.regionId),
+                Number(this.$route.params.mapId)
+            )).data;
+        }
+        catch (err) {
+            if (!isAxiosError(err)) {
+                throw err;
+            }
+
+            if (err.response!.status === 403) {
+                (this.$parent as MapBaseView).isAccessRestricted = true;
+            }
+        }
     }
 
     private async created() {

@@ -46,8 +46,11 @@
                     <v-list-item-subtitle>
                         <v-chip small color="green" outlined>{{ $helpers.formatBytes(item.archiveSize) }}</v-chip>
                     </v-list-item-subtitle>
-                    <v-list-item-action-text class="d-flex flex-wrap flex-sm-nowrap">
-                        <v-btn
+                    <v-list-item-action-text
+                        v-if="item.archiveHash"
+                        class="d-flex flex-wrap flex-sm-nowrap"
+                    >
+                        <!-- <v-btn
                             tile
                             small
                             text
@@ -56,7 +59,7 @@
                             :to="{ name: 'map_versions', params: { regionId: versionHistory.regionId, mapId: versionHistory.bnetId}, query: { majorVersion: item.majorVersion, minorVersion: item.minorVersion } }"
                         >
                             <v-icon small>fas fa-info-circle</v-icon>
-                        </v-btn>
+                        </v-btn> -->
                         <v-btn
                             tile
                             small
@@ -141,7 +144,8 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
-import { SGuard } from '../../helpers';
+import { SGuard, isAxiosError } from '../../helpers';
+import MapBaseView from './MapBase.vue';
 
 @Component
 export default class MapVersionsView extends Vue {
@@ -181,14 +185,28 @@ export default class MapVersionsView extends Vue {
         });
     }
 
-    @SGuard()
+    @SGuard({
+        expectedHttpErrorCodes: [403],
+    })
     private async fetchHistory() {
-        this.versionHistory = (await this.$starc.getMapVersionHistory(
-            Number(this.$route.params.regionId),
-            Number(this.$route.params.mapId)
-        )).data;
+        try {
+            this.versionHistory = (await this.$starc.getMapVersionHistory(
+                Number(this.$route.params.regionId),
+                Number(this.$route.params.mapId)
+            )).data;
+        }
+        catch (err) {
+            if (!isAxiosError(err)) {
+                throw err;
+            }
+
+            if (err.response!.status === 403) {
+                (this.$parent as MapBaseView).isAccessRestricted = true;
+            }
+        }
     }
 
+    @SGuard()
     private async loadMapDetails() {
         this.mapDetails = (await this.$starc.getMapDetails(
             Number(this.$route.params.regionId),

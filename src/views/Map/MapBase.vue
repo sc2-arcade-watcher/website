@@ -88,7 +88,7 @@
         </v-card>
 
         <v-tabs
-            v-if="isPublic"
+            v-show="!isAccessRestricted"
             v-model="activeTab"
             background-color="transparent"
             show-arrows
@@ -98,11 +98,24 @@
             </v-tab>
         </v-tabs>
 
-        <v-flex v-if="isPublic">
+        <v-flex v-if="!isAccessRestricted">
             <transition name="fade">
                 <router-view></router-view>
             </transition>
         </v-flex>
+        <template v-else>
+            <v-banner>
+                <v-avatar
+                    slot="icon"
+                    color="grey darken-3"
+                    size="40"
+                >
+                    <v-icon>fas fa-user-secret</v-icon>
+                </v-avatar>
+
+                <span class="text-button">Further details about this map cannot be shown, due to author's privacy preferences.</span>
+            </v-banner>
+        </template>
     </div>
 </template>
 
@@ -113,6 +126,7 @@ import { SGuard } from '../../helpers';
 
 @Component
 export default class MapBaseView extends Vue {
+    public isAccessRestricted: boolean = false;
     private mapInfo: starc.Map | null = null;
     private activeTab = null;
 
@@ -189,6 +203,7 @@ export default class MapBaseView extends Vue {
 
     @SGuard()
     private async loadMap() {
+        this.isAccessRestricted = false;
         this.mapInfo = (await this.$starc.getMapInfo(
             Number(this.$route.params.regionId),
             Number(this.$route.params.mapId)
@@ -197,7 +212,7 @@ export default class MapBaseView extends Vue {
 
     private async created() {
         await this.loadMap();
-        if (this.$route.name === 'map_base' && this.isPublic) {
+        if (this.$route.name === 'map_base') {
             await this.$router.replace({
                 name: 'map_details',
                 params: {
@@ -216,6 +231,15 @@ export default class MapBaseView extends Vue {
             this.mapInfo.bnetId !== Number(this.$route.params.mapId)
         ) {
             await this.loadMap();
+            if (this.$route.name === 'map_base') {
+                await this.$router.replace({
+                    name: 'map_details',
+                    params: {
+                        regionId: this.$route.params.regionId,
+                        mapId: this.$route.params.mapId,
+                    },
+                });
+            }
         }
     }
 }

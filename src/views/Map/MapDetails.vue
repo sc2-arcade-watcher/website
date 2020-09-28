@@ -134,7 +134,8 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
-import { SGuard } from '../../helpers';
+import { SGuard, isAxiosError } from '../../helpers';
+import MapBaseView from './MapBase.vue';
 
 @Component
 export default class MapInfoView extends Vue {
@@ -181,12 +182,29 @@ export default class MapInfoView extends Vue {
         return this.mapInfo.attributes.filter(x => x.access !== starc.AttributeRestrictionKind.None);
     }
 
-    @SGuard()
+    @SGuard({
+        expectedHttpErrorCodes: [403],
+    })
+    private async fetchDetails() {
+        try {
+            this.mapDetails = (await this.$starc.getMapDetails(
+                Number(this.$route.params.regionId),
+                Number(this.$route.params.mapId)
+            )).data;
+        }
+        catch (err) {
+            if (!isAxiosError(err)) {
+                throw err;
+            }
+
+            if (err.response!.status === 403) {
+                (this.$parent as MapBaseView).isAccessRestricted = true;
+            }
+        }
+    }
+
     private async created() {
-        this.mapDetails = (await this.$starc.getMapDetails(
-            Number(this.$route.params.regionId),
-            Number(this.$route.params.mapId)
-        )).data;
+        await this.fetchDetails();
     }
 }
 </script>

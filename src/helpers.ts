@@ -40,7 +40,9 @@ export function isAxiosError(err: any): err is AxiosError {
     return err instanceof Error && (err as AxiosError).isAxiosError === true;
 }
 
-export function SGuard(options?: {}) {
+export function SGuard(options?: {
+    expectedHttpErrorCodes: number[],
+}) {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         const fn = <Function>descriptor.value;
 
@@ -57,16 +59,17 @@ export function SGuard(options?: {}) {
             catch (err) {
                 let msg: string[] = [];
 
-                if (err.response) {
+                if (isAxiosError(err) && err.response) {
+                    if (options?.expectedHttpErrorCodes?.find(x => x === err.response.status)) {
+                        throw err;
+                    }
+
                     msg.push(`[${err.response.status}] ${err.response.statusText}`)
 
                     if (typeof err.response.data === 'object') {
                         msg.push(err.response.data.message);
                     }
                 }
-                // else if (err.request instanceof XMLHttpRequest) {
-                //     console.log((<XMLHttpRequest>err.request).responseText);
-                // }
                 else {
                     console.error(err);
                     msg = ['Oops, something went wrong.', err?.message ?? ''];
