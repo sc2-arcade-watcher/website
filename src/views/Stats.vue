@@ -49,6 +49,7 @@ export default class StatsView extends Vue {
         'monthly',
     ];
     private periodItem = 'weekly';
+    private regionCodes = starc.regionsList.map(x => x.code);
 
     private dKeys = {
         'lobbiesHosted': 'Lobbies Hosted',
@@ -94,12 +95,13 @@ export default class StatsView extends Vue {
         opts.title!.text = this.dKeys[name];
         (opts.xAxis as any).categories = this.regionStats!.date;
 
-        for (const k of ['US', 'EU', 'KR']) {
+        for (const k of this.regionCodes) {
             (opts.series as Highcharts.SeriesColumnOptions[]).push({
                 type: 'column',
                 name: k,
                 data: (this.regionStats as any)[name + k] as number[],
                 borderWidth: 0,
+                stacking: 'normal',
             });
         }
 
@@ -113,7 +115,7 @@ export default class StatsView extends Vue {
         opts.title!.text = this.dKeys[name];
         (opts.xAxis as any).categories = this.regionStats!.date;
 
-        for (const k of ['US', 'EU', 'KR']) {
+        for (const k of this.regionCodes) {
             (opts.series as Highcharts.SeriesAreaOptions[]).push({
                 type: 'area',
                 name: k,
@@ -132,7 +134,7 @@ export default class StatsView extends Vue {
         opts.title!.text = this.dKeys[name];
         (opts.xAxis as any).categories = this.regionStats!.date;
 
-        for (const k of ['US', 'EU', 'KR']) {
+        for (const k of this.regionCodes) {
             (opts.series as Highcharts.SeriesAreaOptions[]).push({
                 type: 'area',
                 name: k,
