@@ -603,6 +603,7 @@ export type StatsQueryOptions = {
 }
 
 export type MapListQuery = {
+    authorHandle?: string;
     regionId?: number;
     type?: MapType;
     name?: string;
@@ -707,7 +708,7 @@ export class StarcAPI {
         return `battlenet:://starcraft/map/${regionId}/${mapId}`;
     }
 
-    playerHandle(profile: Profile) {
+    profileHandle(profile: { regionId: number, realmId: number, profileId: number }) {
         return `${profile.regionId}-S2-${profile.realmId}-${profile.profileId}`;
     }
 
@@ -753,6 +754,10 @@ export class StarcAPI {
 
     getMapList(opts?: MapListQuery & CursorPaginationQuery) {
         return this.axios.get<MapListResponse>(`maps`, { params: opts });
+    }
+
+    getProfile(params: { regionId: number, realmId: number, profileId: number }) {
+        return this.axios.get<Profile>(`profiles/${params.regionId}/${params.realmId}/${params.profileId}`);
     }
 
     getMapInfo(regionId: number, mapId: number) {

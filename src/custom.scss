@@ -1,6 +1,20 @@
 @import '~vuetify/src/styles/settings/_variables';
 @import '~vuetify/src/styles/settings/_colors';
 
+// =================================
+// ## CONTAINER
+// =================================
+
+.container {
+    @media #{map-get($display-breakpoints, 'xs-only')} {
+        padding: 5px;
+    }
+}
+
+// =================================
+// ## 
+// =================================
+
 .section-title {
     margin-bottom: 0.7rem;
     padding-left: 0.7rem;
@@ -17,5 +31,24 @@
     &.card-t1 {
         background: #151515;
         border: 3px solid rgba(255,255,255, 0.05);
+    }
+}
+
+// =================================
+// ## 
+// =================================
+
+dl.d-info {
+    dt, dd {
+        border-top: 1px dashed #333;
+    }
+
+    dt {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    dd {
+        font-size: 1rem;
     }
 }

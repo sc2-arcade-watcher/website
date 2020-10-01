@@ -21,12 +21,18 @@
                         </v-list-item-action-text>
                     </v-list-item>
                 </div>
-                <dl class="row">
+                <dl class="d-info row">
                     <dt class="col-12 col-sm-3 col-md-2">Author</dt>
                     <dd class="col-12 col-sm-9 col-md-10">
                         <template v-if="author">
-                            <router-link :to="{ name: 'home' }">
-                                <span v-if="author.deleted" v-html="`${$starc.playerHandle(author)}`"></span>
+                            <router-link
+                                :to="{ name: 'profile_base', params: { regionId: author.regionId, realmId: author.realmId, profileId: author.profileId } }"
+                                class="map-author"
+                            >
+                                <img v-if="author.avatarUrl" :src="author.avatarUrl" class="avatar-img"/>
+                                <div v-else class="blank-avatar"></div>
+
+                                <span v-if="author.deleted" v-html="`${$starc.profileHandle(author)}`"></span>
                                 <span v-else v-html="author.name"></span>
                             </router-link>
                         </template>
@@ -249,25 +255,44 @@ export default class MapBaseView extends Vue {
 @import '~vuetify/src/styles/settings/_variables';
 
 .map-base-card {
+    .map-author {
+        display: inline-block;
+
+        .avatar-img,
+        .blank-avatar {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            box-sizing: border-box;
+            margin-right: 0.75rem;
+        }
+
+        .avatar-img,
+        .blank-avatar {
+            vertical-align: top;
+        }
+
+        .avatar-img {
+        }
+
+        .blank-avatar {
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        span {
+            display: inline-block;
+            font-weight: 500;
+            font-size: 1.2em;
+            letter-spacing: 1px;
+        }
+    }
+
     .row {
     }
 
     .row >* {
         padding-top: 0.5em;
         padding-bottom: 0.5em;
-    }
-
-    dt, dd {
-        border-top: 1px dashed #333;
-    }
-
-    dt {
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-
-    dd {
-        font-size: 1rem;
     }
 
     .map-tags {

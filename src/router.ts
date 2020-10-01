@@ -81,6 +81,33 @@ const routes: RouteConfig[] = [
             },
         ],
     },
+    {
+        path: '/profile/:regionId/:realmId/:profileId',
+        name: 'profile_base',
+        component: require('@/views/Profile/Base.vue').default,
+        children: [
+            {
+                path: '/profile/:regionId/:realmId/:profileId/summary',
+                name: 'profile_summary',
+                component: require('@/views/Profile/Summary.vue').default,
+            },
+            {
+                path: '/profile/:regionId/:realmId/:profileId/maps',
+                name: 'profile_published_maps',
+                component: require('@/views/Profile/PublishedMaps.vue').default,
+            },
+            {
+                path: '/profile/:regionId/:realmId/:profileId/lobbies-history',
+                name: 'profile_lobbies_history',
+                component: require('@/views/Profile/LobbiesHistory.vue').default,
+            },
+            {
+                path: '/profile/:regionId/:realmId/:profileId/match-history',
+                name: 'profile_match_history',
+                component: require('@/views/Profile/MatchHistory.vue').default,
+            },
+        ],
+    },
 ]
 
 const router = new VueRouter({

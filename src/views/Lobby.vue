@@ -5,7 +5,7 @@
                 <v-card outlined>
                     <v-list-item dense>
                         <v-list-item-title>
-                            <v-img :src="require(`../assets/region-${lobby.regionId}.png`)" max-width="24" />
+                            <v-img :src="require(`@/assets/region-${lobby.regionId}.png`)" max-width="24" />
                         </v-list-item-title>
                         <v-list-item-subtitle>#{{ lobby.regionId }}/{{ lobby.bnetBucketId }}/{{ lobby.bnetRecordId }}</v-list-item-subtitle>
                     </v-list-item>
@@ -116,19 +116,24 @@
                 <v-list subheader v-for="currTeam in teamSlots" :key="currTeam.team" dense>
                     <v-subheader style="height: 30px; background: rgba(255,255,255,0.05);">{{ currTeam.name }}</v-subheader>
                     <v-list-item v-for="currSlot in currTeam.slots" :key="currSlot.slotNumber">
-                        <v-list-item-avatar tile v-if="currSlot.kind === 'human'">
-                            <v-img :src="require('../assets/Kachinsky_SC2_Portrait1.jpg')"></v-img>
+                        <v-list-item-avatar tile v-if="currSlot.kind === 'human'" style="border: 1px solid rgba(255,255,255,0.1);">
+                            <v-img v-if="currSlot.profile && currSlot.profile.avatarUrl" :src="currSlot.profile.avatarUrl"></v-img>
+                            <!-- <v-img v-else :src="require('@/assets/Kachinsky_SC2_Portrait1.jpg')"></v-img> -->
                         </v-list-item-avatar>
 
                         <v-list-item-title v-if="currSlot.kind === 'human'">
                             <span v-if="!currSlot.profile">{{ currSlot.name }}</span>
-                            <a v-if="currSlot.profile" :href="`https://starcraft2.com/en-us/profile/${currSlot.profile.regionId}/${currSlot.profile.realmId}/${currSlot.profile.profileId}`" target="_blank">{{ currSlot.name }}</a>
+                            <router-link
+                                v-if="currSlot.profile"
+                                :to="{ name: 'profile_base', params: {
+                                    regionId: currSlot.profile.regionId,
+                                    realmId: currSlot.profile.realmId,
+                                    profileId: currSlot.profile.profileId,
+                                }}"
+                            >{{ currSlot.profile.name }}</router-link>
                             <span v-if="currSlot.name === lobby.hostName"> (host)</span>
                         </v-list-item-title>
-                        <v-list-item-subtitle v-if="currSlot.kind !== 'human'" v-text="currSlot.kind.toUpperCase()"/>
-                        <v-list-item-subtitle v-if="currSlot.kind === 'human' && currSlot.profile">
-                            {{ $starc.playerHandle(currSlot.profile) }}
-                        </v-list-item-subtitle>
+                        <v-list-item-subtitle v-text="currSlot.kind.toUpperCase()"/>
                     </v-list-item>
                 </v-list>
 
@@ -139,7 +144,16 @@
                             <v-icon color="green" small left v-if="jevent.type === 'joined'">fas fa-sign-in-alt</v-icon>
                             <v-icon color="red" small left v-if="jevent.type === 'left'">fas fa-sign-out-alt</v-icon>
                             <span style="font-weight: 300;">{{ joinEvents.length - i }}. </span>
-                            <a v-if="jevent.profile" :href="`https://starcraft2.com/en-us/profile/${jevent.profile.regionId}/${jevent.profile.realmId}/${jevent.profile.profileId}`" target="_blank">{{ jevent.profile.name }}</a>
+                            <router-link
+                                v-if="jevent.profile"
+                                :to="{ name: 'profile_base', params: {
+                                    regionId: jevent.profile.regionId,
+                                    realmId: jevent.profile.realmId,
+                                    profileId: jevent.profile.profileId,
+                                }}"
+                            >
+                                {{ jevent.profile.name }}
+                            </router-link>
                         </v-list-item-title>
                         <v-list-item-subtitle>
                             {{ $dfns.formatISO9075(new Date(jevent.date), { representation: 'complete' }) }}
