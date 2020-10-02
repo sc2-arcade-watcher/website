@@ -39,7 +39,7 @@
                                         :to="{ name: 'map_base', params: { regionId: item.map.regionId, mapId: item.map.bnetId } }"
                                     >
                                         <v-img
-                                            :src="$starc.bnetDepotImage(item.map.iconHash)"
+                                            :src="$starc.depotImage(item.map.iconHash, item.map.regionId).url"
                                             max-width="80"
                                             height="50"
                                             contain
@@ -54,7 +54,7 @@
                                         :to="{ name: 'map_base', params: { regionId: item.extMod.regionId, mapId: item.extMod.bnetId } }"
                                     >
                                         <!-- <v-img
-                                            :src="$starc.bnetDepotImage(item.extMod.iconHash)"
+                                            :src="$starc.depotImage(item.extMod.iconHash, item.extMod.regionId).url"
                                             max-width="80"
                                             height="50"
                                             contain

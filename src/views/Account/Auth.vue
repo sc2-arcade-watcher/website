@@ -37,7 +37,6 @@ import { SGuard } from '../../helpers';
 @Component
 export default class AccountAuthView extends Vue {
     private isRedirecting = false;
-    private battleClientId = '25ec71e2fb39441cbedc5d764d1a30f0';
     private errorMessage: string | null = null;
 
     private get redirectUri() {
@@ -67,7 +66,8 @@ export default class AccountAuthView extends Vue {
         }
         else if (this.$route.query.method === 'bnet') {
             this.isRedirecting = true;
-            window.location.href = `https://us.battle.net/oauth/authorize?response_type=code&client_id=${this.battleClientId}&redirect_uri=${this.redirectUri}&scope=sc2.profile&state=sc2`;
+            const battleClientId = process.env.VUE_APP_STARC_BATTLE_API_CLIENT_ID;
+            window.location.href = `https://us.battle.net/oauth/authorize?response_type=code&client_id=${battleClientId}&redirect_uri=${this.redirectUri}&scope=sc2.profile&state=sc2`;
         }
 
         if (this.$store.battleAccount) {

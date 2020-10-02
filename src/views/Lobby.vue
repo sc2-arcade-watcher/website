@@ -66,7 +66,7 @@
                             </v-list-item-content>
 
                             <v-list-item-avatar tile size="100" color="grey">
-                                <v-img :src="$starc.bnetDepotImage(lobby.map.iconHash)"></v-img>
+                                <v-img :src="$starc.depotImage(lobby.map.iconHash, lobby.map.regionId).url"></v-img>
                             </v-list-item-avatar>
                         </v-list-item>
                     </v-card>
@@ -85,7 +85,7 @@
                             </v-list-item-content>
 
                             <v-list-item-avatar tile size="100" color="grey">
-                                <v-img :src="$starc.bnetDepotImage(lobby.extMod.iconHash)"></v-img>
+                                <v-img :src="$starc.depotImage(lobby.extMod.iconHash, lobby.extMod.regionId).url"></v-img>
                             </v-list-item-avatar>
                         </v-list-item>
                     </v-card>
@@ -104,7 +104,7 @@
                             </v-list-item-content>
 
                             <v-list-item-avatar tile size="100" color="grey">
-                                <v-img :src="$starc.bnetDepotImage(lobby.multiMod.iconHash)"></v-img>
+                                <v-img :src="$starc.depotImage(lobby.multiMod.iconHash, lobby.multiMod.regionId).url"></v-img>
                             </v-list-item-avatar>
                         </v-list-item>
                     </v-card>
@@ -118,6 +118,15 @@
                     <v-list-item v-for="currSlot in currTeam.slots" :key="currSlot.slotNumber">
                         <v-list-item-avatar tile v-if="currSlot.kind === 'human'" style="border: 1px solid rgba(255,255,255,0.1);">
                             <v-img v-if="currSlot.profile && currSlot.profile.avatarUrl" :src="currSlot.profile.avatarUrl"></v-img>
+                            <v-avatar
+                                v-else
+                                color="grey darken-3"
+                                tile
+                            >
+                                <v-icon dark>
+                                    mdi-account-question
+                                </v-icon>
+                            </v-avatar>
                             <!-- <v-img v-else :src="require('@/assets/Kachinsky_SC2_Portrait1.jpg')"></v-img> -->
                         </v-list-item-avatar>
 
@@ -234,7 +243,9 @@ export default class LobbyView extends Vue {
             Number(this.$route.params.bnetBucketId),
             Number(this.$route.params.bnetRecordId)
         )).data;
-        this.refreshTimer = setTimeout(this.refresh.bind(this), 10000);
+        if (this.lobby.status === starc.GameLobbyStatus.Open) {
+            this.refreshTimer = setTimeout(this.refresh.bind(this), 10000);
+        }
     }
 
     @SGuard()

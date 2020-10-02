@@ -8,7 +8,7 @@ import * as dfns from 'date-fns';
 // @ts-ignore
 // import locale from 'element-ui/lib/locale/lang/en';
 
-import '@mdi/font/css/materialdesignicons.css';
+// import '@mdi/font/css/materialdesignicons.css';
 
 import { StarcAPI } from './starc-api/starc';
 import * as helpers from './helpers';

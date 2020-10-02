@@ -68,7 +68,7 @@
             </v-container>
             <div class="details-right py-2 px-2">
                 <div class="map-icon">
-                    <img class="d-block" :src="$starc.bnetDepotImage(mapInfo.iconHash)"/>
+                    <img class="d-block" :src="$starc.depotImage(mapInfo.iconHash, mapInfo.regionId).url"/>
                 </div>
                 <div class="meta">
                     <div>

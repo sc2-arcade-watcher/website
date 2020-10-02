@@ -1,16 +1,18 @@
 # Let apache know we're behind a SSL reverse proxy
 SetEnvIf X-Forwarded-Proto "https" HTTPS=on
 
-# Redirect to HTTPS
 <IfModule mod_rewrite.c>
+    # Redirect to HTTPS
     RewriteEngine on
     RewriteCond %{HTTPS} !=on
     RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-</IFModule>
 
-# Redirect to index.html
-<IfModule mod_rewrite.c>
+    # Get rid of www.
+    RewriteCond %{HTTP_HOST} ^www\.(.*)$
+    RewriteRule ^(.*)$ https://%1$1 [R=301,L,NE]
+
+    # Redirect everything else to index.html
     RewriteEngine On
     RewriteBase /
     RewriteRule ^index\.html$ - [L]
@@ -18,3 +20,8 @@ SetEnvIf X-Forwarded-Proto "https" HTTPS=on
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule . /index.html [L]
 </IfModule>
+
+# Specifying no-cache or max-age=0 indicates that clients can cache a resource and must revalidate each time before using it. This means HTTP request occurs each time, but it can skip downloading HTTP body if the content is valid.
+<FilesMatch "\.(html)$">
+Header set Cache-Control "no-cache, max-age=0"
+</FilesMatch>

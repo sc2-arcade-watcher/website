@@ -528,7 +528,7 @@ export interface GameLobbySlot {
     name: string;
 }
 
-enum GameLobbyStatus {
+export enum GameLobbyStatus {
     Open = 'open',
     Started = 'started',
     Abandoned = 'abandoned',
@@ -677,12 +677,8 @@ export class StarcAPI {
 
     constructor(config: AxiosRequestConfig = {}) {
         this.axios = Axios.create(Object.assign({
-            baseURL: process.env.VUE_APP_STARC_WEBAPI_URL ?? 'https://sc2arcade.talv.space/api',
+            baseURL: process.env.VUE_APP_STARC_WEBAPI_URL,
         }, config));
-    }
-
-    bnetDepotImage(hash: string) {
-        return `${process.env.VUE_APP_STARC_WEBAPI_URL ?? '//sc2arcade.talv.space'}/bnet/${hash}.jpg`;
     }
 
     depotImage(img: MapImage | string, region: DepotRegion | number): MapImageResolved {
@@ -700,7 +696,7 @@ export class StarcAPI {
         }
         return {
             ...img,
-            url: `${process.env.VUE_APP_STARC_WEBAPI_URL ?? '//sc2arcade.talv.space'}/depot/${region}/${img.hash}.jpg`,
+            url: `${process.env.VUE_APP_STARC_STATIC_URL}/dimg/${img.hash}.jpg?region=${region}`,
         };
     }
 

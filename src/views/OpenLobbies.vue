@@ -27,7 +27,7 @@
                 <template v-slot:item.image="{ item }">
                     <router-link :to="{ name: 'map_base', params: { regionId: item.regionId, mapId: item.mapBnetId } }" class="" v-if="item.map">
                         <v-img
-                            :src="$starc.bnetDepotImage(item.map.iconHash)"
+                            :src="$starc.depotImage(item.map.iconHash, item.map.regionId).url"
                             max-width="80"
                             height="50"
                             contain

@@ -40,46 +40,27 @@
             </v-container>
         </v-content>
 
-        <!-- <v-footer>
+        <v-footer>
+            <div
+                class="float-left"
+            >
+                <v-btn
+                    href="https://github.com/sc2-arcade-watcher"
+                    target="_blank"
+                    text
+                >
+                    <v-icon>fab fa-github</v-icon>
+                </v-btn>
+                <v-btn
+                    :href="`${$starc.axios.defaults.baseURL}/docs/api/`"
+                    target="_blank"
+                    text
+                >
+                    WebAPI
+                </v-btn>
+            </div>
             <v-spacer></v-spacer>
             <small>Not affiliated with Blizzard Entertainment.</small>
-        </v-footer> -->
-
-        <v-footer
-            padless
-        >
-            <v-row
-                justify="center"
-                no-gutters
-            >
-                <v-col
-                    class="grey darken-4 px-4 text-center white--text"
-                    cols="7"
-                >
-                    <v-btn
-                        v-for="link in links"
-                        :key="link"
-                        color="white"
-                        text
-                        class="my-1"
-                    >
-                        {{ link }}
-                    </v-btn>
-                    <v-btn
-                        href="https://github.com/sc2-arcade-watcher"
-                        target="_blank"
-                        text
-                    >
-                        <v-icon>fab fa-github</v-icon>
-                    </v-btn>
-                </v-col>
-                <v-col
-                    class="grey darken-4 px-4 text-right"
-                    cols="5"
-                >
-                    <small>Not affiliated with Blizzard Entertainment.</small>
-                </v-col>
-            </v-row>
         </v-footer>
     </v-app>
 </template>
@@ -96,13 +77,6 @@ import UserNav from './components/UserNav.vue';
 })
 export default class App extends Vue {
     private isLoading = false;
-
-    private links = [
-        'Home',
-        'About',
-        'API',
-        'Github',
-    ];
 
     async created() {
         const userToken = localStorage.getItem('user_token');
