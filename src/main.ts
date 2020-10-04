@@ -1,12 +1,8 @@
 import Vue from 'vue';
 import * as dfns from 'date-fns';
 
-// import Element from 'element-ui';
-// import './element-variables.scss';
-// import 'element-ui/lib/theme-chalk/index.css';
 // import 'font-awesome/css/font-awesome.css';
 // @ts-ignore
-// import locale from 'element-ui/lib/locale/lang/en';
 
 // import '@mdi/font/css/materialdesignicons.css';
 
@@ -24,11 +20,6 @@ import App from './App.vue'
 import './custom.scss';
 
 Vue.config.productionTip = false;
-
-
-// Vue.use(Element, { locale });
-// Vue.component('loading', Loading);
-
 
 const starc = new StarcAPI();
 
