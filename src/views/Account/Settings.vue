@@ -124,7 +124,14 @@ export default class AccountSettingsView extends Vue {
         });
     }
 
-    @SGuard()
+    @SGuard({
+        onHttpError: function (this, err) {
+            if (err.response!.status === 401) {
+                this.$router.push({ name: 'account_auth' });
+                return true;
+            }
+        }
+    })
     private async pullSettings() {
         this.settings = (await this.$starc.getAccontSettings()).data;
     }
