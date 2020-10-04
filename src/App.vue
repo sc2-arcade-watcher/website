@@ -4,41 +4,89 @@
             <v-progress-circular indeterminate size="64"></v-progress-circular>
         </v-overlay>
 
-        <v-app-bar max-height="64px">
+        <v-app-bar
+            class="d-none d-sm-block flex-grow-0"
+        >
             <router-link :to="{ name: 'home' }">
                 <div class="d-flex align-center">
                     <v-img
+                        class="d-block d-md-none"
                         alt="SC2 Arcade"
-                        class="shrink mr-2"
                         cover
-                        :src="require('./assets/arcade-icon.png')"
+                        :src="require('@/assets/arcade-icon.png')"
                         transition="scale-transition"
-                        width="50"
+                        width="45"
+                    />
+                    <v-img
+                        class="d-none d-md-block"
+                        alt="SC2 Arcade"
+                        contain
+                        :src="require('@/assets/arcade-logo.png')"
+                        transition="scale-transition"
+                        width="350"
+                        max-height="64"
                     />
                 </div>
             </router-link>
-
             <v-spacer></v-spacer>
-
-            <v-btn :to="{ name: 'open_lobbies' }" text>
-                <span>Open lobbies</span>
-            </v-btn>
-            <v-btn :to="{ name: 'map_list' }" text>
-                <span>Maps</span>
-            </v-btn>
-            <v-btn :to="{ name: 'stats' }" text>
-                <span>Global stats</span>
-            </v-btn>
+            <v-toolbar-items>
+                <v-btn
+                    v-for="(item, i) in nav"
+                    :key="i"
+                    :to="item.location"
+                    text
+                >{{ item.text }}</v-btn>
+            </v-toolbar-items>
             <user-nav/>
         </v-app-bar>
 
-        <v-content>
+        <v-app-bar
+            class="d-block d-sm-none flex-grow-0"
+            dense
+        >
+            <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+            <router-link :to="{ name: 'home' }" class="d-flex flex-grow-1 align-center justify-end">
+                <img
+                    alt="SC2 Arcade"
+                    :src="require('@/assets/arcade-logo.png')"
+                    width="280"
+                />
+            </router-link>
+
+        </v-app-bar>
+
+        <v-navigation-drawer
+            v-model="drawer"
+            absolute
+            temporary
+        >
+            <v-list
+                nav
+            >
+                <v-list-item
+                    v-for="(item, i) in nav"
+                    :key="i"
+                    :to="item.location"
+                >
+                    <v-list-item-icon v-if="item.icon">
+                        <v-icon>{{ item.icon }}</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                        <v-list-item-title>{{ item.text }}</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list>
+            <user-nav/>
+        </v-navigation-drawer>
+
+        <v-main>
             <v-container fluid style="min-height: 100%;">
                 <transition name="fade">
                     <router-view></router-view>
                 </transition>
             </v-container>
-        </v-content>
+        </v-main>
 
         <v-footer>
             <div
@@ -67,6 +115,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { RawLocation } from 'vue-router';
 import * as starc from '@/starc-api/starc';
 import UserNav from './components/UserNav.vue';
 
@@ -77,6 +126,34 @@ import UserNav from './components/UserNav.vue';
 })
 export default class App extends Vue {
     private isLoading = false;
+    private drawer = false;
+    private nav: {
+        icon: string | null;
+        text: string;
+        location: RawLocation;
+    }[] = [
+        {
+            icon: null,
+            text: 'Open lobbies',
+            location: {
+                name: 'open_lobbies',
+            },
+        },
+        {
+            icon: null,
+            text: 'Maps',
+            location: {
+                name: 'map_list',
+            },
+        },
+        {
+            icon: null,
+            text: 'Global stats',
+            location: {
+                name: 'stats',
+            },
+        },
+    ];
 
     async created() {
         const userToken = localStorage.getItem('user_token');

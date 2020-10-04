@@ -1,22 +1,15 @@
 <template>
-    <v-container class="home">
-        <v-row class="text-center">
-            <v-col cols="12">
-                <v-img
-                    :src="require('../assets/arcade-logo.png')"
-                    class="my-3"
-                    contain
-                    height="200"
-                />
-            </v-col>
-
-            <v-col class="mb-4">
-                <h1 class="display-1 font-weight-bold mb-3">Unofficial StarCraft II Arcade database!</h1>
-                <v-divider></v-divider>
-                <v-subheader class="text-center justify-center">Under development...</v-subheader>
-            </v-col>
-        </v-row>
-    </v-container>
+    <v-content class="d-flex ">
+        <v-container>
+            <v-row class="text-center">
+                <v-col class="mb-4">
+                    <h1 class="display-1 font-weight-bold mb-3">Unofficial StarCraft II Arcade database!</h1>
+                    <v-divider></v-divider>
+                    <v-subheader class="text-center justify-center">Under development...</v-subheader>
+                </v-col>
+            </v-row>
+        </v-container>
+    </v-content>
 </template>
 
 <script lang="ts">
@@ -34,7 +27,7 @@ export default class HomeView extends Vue {
     background-attachment: fixed;
 
     >div {
-        background: rgba(#000, 0.3);
+        // background: rgba(#000, 0.35);
     }
 }
 </style>

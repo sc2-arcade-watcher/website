@@ -5,7 +5,7 @@
 // ## CONTAINER
 // =================================
 
-.container {
+.container:not(.container--fluid) {
     @media #{map-get($display-breakpoints, 'xs-only')} {
         padding: 5px;
     }

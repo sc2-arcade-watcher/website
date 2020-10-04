@@ -26,7 +26,7 @@ Highcharts.setOptions({
             ]
         },
         style: {
-            fontFamily: '\'Maven Pro\', sans-serif'
+            fontFamily: '\'Maven Pro\', \'Roboto\', sans-serif'
         },
         plotBorderColor: '#606063'
     },
