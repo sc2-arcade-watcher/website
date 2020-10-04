@@ -114,7 +114,13 @@ export default class ProfilePublishedMapsView extends Vue {
     }
 
     @SGuard({
-        expectedHttpErrorCodes: [403],
+        onHttpError: function (this: ProfilePublishedMapsView, err) {
+            if (err.response!.status === 403) {
+                this.maps = [];
+                this.errorMsg = err.response!.data?.message ?? null;
+                return true;
+            }
+        },
     })
     private async fetchData() {
         const profParams = {
@@ -122,25 +128,13 @@ export default class ProfilePublishedMapsView extends Vue {
             realmId: Number(this.$route.params.realmId),
             profileId: Number(this.$route.params.profileId),
         };
-        try {
-            this.maps = (await this.$starc.getMapList({
-                authorHandle: this.$starc.profileHandle(profParams),
-                showPrivate: this.mapQueryParams.showPrivate,
-                orderBy: 'updated',
-                limit: 500,
-            })).data.results;
-            this.errorMsg = null;
-        }
-        catch (err) {
-            if (!isAxiosError(err)) {
-                throw err;
-            }
-
-            this.maps = [];
-            if (err.response!.status === 403) {
-                this.errorMsg = err.response!.data?.message ?? null;
-            }
-        }
+        this.errorMsg = null;
+        this.maps = (await this.$starc.getMapList({
+            authorHandle: this.$starc.profileHandle(profParams),
+            showPrivate: this.mapQueryParams.showPrivate,
+            orderBy: 'updated',
+            limit: 500,
+        })).data.results;
     }
 
     private async created() {

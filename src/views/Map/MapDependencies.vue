@@ -75,31 +75,25 @@ export default class MapVersionsView extends Vue {
 
     private get totalSize() {
         return this.mapDependency!.list
-            .filter(x => x.tags.indexOf('BLIZ') === -1)
+            .filter(x => x.mapHeader.archiveSize >= 256)
             .map(x => x.mapHeader.archiveSize)
             .reduce((prev, curr) => prev + curr, 0)
         ;
     }
 
     @SGuard({
-        expectedHttpErrorCodes: [403],
-    })
-    private async fetchData() {
-        try {
-            this.mapDependency = (await this.$starc.getMapDependencies(
-                Number(this.$route.params.regionId),
-                Number(this.$route.params.mapId)
-            )).data;
-        }
-        catch (err) {
-            if (!isAxiosError(err)) {
-                throw err;
-            }
-
+        onHttpError: function (this, err) {
             if (err.response!.status === 403) {
                 (this.$parent as MapBaseView).isAccessRestricted = true;
+                return true;
             }
-        }
+        },
+    })
+    private async fetchData() {
+        this.mapDependency = (await this.$starc.getMapDependencies(
+            Number(this.$route.params.regionId),
+            Number(this.$route.params.mapId)
+        )).data;
     }
 
     private async created() {

@@ -186,24 +186,18 @@ export default class MapVersionsView extends Vue {
     }
 
     @SGuard({
-        expectedHttpErrorCodes: [403],
-    })
-    private async fetchHistory() {
-        try {
-            this.versionHistory = (await this.$starc.getMapVersionHistory(
-                Number(this.$route.params.regionId),
-                Number(this.$route.params.mapId)
-            )).data;
-        }
-        catch (err) {
-            if (!isAxiosError(err)) {
-                throw err;
-            }
-
+        onHttpError: function (this, err) {
             if (err.response!.status === 403) {
                 (this.$parent as MapBaseView).isAccessRestricted = true;
+                return true;
             }
-        }
+        },
+    })
+    private async fetchHistory() {
+        this.versionHistory = (await this.$starc.getMapVersionHistory(
+            Number(this.$route.params.regionId),
+            Number(this.$route.params.mapId)
+        )).data;
     }
 
     @SGuard()

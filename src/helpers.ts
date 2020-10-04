@@ -2,6 +2,10 @@ import Vue from 'vue';
 import { TYPE } from 'vue-toastification';
 import { AxiosError } from 'axios';
 
+function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export function formatBytes(bytes: number, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
 
@@ -40,8 +44,10 @@ export function isAxiosError(err: any): err is AxiosError {
     return err instanceof Error && (err as AxiosError).isAxiosError === true;
 }
 
-export function SGuard(options?: {
-    expectedHttpErrorCodes: number[],
+type TOnHttpError<T = any> = (this: T, err: AxiosError) => boolean | void;
+
+export function SGuard<T extends Vue>(options?: {
+    onHttpError?: TOnHttpError<T>;
 }) {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         const fn = <Function>descriptor.value;
@@ -55,19 +61,21 @@ export function SGuard(options?: {
                 if (isPromise(fnResult)) {
                     fnResult = await fnResult;
                 }
+                return fnResult;
             }
             catch (err) {
                 let msg: string[] = [];
 
                 if (isAxiosError(err) && err.response) {
-                    if (options?.expectedHttpErrorCodes?.find(x => x === err.response.status)) {
-                        throw err;
+                    if (options?.onHttpError && options?.onHttpError.call(this as any, err) === true) {
+                        // supress
                     }
+                    else {
+                        msg.push(`[${err.response.status}] ${err.response.statusText}`)
 
-                    msg.push(`[${err.response.status}] ${err.response.statusText}`)
-
-                    if (typeof err.response.data === 'object') {
-                        msg.push(err.response.data.message);
+                        if (typeof err.response.data === 'object') {
+                            msg.push(err.response.data.message);
+                        }
                     }
                 }
                 else {
@@ -75,14 +83,17 @@ export function SGuard(options?: {
                     msg = ['Oops, something went wrong.', err?.message ?? ''];
                 }
 
-                this.$toast(msg.join('\n'), {
-                    type: TYPE.ERROR,
-                    timeout: false,
-                    closeOnClick: false,
-                });
+                if (msg.length) {
+                    this.$toast(msg.join('\n'), {
+                        type: TYPE.ERROR,
+                        timeout: false,
+                        closeOnClick: false,
+                    });
+                }
             }
-            l.hide();
-            return fnResult;
+            finally {
+                l.hide();
+            }
         };
     };
 }
