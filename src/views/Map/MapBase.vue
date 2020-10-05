@@ -254,38 +254,39 @@ export default class MapBaseView extends Vue {
 <style lang="scss">
 @import '~vuetify/src/styles/settings/_variables';
 
-.map-base-card {
-    .map-author {
+.map-author {
+    display: inline-block;
+
+    .avatar-img,
+    .blank-avatar {
         display: inline-block;
-
-        .avatar-img,
-        .blank-avatar {
-            display: inline-block;
-            width: 32px;
-            height: 32px;
-            box-sizing: border-box;
-            margin-right: 0.75rem;
-        }
-
-        .avatar-img,
-        .blank-avatar {
-            vertical-align: top;
-        }
-
-        .avatar-img {
-        }
-
-        .blank-avatar {
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        span {
-            display: inline-block;
-            font-weight: 500;
-            font-size: 1.2em;
-            letter-spacing: 1px;
-        }
+        width: 32px;
+        height: 32px;
+        box-sizing: border-box;
+        margin-right: 0.75rem;
     }
+
+    .avatar-img,
+    .blank-avatar {
+        vertical-align: top;
+    }
+
+    .avatar-img {
+    }
+
+    .blank-avatar {
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    span {
+        display: inline-block;
+        font-weight: 500;
+        font-size: 1.2em;
+        letter-spacing: 1px;
+    }
+}
+
+.map-base-card {
 
     .row {
     }

@@ -148,6 +148,13 @@ export default class App extends Vue {
         },
         {
             icon: null,
+            text: 'Profiles',
+            location: {
+                name: 'profile_list',
+            },
+        },
+        {
+            icon: null,
             text: 'Global stats',
             location: {
                 name: 'stats',

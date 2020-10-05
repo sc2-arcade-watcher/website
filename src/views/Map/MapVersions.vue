@@ -47,8 +47,8 @@
                         <v-chip small color="green" outlined>{{ $helpers.formatBytes(item.archiveSize) }}</v-chip>
                     </v-list-item-subtitle>
                     <v-list-item-action-text
-                        v-if="item.archiveHash"
                         class="d-flex flex-wrap flex-sm-nowrap"
+                        style="min-width: 50px;"
                     >
                         <!-- <v-btn
                             tile
@@ -61,6 +61,7 @@
                             <v-icon small>fas fa-info-circle</v-icon>
                         </v-btn> -->
                         <v-btn
+                            v-if="item.archiveHash"
                             tile
                             small
                             text

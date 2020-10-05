@@ -22,10 +22,19 @@
                         <dd class="col-12 col-sm-9 col-md-10">
                             <span>{{ $starc.profileHandle(profile) }}</span>
                         </dd>
-                        <!-- <dt class="col-12 col-sm-3 col-md-2">Last seen online</dt>
+                        <dt class="col-12 col-sm-3 col-md-2">Last seen online</dt>
                         <dd class="col-12 col-sm-9 col-md-10">
-                            <span>-</span>
-                        </dd> -->
+                            <v-tooltip top transition="fade-transition">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <span class="font-weight-light" v-bind="attrs" v-on="on">
+                                        {{ $dfns.formatDistanceStrict(new Date(profile.lastOnlineAt), new Date(), {
+                                            addSuffix: true,
+                                            roundingMethod: 'floor'}) }}
+                                    </span>
+                                </template>
+                                <span>{{ $dfns.formatISO9075(new Date(profile.lastOnlineAt), { representation: 'complete' }) }}</span>
+                            </v-tooltip>
+                        </dd>
                     </dl>
                 </div>
             </div>

@@ -1,6 +1,14 @@
 @import '~vuetify/src/styles/settings/_variables';
 @import '~vuetify/src/styles/settings/_colors';
 
+.v-tooltip__content {
+    border: 1px solid rgba(#fff, 0.15);
+}
+
+.v-tooltip__content.menuable__content__active {
+    opacity: 1 !important;
+}
+
 // =================================
 // ## CONTAINER
 // =================================

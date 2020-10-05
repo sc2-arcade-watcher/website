@@ -82,6 +82,11 @@ const routes: RouteConfig[] = [
         ],
     },
     {
+        path: '/profile-list',
+        name: 'profile_list',
+        component: require('@/views/Profile/List.vue').default,
+    },
+    {
         path: '/profile/:regionId/:realmId/:profileId',
         name: 'profile_base',
         component: require('@/views/Profile/Base.vue').default,

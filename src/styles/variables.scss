@@ -1,0 +1,8 @@
+@import '~vuetify/src/styles/settings/_colors';
+
+$border-radius-root: 4px;
+
+$tooltip-background-color: rgba(map-get($grey, 'darken-4'), 1.0);
+$tooltip-border-radius: 2px;
+$tooltip-padding: 4px 10px;
+$tooltip-font-size: 13px;

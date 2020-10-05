@@ -613,6 +613,21 @@ export type MapListQuery = {
     orderBy?: string;
 }
 
+export type MapListResponse = CursorPaginationResult<Map>;
+
+// ===
+// ===
+
+export type ProfileListParams = {
+    profileHandle?: string;
+    regionId?: number;
+    name?: string;
+    orderBy?: string;
+    orderDirection?: string;
+}
+
+export type ProfileListResponse = CursorPaginationResult<Profile>;
+
 // ===
 // ===
 
@@ -669,8 +684,6 @@ export type CursorPaginationResult<T> = {
     },
     results: T[];
 }
-
-export type MapListResponse = CursorPaginationResult<Map>;
 
 export class StarcAPI {
     axios: AxiosInstance;
@@ -748,12 +761,16 @@ export class StarcAPI {
         return this.axios.post(`account/settings`, settings);
     }
 
-    getMapList(opts?: MapListQuery & CursorPaginationQuery) {
-        return this.axios.get<MapListResponse>(`maps`, { params: opts });
+    getProfileList(params?: ProfileListParams & CursorPaginationQuery) {
+        return this.axios.get<ProfileListResponse>(`profiles`, { params });
     }
 
     getProfile(params: { regionId: number, realmId: number, profileId: number }) {
         return this.axios.get<Profile>(`profiles/${params.regionId}/${params.realmId}/${params.profileId}`);
+    }
+
+    getMapList(opts?: MapListQuery & CursorPaginationQuery) {
+        return this.axios.get<MapListResponse>(`maps`, { params: opts });
     }
 
     getMapInfo(regionId: number, mapId: number) {
