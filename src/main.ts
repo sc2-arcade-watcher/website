@@ -6,7 +6,7 @@ import * as dfns from 'date-fns';
 
 // import '@mdi/font/css/materialdesignicons.css';
 
-import { StarcAPI } from './starc-api/starc';
+import * as starc from './starc-api/starc';
 import * as helpers from './helpers';
 
 import './plugins/highcharts';
@@ -21,12 +21,18 @@ import './custom.scss';
 
 Vue.config.productionTip = false;
 
-const starc = new StarcAPI();
-
 Vue.use({
     install: (Vue) => {
+        const sAPI = new starc.StarcAPI();
+
         Object.defineProperty(Vue.prototype, '$starc', {
             // api.interceptors.request.use();
+            get() {
+                return sAPI;
+            }
+        });
+
+        Object.defineProperty(Vue.prototype, '$sTypes', {
             get() {
                 return starc;
             }
@@ -54,7 +60,8 @@ Vue.use({
 
 declare module 'vue/types/vue' {
     interface Vue {
-        $starc: StarcAPI;
+        $starc: starc.StarcAPI;
+        $sTypes: typeof starc;
         $helpers: typeof helpers;
         $dfns: typeof dfns;
         $store: typeof store;

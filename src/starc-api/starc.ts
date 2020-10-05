@@ -1,4 +1,4 @@
-import Axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import Axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosTransformer } from 'axios';
 
 export const availableCategories: MapCategory[] = [
     {
@@ -142,6 +142,10 @@ export const availableCategories: MapCategory[] = [
         isMelee: false
     }
 ];
+
+export function categoryById(id: number) {
+    return availableCategories.find(x => x.id === id);
+}
 
 export const regionsList = [
     {
@@ -628,6 +632,16 @@ export type ProfileListParams = {
 
 export type ProfileListResponse = CursorPaginationResult<Profile>;
 
+export type ProfilePlayedMap = {
+    map: Map;
+    lobbiesStarted: number;
+    lastPlayedAt: Date;
+};
+
+export type ProfileSummaryResponse = {
+    mostPlayed: ProfilePlayedMap[];
+};
+
 // ===
 // ===
 
@@ -767,6 +781,40 @@ export class StarcAPI {
 
     getProfile(params: { regionId: number, realmId: number, profileId: number }) {
         return this.axios.get<Profile>(`profiles/${params.regionId}/${params.realmId}/${params.profileId}`);
+    }
+
+    getProfileSummary(params: { regionId: number, realmId: number, profileId: number }) {
+        function strToDate(data: any) {
+            if (Array.isArray(data)) {
+                data.forEach(x => {
+                    strToDate(x);
+                });
+            }
+            else if (typeof data === 'object') {
+                for (const key of Object.keys(data)) {
+                    if (data[key] === null) continue;
+                    if (typeof data[key] === 'object') {
+                        data[key] = strToDate(data[key]);
+                    }
+                    else if (typeof data[key] === 'string') {
+                        switch (key) {
+                            case 'lastPlayedAt': {
+                                data[key] = new Date(data[key]);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return data;
+        }
+
+        const transformers: AxiosTransformer[] = [].concat(this.axios.defaults.transformResponse as any);
+        transformers.push(strToDate);
+
+        return this.axios.get<ProfileSummaryResponse>(`profiles/${params.regionId}/${params.realmId}/${params.profileId}/summary`, {
+            transformResponse: transformers,
+        });
     }
 
     getMapList(opts?: MapListQuery & CursorPaginationQuery) {
