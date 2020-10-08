@@ -606,6 +606,20 @@ export type StatsQueryOptions = {
     kind?: keyof typeof StatsPeriodKind;
 }
 
+// ===
+// ===
+
+export type LobbyHistoryListParams = {
+    profileHandle?: string;
+    regionId?: number;
+    mapId?: number;
+}
+
+export type LobbyHistoryListResponse = CursorPaginationResult<GameLobbyData>;
+
+// ===
+// ===
+
 export type MapListQuery = {
     authorHandle?: string;
     regionId?: number;
@@ -849,8 +863,8 @@ export class StarcAPI {
         return this.axios.get<GameLobbyData>(`lobbies/${regionId}/${bnetBucketId}/${bnetRecordId}`);
     }
 
-    getMapLobbiesHistory(regionId: number, mapId: number, params?: CursorPaginationQuery) {
-        return this.axios.get(`lobbies/history/map/${regionId}/${mapId}`, { params: params });
+    getMapLobbiesHistory(params?: LobbyHistoryListParams & CursorPaginationQuery) {
+        return this.axios.get<LobbyHistoryListResponse>(`lobbies/history`, { params: params });
     }
 
     getStatsRegions(params?: StatsQueryOptions) {

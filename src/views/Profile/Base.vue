@@ -84,10 +84,10 @@ export default class ProfileBaseView extends Vue {
                 name: 'Published maps',
                 route: { name: 'profile_published_maps', params: dparams },
             },
-            // {
-            //     name: 'Lobbies history',
-            //     route: { name: 'profile_lobbies_history', params: dparams },
-            // },
+            {
+                name: 'Lobbies history',
+                route: { name: 'profile_lobbies_history', params: dparams },
+            },
             // {
             //     name: 'Match history',
             //     route: { name: 'profile_match_history', params: dparams },
