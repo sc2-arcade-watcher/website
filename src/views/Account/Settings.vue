@@ -1,58 +1,23 @@
 <template>
     <div v-if="settings">
-        <!-- <h2 class="display-1">Settings</h2> -->
-
-        <!-- <template>
-            <v-card
-                height="400"
-                width="256"
-                class="mx-auto"
-            >
-                <v-navigation-drawer permanent>
-                    <v-list-item>
-                        <v-list-item-content>
-                            <v-list-item-title class="title">
-                                Application
-                            </v-list-item-title>
-                            <v-list-item-subtitle>
-                                subtext
-                            </v-list-item-subtitle>
-                        </v-list-item-content>
-                    </v-list-item>
-
-                    <v-divider></v-divider>
-
-                    <v-list
-                        dense
-                        nav
-                    >
-                        <v-list-item
-                            v-for="item in [{ title: 'asd', icon: 'a' }]"
-                            :key="item.title"
-                            link
-                        >
-                            <v-list-item-icon>
-                                <v-icon>{{ item.icon }}</v-icon>
-                            </v-list-item-icon>
-
-                            <v-list-item-content>
-                                <v-list-item-title>{{ item.title }}</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
-                    </v-list>
-                </v-navigation-drawer>
-            </v-card>
-        </template> -->
-
         <v-card class="mt-2 mx-auto" raised elevation max-width="500">
             <v-container>
+                <h2 class="display-1 mb-3">Settings</h2>
                 <v-form
                     @submit.prevent="onSubmit"
                 >
-                    <v-subheader class="my-0 overline">Map author preferences</v-subheader>
-                    <p class="body-2">Following settings will apply to all maps published from this account [{{ '\xa0' }}<strong style="font-weight: 500;" class="primary--text">{{ $store.battleAccount.battleTag }}</strong>{{ '\xa0' }}].</p>
+                    <p class="body-2">Following settings will apply to all game profiles (and related content), associated with this account [{{ '\xa0' }}<strong style="font-weight: 500;" class="primary--text">{{ $store.battleAccount.battleTag }}</strong>{{ '\xa0' }}].</p>
 
-                    <span class="overline">Public maps</span>
+                    <span class="overline">General privacy preferences</span>
+                    <v-divider/>
+
+                    <v-checkbox
+                        v-model="settings.profilePrivate"
+                        label="Keep details about my profile private"
+                    >
+                    </v-checkbox>
+
+                    <span class="overline">Map author preferences - public maps</span>
                     <v-divider/>
 
                     <v-checkbox
@@ -61,7 +26,7 @@
                     >
                     </v-checkbox>
 
-                    <span class="overline">Private maps</span>
+                    <span class="overline">Map author preferences - private maps</span>
                     <v-divider/>
 
                     <v-checkbox

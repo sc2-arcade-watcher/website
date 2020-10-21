@@ -680,6 +680,7 @@ export interface AccountBattleInfo {
 }
 
 export interface MapAuthorPreferences {
+    profilePrivate: boolean | null;
     mapPubDownload: boolean | null;
     mapPrivDownload: boolean | null;
     mapPrivDetails: boolean | null;

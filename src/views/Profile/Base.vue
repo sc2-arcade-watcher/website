@@ -16,7 +16,7 @@
                         <small v-if="profile.discriminator" v-html="`#${profile.discriminator}`" class="grey--text"></small>
                         <v-img class="d-inline-block my-2 float-right" :src="require(`@/assets/region-${profile.regionId}.png`)" width="24" height="24" />
                     </h1>
-                    <p v-if="profile.regionId !== 5" class="mb-0"><a :href="sc2ProfileURL" target="_blank">See on StarCraft2.com</a></p>
+                    <p class="mb-0"><a :href="sc2ProfileURL" target="_blank">See on StarCraft2.com</a></p>
                     <dl class="d-info row">
                         <dt class="col-12 col-sm-3 col-md-2">Profile handle</dt>
                         <dd class="col-12 col-sm-9 col-md-10">
@@ -41,6 +41,7 @@
         </v-card>
 
         <v-tabs
+            v-show="!isAccessRestricted"
             v-model="activeTab"
             background-color="transparent"
             show-arrows
@@ -50,11 +51,24 @@
             </v-tab>
         </v-tabs>
 
-        <v-flex>
+        <v-flex v-if="!isAccessRestricted">
             <transition name="fade">
                 <router-view></router-view>
             </transition>
         </v-flex>
+        <template v-else>
+            <v-banner>
+                <v-avatar
+                    slot="icon"
+                    color="grey darken-3"
+                    size="40"
+                >
+                    <v-icon>fas fa-user-secret</v-icon>
+                </v-avatar>
+
+                <span class="text-button">This user's public profile is hidden.</span>
+            </v-banner>
+        </template>
     </div>
 </template>
 
@@ -65,6 +79,7 @@ import { SGuard } from '../../helpers';
 
 @Component
 export default class ProfileBaseView extends Vue {
+    public isAccessRestricted: boolean = false;
     private activeTab = null;
     private profile: starc.Profile | null = null;
 
@@ -102,6 +117,7 @@ export default class ProfileBaseView extends Vue {
 
     @SGuard()
     async loadProfile() {
+        this.isAccessRestricted = false;
         this.profile = (await this.$starc.getProfile({
             regionId: Number(this.$route.params.regionId),
             realmId: Number(this.$route.params.realmId),

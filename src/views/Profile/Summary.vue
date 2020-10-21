@@ -73,6 +73,7 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
 import { SGuard } from '../../helpers';
+import ProfileBaseView from './Base.vue';
 
 @Component
 export default class ProfileSummaryView extends Vue {
@@ -80,6 +81,10 @@ export default class ProfileSummaryView extends Vue {
 
     @SGuard({
         onHttpError: function (this, err) {
+            if (err.response!.status === 403) {
+                (this.$parent as ProfileBaseView).isAccessRestricted = true;
+                return true;
+            }
             if (err.response!.status === 404) {
                 return true;
             }

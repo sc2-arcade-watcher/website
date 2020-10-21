@@ -67,6 +67,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import LobbyHistoryList from '@/components/LobbyHistoryList.vue';
 import * as starc from '@/starc-api/starc';
 import { SGuard } from '../../helpers';
+import ProfileBaseView from './Base.vue';
 
 @Component({
     components: {
@@ -78,7 +79,14 @@ export default class ProfileLobbiesHistoryView extends Vue {
     private currentPaginationParams!: starc.CursorPaginationQuery;
     private lobbyHistoryResponse: starc.LobbyHistoryListResponse | null = null;
 
-    @SGuard()
+    @SGuard({
+        onHttpError: function (this, err) {
+            if (err.response!.status === 403) {
+                (this.$parent as ProfileBaseView).isAccessRestricted = true;
+                return true;
+            }
+        }
+    })
     private async refreshList() {
         const profParams = {
             regionId: Number(this.$route.params.regionId),
