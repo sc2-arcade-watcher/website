@@ -19,7 +19,7 @@
                             <v-icon color="green" small title="Started">fas fa-calendar-check</v-icon>
                         </template>
                         <template v-else-if="item.status === 'abandoned'">
-                            <v-icon color="red" small title="Abandoned">fas fa-calendar-times</v-icon>
+                            <v-icon color="red" small title="Abandoned">fas fa-door-closed</v-icon>
                         </template>
                         <template v-else-if="item.status === 'open'">
                             <v-icon color="yellow" small title="Open">fas fa-hourglass-start</v-icon>

@@ -51,7 +51,7 @@
                     </router-link>
                 </template>
                 <template v-slot:item.slotsStatus="{ item }">
-                    <span v-if="item.slots.length">
+                    <span v-if="item.slots && item.slots.length">
                         {{ item.slots.filter(x => x.kind === 'human').length }}/{{ item.slots.filter(x => x.kind !== 'ai').length }}
                     </span>
                     <span v-else>{{ item.slotsHumansTaken }}/{{ item.slotsHumansTotal }}</span>
@@ -152,7 +152,7 @@ export default class OpenLobbiesView extends Vue {
         this.refreshTimer = null;
         this.activeLobbies = (await this.$starc.getLobbiesActive({
             includeMapInfo: true,
-            includeSlots: true,
+            includeSlots: false,
             includeSlotsJoinInfo: false,
             includeJoinHistory: false,
             recentlyClosedThreshold: 0,

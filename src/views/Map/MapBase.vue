@@ -32,7 +32,7 @@
                                 <img v-if="author.avatarUrl" :src="author.avatarUrl" class="avatar-img"/>
                                 <div v-else class="blank-avatar"></div>
 
-                                <span v-if="author.deleted" v-html="`${$starc.profileHandle(author)}`"></span>
+                                <span v-if="author.discriminator === 0" v-html="`${$starc.profileHandle(author)}`"></span>
                                 <span v-else v-html="author.name"></span>
                             </router-link>
                         </template>

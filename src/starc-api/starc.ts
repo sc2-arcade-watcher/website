@@ -501,14 +501,19 @@ export interface MapDependencyInfo {
 // ===
 
 export interface Profile {
-    nameUpdatedAt: Date | null;
     regionId: number;
     realmId: number;
     profileId: number;
     name: string | null;
-    discriminator: number | null;
-    deleted: boolean;
+    discriminator: number;
     avatarURL: string | null;
+}
+
+interface GameLobbyTitleRecord {
+    date: Date | string;
+    hostName: string;
+    title: string;
+    profile?: Profile;
 }
 
 interface GameLobbyPlayerJoin {
@@ -567,6 +572,7 @@ export interface GameLobbyData {
     hostName: string;
     slots?: GameLobbySlot[];
     joinHistory?: GameLobbyPlayerJoin[];
+    titleHistory?: GameLobbyTitleRecord[];
 }
 
 export type GameLobbyQueryParams = {

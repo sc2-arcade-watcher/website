@@ -33,11 +33,11 @@
                 {{ regionCode }}
             </span>
 
-            <span class="version">
+            <span class="version" v-if="map.currentVersion">
                 v{{ map.currentVersion.majorVersion }}.{{ map.currentVersion.minorVersion }}
             </span>
 
-            <span class="date" :title="$dfns.lightFormat(new Date(map.updatedAt), 'yyyy-MM-dd HH:mm')">
+            <span class="date" :title="`Last update at ${$dfns.lightFormat(new Date(map.updatedAt), 'yyyy-MM-dd HH:mm')}`">
                 {{ $dfns.formatDistanceStrict(
                     new Date(map.updatedAt),
                     new Date(),
@@ -48,7 +48,7 @@
             </span>
 
             <span
-                v-if="map.currentVersion.isPrivate"
+                v-if="map.currentVersion && map.currentVersion.isPrivate"
                 class="private"
                 title="Private map"
             >
@@ -131,7 +131,7 @@ export default class MapItem extends Vue {
             letter-spacing: -1px !important;
         }
 
-        .date {
+        .version +.date {
             &::before {
                 content: '|';
                 padding-left: 5px;
