@@ -4,8 +4,7 @@
             <thead>
                 <tr>
                     <th></th>
-                    <th>Map / Mod</th>
-                    <th>Title</th>
+                    <th v-if="showMapModColumn">Map / Mod</th>
                     <th>Host</th>
                     <th>Players</th>
                     <th>Date</th>
@@ -14,7 +13,7 @@
             </thead>
             <tbody>
                 <tr v-for="item in lobbiesHistory" :key="item.bnetRecordId">
-                    <td>
+                    <td class="px-1 text-center" style="width: 46px;">
                         <template v-if="item.status === 'started'">
                             <v-icon color="green" small title="Started">fas fa-calendar-check</v-icon>
                         </template>
@@ -28,28 +27,41 @@
                             <v-icon color="grey" small title="Unknown">fas fa-question-circle</v-icon>
                         </template>
                     </td>
-                    <td class="text-left">
+                    <td class="text-left" v-if="showMapModColumn">
                         <template v-if="item.map && item.map.bnetId !== mapId">
-                            <router-link
-                                class="d-inline-block"
+                            <v-btn
+                                tile
+                                large
+                                text
+                                class="overline my-1"
+                                color="primary lighten-1"
+                                style="text-transform: none !important; padding-left: 6px; padding-right: 6px;"
                                 :title="item.map.name"
                                 :to="{ name: 'map_base', params: { regionId: item.map.regionId, mapId: item.map.bnetId } }"
                             >
                                 <v-img
                                     :src="$starc.depotImage(item.map.iconHash, item.map.regionId).url"
-                                    max-width="80"
-                                    height="50"
+                                    width="90"
+                                    min-width="90"
+                                    max-height="46"
                                     contain
-                                    class="float-left my-0 mt-1"
+                                    class="float-left my-0 mr-2"
                                 />
-                            </router-link>
+                                <span v-if="!item.extMod">{{ item.map.name }}</span>
+                            </v-btn>
                         </template>
                         <template v-if="item.extMod && item.extMod.bnetId !== mapId">
-                            <router-link
-                                class="d-inline-block"
+                            <v-btn
+                                tile
+                                small
+                                text
+                                class="overline my-1"
+                                color="deep-orange lighten-2"
+                                style="text-transform: none !important; padding-left: 6px; padding-right: 6px;"
                                 :title="item.extMod.name"
                                 :to="{ name: 'map_base', params: { regionId: item.extMod.regionId, mapId: item.extMod.bnetId } }"
                             >
+                                <v-icon x-small color="grey lighten-1" left>fas fa-plus</v-icon>
                                 <!-- <v-img
                                     :src="$starc.depotImage(item.extMod.iconHash, item.extMod.regionId).url"
                                     max-width="80"
@@ -58,20 +70,25 @@
                                     class="float-left my-0 mt-1"
                                 /> -->
                                 {{ item.extMod.name }}
-                            </router-link>
+                            </v-btn>
                         </template>
                     </td>
-                    <td>
-                        {{ item.lobbyTitle }}
-                    </td>
-                    <td>
-                        {{ item.hostName }}
+                    <td class="text--secondary overline text-no-wrap">
+                        <span style="vertical-align: middle;">{{ item.hostName }}</span>
+                        <v-tooltip top transition="fade-transition" v-if="item.lobbyTitle">
+                            <template v-slot:activator="{ on, attrs }">
+                                <span v-bind="attrs" v-on="on">
+                                    <v-btn color="primary" text x-small min-width="20"><v-icon x-small>fas fa-info</v-icon></v-btn>
+                                </span>
+                            </template>
+                            <span>{{ item.lobbyTitle }}</span>
+                        </v-tooltip>
                     </td>
                     <td>
                         <v-tooltip top v-if="item.slots.length">
                             <template v-slot:activator="{ on, attrs }">
-                                <span v-bind="attrs" v-on="on">
-                                    {{ item.slots.filter(x => x.kind === 'human').length }}&nbsp;/&nbsp;{{ item.slots.filter(x => x.kind !== 'ai').length }}
+                                <span v-bind="attrs" v-on="on" class="overline teal--text text--lighten-2">
+                                    {{ item.slots.filter(x => x.kind === 'human').length }}/{{ item.slots.filter(x => x.kind !== 'ai').length }}
                                 </span>
                             </template>
                             <ol>
@@ -83,8 +100,8 @@
                         </v-tooltip>
                         <span v-else></span>
                     </td>
-                    <td>
-                        <v-tooltip top v-if="item.closedAt !== null">
+                    <td class="text-no-wrap font-weight-light">
+                        <v-tooltip top transition="fade-transition" v-if="item.closedAt !== null">
                             <template v-slot:activator="{ on, attrs }">
                                 <span v-bind="attrs" v-on="on">
                                     {{ $dfns.formatDistanceStrict(new Date(item.closedAt), new Date(), {
@@ -95,13 +112,12 @@
                             <span>{{ $dfns.formatISO9075(new Date(item.closedAt), { representation: 'complete' }) }}</span>
                         </v-tooltip>
                     </td>
-                    <td>
+                    <td class="pr-1">
                         <v-btn
                             tile
                             small
                             text
                             color="primary"
-                            title="View details"
                             :to="{
                                 name: 'lobby',
                                 params: {
@@ -111,7 +127,7 @@
                                 },
                             }"
                         >
-                            <v-icon small>fas fa-info-circle</v-icon>
+                            Details
                         </v-btn>
                     </td>
                 </tr>
@@ -132,9 +148,19 @@ export default class LobbyHistoryList extends Vue {
     })
     readonly lobbiesHistory!: starc.GameLobbyData[];
     private mapId: number | null = null;
+    private showMapModColumn = true;
 
     created() {
         this.mapId = Number(this.$route.params.mapId);
+        if (this.lobbiesHistory.length) {
+            this.showMapModColumn = (
+                Number(this.$route.params.mapId) !== this.lobbiesHistory[0].mapBnetId ||
+                this.lobbiesHistory.findIndex(x => x.extModBnetId) !== -1
+            );
+        }
+        else {
+            this.showMapModColumn = false;
+        }
     }
 }
 </script>

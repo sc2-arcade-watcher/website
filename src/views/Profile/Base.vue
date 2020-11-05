@@ -103,10 +103,10 @@ export default class ProfileBaseView extends Vue {
                 name: 'Lobbies history',
                 route: { name: 'profile_lobbies_history', params: dparams },
             },
-            // {
-            //     name: 'Match history',
-            //     route: { name: 'profile_match_history', params: dparams },
-            // },
+            {
+                name: 'Match history',
+                route: { name: 'profile_match_history', params: dparams },
+            },
         ];
         return tabs;
     }

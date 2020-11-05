@@ -7,7 +7,7 @@
         <v-img
             :src="$starc.depotImage(map.iconHash, map.regionId).url"
             :lazy-src="require('@/assets/UI_Arcade_IconTBattlecruiser.png')"
-            :key="map.id"
+            :key="`${map.regionId,map.bnetId}`"
             aspect-ratio="1.5"
             height="150"
             class="map-icon"

@@ -500,10 +500,13 @@ export interface MapDependencyInfo {
 // ===
 // ===
 
-export interface Profile {
+export type ProfileBaseParams = {
     regionId: number;
     realmId: number;
     profileId: number;
+}
+
+export interface Profile extends ProfileBaseParams {
     name: string | null;
     discriminator: number;
     avatarURL: string | null;
@@ -662,6 +665,48 @@ export type ProfileSummaryResponse = {
     mostPlayed: ProfilePlayedMap[];
 };
 
+export type ProfileMatchHistoryParams = ProfileBaseParams & {
+    orderBy?: string;
+    orderDirection?: string;
+}
+
+export enum MatchDecision {
+    Left = 'left',
+    Win = 'win',
+    Loss = 'loss',
+    Tie = 'tie',
+    Observer = 'observer',
+    Disagree = 'disagree',
+}
+
+export enum MatchSpeed {
+    Slower = 'slower',
+    Slow = 'slow',
+    Normal = 'normal',
+    Fast = 'fast',
+    Faster = 'faster',
+}
+
+export enum MatchType {
+    Custom = 'custom',
+    Unknown = 'unknown',
+    Coop = 'coop',
+    OneVersusOne = '1v1',
+    TwoVersusTwo = '2v2',
+    ThreeVersusThree = '3v3',
+    FourVersusFour = '4v4',
+    FreeForAll = 'ffa',
+}
+
+export type ProfileMatchEntry = {
+    date: Date;
+    type: MatchType;
+    decision: MatchDecision;
+    map?: Map;
+};
+
+export type ProfileMatchHistoryResponse = CursorPaginationResult<ProfileMatchEntry>;
+
 // ===
 // ===
 
@@ -718,6 +763,35 @@ export type CursorPaginationResult<T> = {
         next: string | null;
     },
     results: T[];
+}
+
+// ===
+// ===
+
+function strToDate(data: any) {
+    if (Array.isArray(data)) {
+        data.forEach(x => {
+            strToDate(x);
+        });
+    }
+    else if (typeof data === 'object') {
+        for (const key of Object.keys(data)) {
+            if (data[key] === null) continue;
+            if (typeof data[key] === 'object') {
+                data[key] = strToDate(data[key]);
+            }
+            else if (typeof data[key] === 'string') {
+                switch (key) {
+                    case 'date':
+                    case 'lastPlayedAt': {
+                        data[key] = new Date(data[key]);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    return data;
 }
 
 export class StarcAPI {
@@ -800,40 +874,29 @@ export class StarcAPI {
         return this.axios.get<ProfileListResponse>(`profiles`, { params });
     }
 
-    getProfile(params: { regionId: number, realmId: number, profileId: number }) {
+    getProfile(params: ProfileBaseParams) {
         return this.axios.get<Profile>(`profiles/${params.regionId}/${params.realmId}/${params.profileId}`);
     }
 
-    getProfileSummary(params: { regionId: number, realmId: number, profileId: number }) {
-        function strToDate(data: any) {
-            if (Array.isArray(data)) {
-                data.forEach(x => {
-                    strToDate(x);
-                });
-            }
-            else if (typeof data === 'object') {
-                for (const key of Object.keys(data)) {
-                    if (data[key] === null) continue;
-                    if (typeof data[key] === 'object') {
-                        data[key] = strToDate(data[key]);
-                    }
-                    else if (typeof data[key] === 'string') {
-                        switch (key) {
-                            case 'lastPlayedAt': {
-                                data[key] = new Date(data[key]);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            return data;
-        }
-
+    getProfileSummary(params: ProfileBaseParams) {
         const transformers: AxiosTransformer[] = [].concat(this.axios.defaults.transformResponse as any);
         transformers.push(strToDate);
 
         return this.axios.get<ProfileSummaryResponse>(`profiles/${params.regionId}/${params.realmId}/${params.profileId}/summary`, {
+            transformResponse: transformers,
+        });
+    }
+
+    getProfileMatches(params: ProfileMatchHistoryParams & CursorPaginationQuery) {
+        const transformers: AxiosTransformer[] = [].concat(this.axios.defaults.transformResponse as any);
+        transformers.push(strToDate);
+
+        const queryParams = Object.assign({}, params);
+        delete queryParams.regionId;
+        delete queryParams.realmId;
+        delete queryParams.profileId;
+        return this.axios.get<ProfileMatchHistoryResponse>(`profiles/${params.regionId}/${params.realmId}/${params.profileId}/matches`, {
+            params: queryParams,
             transformResponse: transformers,
         });
     }
