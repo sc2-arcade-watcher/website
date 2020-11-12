@@ -1,4 +1,5 @@
 import Axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosTransformer } from 'axios';
+import * as rax from 'retry-axios';
 
 export const availableCategories: MapCategory[] = [
     {
@@ -798,9 +799,14 @@ export class StarcAPI {
     axios: AxiosInstance;
 
     constructor(config: AxiosRequestConfig = {}) {
-        this.axios = Axios.create(Object.assign({
+        this.axios = Axios.create(Object.assign<Partial<AxiosRequestConfig>, AxiosRequestConfig>({
             baseURL: process.env.VUE_APP_STARC_WEBAPI_URL,
+            raxConfig: {
+                retry: 3,
+                statusCodesToRetry: [[100, 199], [429, 429], [501, 599]],
+            },
         }, config));
+        const interceptorId = rax.attach(this.axios);
     }
 
     depotImage(img: MapImage | string, region: DepotRegion | number): MapImageResolved {

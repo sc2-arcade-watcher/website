@@ -95,15 +95,30 @@
                 <v-btn
                     href="https://github.com/sc2-arcade-watcher"
                     target="_blank"
+                    small
+                    tile
                     text
                 >
                     <v-icon>fab fa-github</v-icon>
                 </v-btn>
                 <v-btn
-                    :href="`${$starc.axios.defaults.baseURL}/docs/api/`"
+                    href="https://discord.gg/VxAJYjF"
                     target="_blank"
+                    small
+                    tile
+                    text
+                    title="#arcade-watcher on SC2Mapster Discord"
+                >
+                    <v-icon>fab fa-discord</v-icon>
+                </v-btn>
+                <v-btn
+                    href="https://api.sc2arcade.com/docs/api/"
+                    target="_blank"
+                    small
+                    tile
                     text
                 >
+                    <v-icon left>fas fa-laptop-code</v-icon>
                     WebAPI
                 </v-btn>
             </div>
@@ -172,13 +187,14 @@ export default class App extends Vue {
                 this.$store.battleAccount = response.battleAccount;
             }
             catch (err) {
-                if (this.$helpers.isAxiosError(err) && err.response!.status == 401) {
-                    localStorage.removeItem('user_token');
-                    this.$store.battleAccount = null;
+                if (this.$helpers.isAxiosError(err)) {
+                    if (err.response?.status == 401) {
+                        localStorage.removeItem('user_token');
+                        this.$store.battleAccount = null;
+                        return;
+                    }
                 }
-                else {
-                    throw err;
-                }
+                throw err;
             }
         }
     }
