@@ -1,9 +1,9 @@
 <template>
-    <v-container fluid v-if="profileSummary !== null">
+    <v-container fluid v-if="mapStats !== null" class="pt-0">
         <v-row>
             <v-card class="card-t1 flex-grow-1 profile-summary" raised elevation outlined>
                 <v-card-text class="py-1">
-                    <h3 class="overline font-weight-bold">Most played maps</h3>
+                    <h3 class="overline font-weight-bold">Most played custom maps &amp; extension mods</h3>
                 </v-card-text>
 
                 <v-simple-table fixed-header>
@@ -18,7 +18,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(item, i) in profileSummary.mostPlayed" :key="i">
+                            <tr v-for="(item, i) in mapStats" :key="i">
                                 <td>
                                     <span class="font-weight-medium text--secondary">{{ i + 1 }}.</span>
                                 </td>
@@ -34,7 +34,7 @@
                                     >
                                         <v-img
                                             :src="$starc.depotImage(item.map.iconHash, item.map.regionId).url"
-                                            max-width="80"
+                                            width="70"
                                             height="35"
                                             contain
                                             class="float-left my-0"
@@ -72,12 +72,12 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
-import { SGuard } from '../../helpers';
+import { SGuard, isAxiosError } from '../../helpers';
 import ProfileBaseView from './Base.vue';
 
 @Component
-export default class ProfileSummaryView extends Vue {
-    private profileSummary: any | null = null;
+export default class MostPlayedView extends Vue {
+    private mapStats: starc.ProfileMostPlayedResponse | null = null;
 
     @SGuard({
         onHttpError: function (this, err) {
@@ -90,8 +90,8 @@ export default class ProfileSummaryView extends Vue {
             }
         }
     })
-    private async fetchSummary() {
-        this.profileSummary = (await this.$starc.getProfileSummary({
+    private async fetchData() {
+        this.mapStats = (await this.$starc.getProfileMostPlayed({
             regionId: Number(this.$route.params.regionId),
             realmId: Number(this.$route.params.realmId),
             profileId: Number(this.$route.params.profileId),
@@ -99,7 +99,7 @@ export default class ProfileSummaryView extends Vue {
     }
 
     private async created() {
-        await this.fetchSummary();
+        await this.fetchData();
     }
 }
 </script>

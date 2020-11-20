@@ -656,15 +656,27 @@ export type ProfileListParams = {
 
 export type ProfileListResponse = CursorPaginationResult<Profile>;
 
-export type ProfilePlayedMap = {
-    map: Map;
+// ===
+// ===
+
+export type ProfileMapStats = {
+    map?: Map;
+    profile?: Profile;
     lobbiesStarted: number;
+    lobbiesStartedDiffDays: number;
+    lobbiesJoined: number;
+    lobbiesHosted: number;
+    lobbiesHostedStarted: number;
+    timeSpentWaiting: number;
+    timeSpentWaitingAsHost: number;
     lastPlayedAt: Date;
 };
 
-export type ProfileSummaryResponse = {
-    mostPlayed: ProfilePlayedMap[];
-};
+export type ProfileMostPlayedResponse = ProfileMapStats[];
+
+// ===
+// ===
+
 
 export type ProfileMatchHistoryParams = ProfileBaseParams & {
     orderBy?: string;
@@ -888,7 +900,16 @@ export class StarcAPI {
         const transformers: AxiosTransformer[] = [].concat(this.axios.defaults.transformResponse as any);
         transformers.push(strToDate);
 
-        return this.axios.get<ProfileSummaryResponse>(`profiles/${params.regionId}/${params.realmId}/${params.profileId}/summary`, {
+        return this.axios.get(`profiles/${params.regionId}/${params.realmId}/${params.profileId}/summary`, {
+            transformResponse: transformers,
+        });
+    }
+
+    getProfileMostPlayed(params: ProfileBaseParams) {
+        const transformers: AxiosTransformer[] = [].concat(this.axios.defaults.transformResponse as any);
+        transformers.push(strToDate);
+
+        return this.axios.get<ProfileMostPlayedResponse>(`profiles/${params.regionId}/${params.realmId}/${params.profileId}/most-played`, {
             transformResponse: transformers,
         });
     }

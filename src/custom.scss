@@ -50,6 +50,16 @@
     }
 }
 
+.sub-loading-container {
+    position: relative;
+    min-height: 200px;
+
+    .vld-overlay .vld-background {
+        // background: transparent !important;
+        // opacity: 0.15 !important;
+    }
+}
+
 // =================================
 // ## 
 // =================================

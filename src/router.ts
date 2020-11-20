@@ -97,9 +97,9 @@ const routes: RouteConfig[] = [
                 component: require('@/views/Profile/Summary.vue').default,
             },
             {
-                path: '/profile/:regionId/:realmId/:profileId/maps',
-                name: 'profile_published_maps',
-                component: require('@/views/Profile/PublishedMaps.vue').default,
+                path: '/profile/:regionId/:realmId/:profileId/most-played',
+                name: 'profile_most_played',
+                component: require('@/views/Profile/MostPlayed.vue').default,
             },
             {
                 path: '/profile/:regionId/:realmId/:profileId/lobbies-history',
@@ -111,19 +111,23 @@ const routes: RouteConfig[] = [
                 name: 'profile_match_history',
                 component: require('@/views/Profile/MatchHistory.vue').default,
             },
+            {
+                path: '/profile/:regionId/:realmId/:profileId/maps',
+                name: 'profile_published_maps',
+                component: require('@/views/Profile/PublishedMaps.vue').default,
+            },
         ],
     },
 ]
 
 const router = new VueRouter({
     mode: 'history',
+    fallback: false,
     base: process.env.BASE_URL,
     routes,
     scrollBehavior (to, from, savedPosition) {
         if (savedPosition) {
             return savedPosition
-        } else {
-            return { x: 0, y: 0 }
         }
     }
 })

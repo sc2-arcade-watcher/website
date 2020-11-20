@@ -6,4 +6,5 @@ Vue.use(Loading, {
     opacity: 0.75,
     backgroundColor: '#000',
     color: '#2196f3',
+    lockScroll: false,
 });

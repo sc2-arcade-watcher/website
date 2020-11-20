@@ -108,6 +108,7 @@ export default class ProfileLobbiesHistoryView extends Vue {
                 ...this.$helpers.stringifyQueryParams(this.currentPaginationParams),
             },
         });
+        this.$vuetify.goTo(this);
     }
 
     private updateItemsPerPage(n: number) {

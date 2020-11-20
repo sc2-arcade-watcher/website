@@ -51,12 +51,12 @@
             </v-tab>
         </v-tabs>
 
-        <v-flex v-if="!isAccessRestricted">
+        <v-flex v-show="!isAccessRestricted" class="sub-loading-container" ref="subLoadingContainer">
             <transition name="fade">
                 <router-view></router-view>
             </transition>
         </v-flex>
-        <template v-else>
+        <template v-if="isAccessRestricted">
             <v-banner>
                 <v-avatar
                     slot="icon"
@@ -96,8 +96,8 @@ export default class ProfileBaseView extends Vue {
                 route: { name: 'profile_summary', params: dparams },
             },
             {
-                name: 'Published maps',
-                route: { name: 'profile_published_maps', params: dparams },
+                name: 'Most played',
+                route: { name: 'profile_most_played', params: dparams },
             },
             {
                 name: 'Lobbies history',
@@ -106,6 +106,10 @@ export default class ProfileBaseView extends Vue {
             {
                 name: 'Match history',
                 route: { name: 'profile_match_history', params: dparams },
+            },
+            {
+                name: 'Published maps',
+                route: { name: 'profile_published_maps', params: dparams },
             },
         ];
         return tabs;

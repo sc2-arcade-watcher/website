@@ -251,6 +251,7 @@ export default class ProfileListView extends Vue {
             name: this.$route.name!,
             query: this.$helpers.stringifyQueryParams(this.queryParams),
         })
+        this.$vuetify.goTo(this.$parent);
     }
 
     private pageGo(where: 'prev' | 'next') {

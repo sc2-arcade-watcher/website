@@ -1,5 +1,5 @@
 <template>
-    <v-card class="card-t1">
+    <v-card class="card-t1" v-show="matchHistoryResponse">
         <div v-if="matchHistoryResponse && matchHistoryResponse.results.length > 0">
             <v-simple-table dense fixed-header>
                 <template v-slot:default>
@@ -158,6 +158,7 @@ export default class ProfileMatchHistoryView extends Vue {
                 ...this.$helpers.stringifyQueryParams(this.currentPaginationParams),
             },
         });
+        this.$vuetify.goTo(this);
     }
 
     private updateItemsPerPage(n: number) {

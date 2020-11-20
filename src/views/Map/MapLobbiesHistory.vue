@@ -97,6 +97,7 @@ export default class MapLobbiesHistoryView extends Vue {
                 ...this.$helpers.stringifyQueryParams(this.currentPaginationParams),
             },
         });
+        this.$vuetify.goTo(this);
     }
 
     private updateItemsPerPage(n: number) {

@@ -104,7 +104,7 @@
             </v-tab>
         </v-tabs>
 
-        <v-flex v-if="!isAccessRestricted">
+        <v-flex v-if="!isAccessRestricted" class="sub-loading-container" ref="subLoadingContainer">
             <transition name="fade">
                 <router-view></router-view>
             </transition>

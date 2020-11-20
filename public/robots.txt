@@ -1,0 +1,12 @@
+User-agent: *
+
+# lobby
+Disallow: /open-lobbies
+Disallow: /lobby/
+
+# map
+Disallow: /map/*/*/recent-lobbies
+
+# profile
+Disallow: /profile/*/*/*/lobbies-history
+Disallow: /profile/*/*/*/match-history
