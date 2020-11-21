@@ -75,6 +75,11 @@ const routes: RouteConfig[] = [
                 component: require('@/views/Map/MapStats.vue').default,
             },
             {
+                path: '/map/:regionId/:mapId/player-base',
+                name: 'map_player_base',
+                component: require('@/views/Map/PlayerBase.vue').default,
+            },
+            {
                 path: '/map/:regionId/:mapId/recent-lobbies',
                 name: 'map_recent_lobbies',
                 component: require('@/views/Map/MapLobbiesHistory.vue').default,

@@ -84,20 +84,7 @@
                                 <span class="text--secondary">{{ $starc.profileHandle(profile) }}</span>
                             </td>
                             <td>
-                                <router-link
-                                    :to="{ name: 'profile_base', params: {
-                                        regionId: profile.regionId,
-                                        realmId: profile.realmId,
-                                        profileId: profile.profileId
-                                    }}"
-                                    class="map-author"
-                                >
-                                    <img v-if="profile.avatarUrl" :src="profile.avatarUrl" class="avatar-img"/>
-                                    <div v-else class="blank-avatar"></div>
-
-                                    <span v-html="profile.name"></span>
-                                </router-link>
-                                <small v-if="profile.discriminator" v-html="`#${profile.discriminator}`" class="grey--text"></small>
+                                <profile-item :profile="profile" :show-discriminator="true"/>
                             </td>
                             <td>
                                 <v-tooltip top transition="fade-transition">
@@ -190,10 +177,15 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
+import ProfileItem from '@/components/ProfileItem.vue';
 import { SGuard } from '../../helpers';
 import { Debounce } from 'vue-debounce-decorator';
 
-@Component
+@Component({
+    components: {
+        ProfileItem,
+    },
+})
 export default class ProfileListView extends Vue {
     private queryParams!: starc.ProfileListParams & starc.CursorPaginationQuery;
     private queryResponse: starc.ProfileListResponse | null = null;

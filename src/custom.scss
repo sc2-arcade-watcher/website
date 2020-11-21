@@ -64,6 +64,14 @@
 // ## 
 // =================================
 
+.v-top {
+    vertical-align: top;
+}
+
+.v-middle {
+    vertical-align: middle;
+}
+
 dl.d-info {
     dt, dd {
         border-top: 1px dashed #333;
@@ -76,5 +84,43 @@ dl.d-info {
 
     dd {
         font-size: 1rem;
+    }
+}
+
+// =================================
+// ## 
+// =================================
+
+.player-link {
+    display: inline-block;
+    text-decoration: none;
+    margin-top: 0.10rem;
+    margin-bottom: 0.10rem;
+
+    >.v-avatar {
+        margin: 0 !important;
+    }
+
+    .avatar-img {
+        display: inline-block;
+        // width: 38px;
+        height: 39px;
+        box-sizing: border-box;
+        vertical-align: middle;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .avatar-img {
+    }
+
+    .blank-avatar {
+    }
+
+    span {
+        display: inline-block;
+        margin-left: 0.5rem;
+        font-weight: 500;
+        font-size: 1.2em;
+        letter-spacing: 1px;
     }
 }

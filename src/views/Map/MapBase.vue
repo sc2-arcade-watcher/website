@@ -4,7 +4,7 @@
         <v-card v-if="mapInfo" class="map-base-card mt-2 d-flex flex-wrap flex-md-nowrap justify-space-between" raised>
             <v-container fluid>
                 <div class="row">
-                    <v-list-item class="py-0">
+                    <v-list-item class="py-0 d-flex flex-wrap flex-sm-nowrap">
                         <v-list-item-subtitle class="d-flex flex-wrap flex-md-nowrap justify-space-between align-center mr-3">
                             <v-chip-group class="map-tags">
                                 <v-chip outlined color="primary" small>{{ mapInfo.type.replace('_', ' ') }}</v-chip>
@@ -25,16 +25,7 @@
                     <dt class="col-12 col-sm-3 col-md-2">Author</dt>
                     <dd class="col-12 col-sm-9 col-md-10">
                         <template v-if="author">
-                            <router-link
-                                :to="{ name: 'profile_base', params: { regionId: author.regionId, realmId: author.realmId, profileId: author.profileId } }"
-                                class="map-author"
-                            >
-                                <img v-if="author.avatarUrl" :src="author.avatarUrl" class="avatar-img"/>
-                                <div v-else class="blank-avatar"></div>
-
-                                <span v-if="author.discriminator === 0" v-html="`${$starc.profileHandle(author)}`"></span>
-                                <span v-else v-html="author.name"></span>
-                            </router-link>
+                            <profile-item :profile="author"/>
                         </template>
                     </dd>
 
@@ -128,9 +119,14 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
+import ProfileItem from '@/components/ProfileItem.vue';
 import { SGuard } from '../../helpers';
 
-@Component
+@Component({
+    components: {
+        ProfileItem,
+    },
+})
 export default class MapBaseView extends Vue {
     public isAccessRestricted: boolean = false;
     private mapInfo: starc.Map | null = null;
@@ -188,6 +184,15 @@ export default class MapBaseView extends Vue {
                 name: 'Stats',
                 route: {
                     name: 'map_stats', params: {
+                        regionId: this.$route.params.regionId,
+                        mapId: this.$route.params.mapId,
+                    },
+                },
+            });
+            tabs.push({
+                name: 'Player base',
+                route: {
+                    name: 'map_player_base', params: {
                         regionId: this.$route.params.regionId,
                         mapId: this.$route.params.mapId,
                     },
@@ -254,40 +259,7 @@ export default class MapBaseView extends Vue {
 <style lang="scss">
 @import '~vuetify/src/styles/settings/_variables';
 
-.map-author {
-    display: inline-block;
-
-    .avatar-img,
-    .blank-avatar {
-        display: inline-block;
-        width: 32px;
-        height: 32px;
-        box-sizing: border-box;
-        margin-right: 0.75rem;
-    }
-
-    .avatar-img,
-    .blank-avatar {
-        vertical-align: top;
-    }
-
-    .avatar-img {
-    }
-
-    .blank-avatar {
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    span {
-        display: inline-block;
-        font-weight: 500;
-        font-size: 1.2em;
-        letter-spacing: 1px;
-    }
-}
-
 .map-base-card {
-
     .row {
     }
 

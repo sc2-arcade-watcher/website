@@ -677,6 +677,17 @@ export type ProfileMostPlayedResponse = ProfileMapStats[];
 // ===
 // ===
 
+export type MapPlayerBaseParams = {
+    name?: string;
+    lastPlayedMin?: string;
+    orderBy?: string;
+    orderDirection?: string;
+}
+
+export type MapPlayerBaseResponse = CursorPaginationResult<ProfileMapStats>;
+
+// ===
+// ===
 
 export type ProfileMatchHistoryParams = ProfileBaseParams & {
     orderBy?: string;
@@ -950,6 +961,10 @@ export class StarcAPI {
 
     getMapStats(regionId: number, mapId: number, params?: StatsQueryOptions) {
         return this.axios.get<MapStatData>(`maps/${regionId}/${mapId}/stats`, { params: params });
+    }
+
+    getMapPlayerBase(regionId: number, mapId: number, params?: MapPlayerBaseParams & CursorPaginationQuery) {
+        return this.axios.get<MapPlayerBaseResponse>(`maps/${regionId}/${mapId}/player-base`, { params: params });
     }
 
     getLobbiesActive(params?: GameLobbyQueryParams) {
