@@ -77,13 +77,32 @@ dl.d-info {
         border-top: 1px dashed #333;
     }
 
+    dt:first-child, dt:first-child +dd {
+        border-top: none;
+    }
+
     dt {
-        font-weight: 600;
-        font-size: 0.9rem;
+        padding-top: 0.75rem !important;
+        font-size: 0.75rem !important;
+        font-weight: 500;
+        letter-spacing: 0.1666666667em !important;
+        line-height: 1.8rem;
+        text-transform: uppercase;
+        font-family: "Roboto", sans-serif !important;
+        text-align: right;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     dd {
         font-size: 1rem;
+    }
+
+    @media #{map-get($display-breakpoints, 'xs-only')} {
+        dt {
+            text-align: left;
+            background: rgba(#000, 0.15);
+        }
     }
 }
 
@@ -122,5 +141,32 @@ dl.d-info {
         font-weight: 500;
         font-size: 1.2em;
         letter-spacing: 1px;
+    }
+}
+
+// =================================
+// ## GAME MATCH
+// =================================
+
+.match-type span {
+    font-weight: 500 !important;
+    letter-spacing: 1px !important;
+}
+
+.match-decision {
+    &-left {
+        color: map-get($grey, 'darken-1');
+    }
+    &-win {
+        color: map-get($green, 'base');
+    }
+    &-loss {
+        color: map-get($red, 'darken-1');
+    }
+    &-tie {
+        color: map-get($blue, 'lighten-3');
+    }
+    &-observer {
+        color: map-get($blue, 'darken-2');
     }
 }

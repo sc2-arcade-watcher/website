@@ -80,9 +80,14 @@ const routes: RouteConfig[] = [
                 component: require('@/views/Map/PlayerBase.vue').default,
             },
             {
-                path: '/map/:regionId/:mapId/recent-lobbies',
-                name: 'map_recent_lobbies',
+                path: '/map/:regionId/:mapId/lobbies-history',
+                name: 'map_lobbies_history',
                 component: require('@/views/Map/MapLobbiesHistory.vue').default,
+            },
+            {
+                path: '/map/:regionId/:mapId/match-history',
+                name: 'map_match_history',
+                component: require('@/views/Map/MatchHistory.vue').default,
             },
         ],
     },

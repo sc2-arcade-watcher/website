@@ -1,6 +1,11 @@
 <template>
     <v-card class="py-2 px-2 card-t1" v-if="mapDependency">
-        <v-list-item v-for="item in mapDependency.list" :key="item.mapHeader.id" class="" dense>
+        <v-list-item
+            v-for="item in mapDependency.list"
+            :key="item.mapHeader.id"
+            class="flex-wrap flex-sm-nowrap"
+            dense
+        >
             <v-list-item-title>
                 <router-link :to="{
                     name: 'map_base',

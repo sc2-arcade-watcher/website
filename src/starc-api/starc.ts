@@ -689,6 +689,28 @@ export type MapPlayerBaseResponse = CursorPaginationResult<ProfileMapStats>;
 // ===
 // ===
 
+export type MapBaseParams = {
+    regionId: number;
+    mapId: number;
+}
+
+export type MapMatchHistoryParams = MapBaseParams & {
+    orderBy?: string;
+    orderDirection?: string;
+}
+
+export type MapMatchEntry = {
+    date: Date;
+    type: MatchType;
+    decision: MatchDecision;
+    profile?: Profile;
+};
+
+export type MapMatchHistoryResponse = CursorPaginationResult<MapMatchEntry>;
+
+// ===
+// ===
+
 export type ProfileMatchHistoryParams = ProfileBaseParams & {
     orderBy?: string;
     orderDirection?: string;
@@ -727,6 +749,10 @@ export type ProfileMatchEntry = {
     type: MatchType;
     decision: MatchDecision;
     map?: Map;
+    names?: {
+        locale: GameLocale;
+        name: string;
+    }[];
 };
 
 export type ProfileMatchHistoryResponse = CursorPaginationResult<ProfileMatchEntry>;
@@ -851,6 +877,10 @@ export class StarcAPI {
         };
     }
 
+    profileAvatarUrl(id: string) {
+        return `https://static.starcraft2.com/starport/d0e7c831-18ab-4cd6-adc7-9d4a28f49ec7/portraits/${id}.jpg`;
+    }
+
     battleMapLink(regionId: number, mapId: number) {
         return `battlenet:://starcraft/map/${regionId}/${mapId}`;
     }
@@ -965,6 +995,13 @@ export class StarcAPI {
 
     getMapPlayerBase(regionId: number, mapId: number, params?: MapPlayerBaseParams & CursorPaginationQuery) {
         return this.axios.get<MapPlayerBaseResponse>(`maps/${regionId}/${mapId}/player-base`, { params: params });
+    }
+
+    getMapMatchHistory(params: MapMatchHistoryParams & CursorPaginationQuery) {
+        const qp = Object.assign({}, params);
+        delete qp.regionId;
+        delete qp.mapId;
+        return this.axios.get<MapMatchHistoryResponse>(`maps/${params.regionId}/${params.mapId}/match-history`, { params: qp });
     }
 
     getLobbiesActive(params?: GameLobbyQueryParams) {

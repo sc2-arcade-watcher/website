@@ -31,7 +31,7 @@
                     dense
                 >
                     <v-list-item-avatar rounded>
-                        <img :src="profile.avatarUrl" alt="">
+                        <img :src="$starc.profileAvatarUrl(profile.avatar)"/>
                     </v-list-item-avatar>
 
                     <v-list-item-content>

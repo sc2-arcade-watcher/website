@@ -11,7 +11,7 @@
             <v-list-item-avatar
                 tile
             >
-                <v-img v-if="profile.avatarUrl" :src="profile.avatarUrl" class="avatar-img" cover/>
+                <v-img v-if="profile.avatar" :src="$starc.profileAvatarUrl(profile.avatar)" class="avatar-img" cover/>
                 <v-avatar
                     v-else
                     class="blank-avatar"
@@ -54,10 +54,3 @@ export default class ProfileItem extends Vue {
     }
 }
 </script>
-
-<style lang="scss" scoped>
-@import '~vuetify/src/styles/settings/_index';
-
-.profile-item {
-}
-</style>

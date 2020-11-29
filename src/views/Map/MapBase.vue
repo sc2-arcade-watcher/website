@@ -1,26 +1,8 @@
 <template>
     <div>
         <h2 class="display-1" v-if="mapInfo">{{ mapInfo.name }}</h2>
-        <v-card v-if="mapInfo" class="map-base-card mt-2 d-flex flex-wrap flex-md-nowrap justify-space-between" raised>
-            <v-container fluid>
-                <div class="row">
-                    <v-list-item class="py-0 d-flex flex-wrap flex-sm-nowrap">
-                        <v-list-item-subtitle class="d-flex flex-wrap flex-md-nowrap justify-space-between align-center mr-3">
-                            <v-chip-group class="map-tags">
-                                <v-chip outlined color="primary" small>{{ mapInfo.type.replace('_', ' ') }}</v-chip>
-                                <v-chip outlined color="blue-grey darken-2" small v-if="mapInfo.currentVersion.isPrivate">Private</v-chip>
-                            </v-chip-group>
-                            &nbsp;
-                            <v-btn small outlined text :href="$starc.battleMapLink(mapInfo.regionId, mapInfo.bnetId)">
-                                {{ $starc.battleMapLink(mapInfo.regionId, mapInfo.bnetId) }}
-                            </v-btn>
-                        </v-list-item-subtitle>
-                        <v-list-item-action-text class="justify-sm-end" style="min-width: 80px;">
-                            v{{ mapInfo.currentVersion.majorVersion }}.{{ mapInfo.currentVersion.minorVersion }}
-                            <v-img class="d-inline-block float-right" :src="require(`../../assets/region-${mapInfo.regionId}.png`)" width="20" height="20" />
-                        </v-list-item-action-text>
-                    </v-list-item>
-                </div>
+        <v-card v-if="mapInfo" class="map-base-card mt-2" raised>
+            <v-container fluid class="base-left">
                 <dl class="d-info row">
                     <dt class="col-12 col-sm-3 col-md-2">Author</dt>
                     <dd class="col-12 col-sm-9 col-md-10">
@@ -32,13 +14,20 @@
                     <template v-if="mapInfo.type === 'arcade_map'">
                         <dt class="col-12 col-sm-3 col-md-2">Genre</dt>
                         <dd class="col-12 col-sm-9 col-md-10">
-                            {{ mapCategory.name }}
+                            <span class="overline font-weight-bold primary--text text--lighten-1">
+                                {{ mapCategory.name }}
+                            </span>
                         </dd>
                     </template>
 
                     <template v-if="mapInfo.type === 'arcade_map' || mapInfo.type === 'melee_map'">
-                        <dt class="col-12 col-sm-3 col-md-2">Max players</dt>
-                        <dd class="col-12 col-sm-9 col-md-10">{{ mapInfo.maxPlayers }}</dd>
+                        <dt class="col-12 col-sm-3 col-md-2">
+                            Max players
+                        </dt>
+                        <dd class="col-12 col-sm-9 col-md-10">
+                            <v-icon small left>fas fa-users</v-icon>
+                            <span class="green--text text--lighten-2 font-weight-bold overline v-middle" style="font-size: 1em !important">{{ mapInfo.maxPlayers }}</span>
+                        </dd>
                     </template>
 
                     <dt class="col-12 col-sm-3 col-md-2">Description</dt>
@@ -47,16 +36,19 @@
                     </dd>
 
                     <template v-if="mapInfo.website">
-                        <dt class="col-12 col-sm-3 col-md-2">Website</dt>
+                        <dt class="col-12 col-sm-3 col-md-2">
+                            Website
+                        </dt>
                         <dd class="col-12 col-sm-9 col-md-10">
-                            <v-btn color="primary" small outlined :href="mapInfo.website" target="_blank">
-                                <v-icon small left>fas fa-globe</v-icon>
+                            <v-icon small left>fas fa-globe</v-icon>
+                            <v-btn class="pl-1 pr-1" color="primary lighten-1" small text :href="mapInfo.website" target="_blank">
                                 {{ mapInfo.website }}
                             </v-btn>
                         </dd>
                     </template>
                 </dl>
             </v-container>
+
             <div class="details-right py-2 px-2">
                 <div class="map-icon">
                     <img class="d-block" :src="$starc.depotImage(mapInfo.iconHash, mapInfo.regionId).url"/>
@@ -82,6 +74,23 @@
                     </div>
                 </div>
             </div>
+
+            <v-list-item class="map-panel py-0 d-flex flex-wrap flex-sm-nowrap">
+                <v-list-item-subtitle class="d-flex flex-wrap flex-md-nowrap justify-space-between align-center mr-3">
+                    <v-chip-group class="map-tags">
+                        <v-chip outlined color="primary" small>{{ mapInfo.type.replace('_', ' ') }}</v-chip>
+                        <v-chip outlined color="blue-grey darken-2" small v-if="mapInfo.currentVersion.isPrivate">Private</v-chip>
+                    </v-chip-group>
+                    &nbsp;
+                    <v-btn small outlined text :href="$starc.battleMapLink(mapInfo.regionId, mapInfo.bnetId)">
+                        {{ $starc.battleMapLink(mapInfo.regionId, mapInfo.bnetId) }}
+                    </v-btn>
+                </v-list-item-subtitle>
+                <v-list-item-action-text class="justify-sm-end" style="min-width: 80px;">
+                    v{{ mapInfo.currentVersion.majorVersion }}.{{ mapInfo.currentVersion.minorVersion }}
+                    <v-img class="d-inline-block float-right" :src="require(`../../assets/region-${mapInfo.regionId}.png`)" width="20" height="20" />
+                </v-list-item-action-text>
+            </v-list-item>
         </v-card>
 
         <v-tabs
@@ -199,9 +208,18 @@ export default class MapBaseView extends Vue {
                 },
             });
             tabs.push({
-                name: 'Recent lobbies',
+                name: 'Lobbies history',
                 route: {
-                    name: 'map_recent_lobbies', params: {
+                    name: 'map_lobbies_history', params: {
+                        regionId: this.$route.params.regionId,
+                        mapId: this.$route.params.mapId,
+                    },
+                },
+            });
+            tabs.push({
+                name: 'Match history',
+                route: {
+                    name: 'map_match_history', params: {
                         regionId: this.$route.params.regionId,
                         mapId: this.$route.params.mapId,
                     },
@@ -224,6 +242,7 @@ export default class MapBaseView extends Vue {
     private async created() {
         await this.loadMap();
         if (this.$route.name === 'map_base') {
+            this.$vuetify.goTo(this.$parent);
             await this.$router.replace({
                 name: 'map_details',
                 params: {
@@ -260,6 +279,11 @@ export default class MapBaseView extends Vue {
 @import '~vuetify/src/styles/settings/_variables';
 
 .map-base-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    //  d-flex flex-wrap flex-md-nowrap justify-space-between
+
     .row {
     }
 
@@ -273,8 +297,15 @@ export default class MapBaseView extends Vue {
         font-weight: 500;
     }
 
+    .base-left {
+        display: flex;
+        flex-grow: 1;
+        max-width: 75%;
+    }
+
     .details-right {
         display: flex;
+        flex-grow: 1;
         align-items: flex-end;
         justify-content: center;
         flex-direction: column;
@@ -292,6 +323,13 @@ export default class MapBaseView extends Vue {
         }
     }
 
+    .map-panel {
+        flex-grow: 1;
+        flex-basis: 100%;
+        order: 3;
+        flex-basis: 0;
+    }
+
     .map-icon {
         display: flex;
         flex-grow: 1;
@@ -304,6 +342,18 @@ export default class MapBaseView extends Vue {
         }
     }
 
+    @media #{map-get($display-breakpoints, 'lg-and-down')} {
+        .base-left {
+            max-width: 70%;
+        }
+
+        .map-icon {
+            img {
+                max-width: 320px;
+            }
+        }
+    }
+
     @media #{map-get($display-breakpoints, 'md-and-down')} {
         .details-right {
             flex-grow: 1;
@@ -311,9 +361,36 @@ export default class MapBaseView extends Vue {
 
         .map-icon {
             img {
+                max-width: 250px;
+            }
+        }
+    }
+
+    @media #{map-get($display-breakpoints, 'sm-and-down')} {
+        .base-left {
+            max-width: none;
+        }
+
+        .map-icon {
+            width: 100%;
+
+            img {
+                margin: 0 auto;
                 max-width: 100%;
             }
         }
+
+        // .details-right {
+        //     order: 1;
+        // }
+
+        // .map-panel {
+        //     order: 2;
+        // }
+
+        // .base-left {
+        //     order: 3;
+        // }
     }
 }
 </style>

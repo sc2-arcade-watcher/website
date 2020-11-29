@@ -38,6 +38,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import * as starc from '@/starc-api/starc';
+import { SGuard } from '../helpers';
 
 @Component
 export default class StatsView extends Vue {
@@ -146,14 +147,15 @@ export default class StatsView extends Vue {
         return opts;
     }
 
+    @SGuard()
     private async refresh() {
         this.regionStats = (await this.$starc.getStatsRegions({
             kind: this.periodItem as keyof typeof starc.StatsPeriodKind,
         })).data;
     }
 
-    private created() {
-        this.refresh();
+    private async created() {
+        await this.refresh();
     }
 
     private chartInit(chart: Highcharts.Chart) {

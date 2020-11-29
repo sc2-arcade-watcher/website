@@ -18,14 +18,19 @@ export function formatBytes(bytes: number, decimals = 2) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-const reURL = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g;
+const reURL = /(http(s)?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g;
+const reMail = /^\S+@\S+$/;
+const reURLWithScheme = /^([a-z]+:)?\/\//i;
 
 export function formatDescription(s: string) {
     s = s.trim().replace(/\n/g, '<br>');
     s = s.replace(reURL, (substring) => {
         let href = substring;
-        if (!href.startsWith('http')) {
-            href = `//${href}`;
+        if (href.match(reMail)) {
+            href = `mailto:${href}`;
+        }
+        else if (!href.match(reURLWithScheme)) {
+            href = `http://${href}`;
         }
         return `<a href="${href}" target="_blank">${substring}</a>`;
     });
