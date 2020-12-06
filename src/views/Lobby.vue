@@ -34,34 +34,15 @@
                 </v-card>
 
                 <v-subheader class="overline">Slots</v-subheader>
-                <v-list subheader v-for="currTeam in teamSlots" :key="currTeam.team" dense>
+                <v-list subheader v-for="currTeam in teamSlots" :key="currTeam.team">
                     <v-subheader class="overline" style="height: 26px; background: rgba(255,255,255,0.05);">{{ currTeam.name }}</v-subheader>
                     <v-list-item v-for="currSlot in currTeam.slots" :key="currSlot.slotNumber">
-                        <v-list-item-avatar tile v-if="false && currSlot.kind === 'human'" style="border: 1px solid rgba(255,255,255,0.1);">
-                            <v-img v-if="currSlot.profile && currSlot.profile.avatarUrl" :src="currSlot.profile.avatarUrl"></v-img>
-                            <v-avatar
-                                v-else
-                                color="grey darken-3"
-                                tile
-                            >
-                                <v-icon dark>
-                                    mdi-account-question
-                                </v-icon>
-                            </v-avatar>
-                        </v-list-item-avatar>
-
                         <v-list-item-title v-if="currSlot.kind === 'human'">
                             <span v-if="!currSlot.profile">{{ currSlot.name }}</span>
-                            <router-link
-                                v-if="currSlot.profile"
-                                :to="{ name: 'profile_base', params: {
-                                    regionId: currSlot.profile.regionId,
-                                    realmId: currSlot.profile.realmId,
-                                    profileId: currSlot.profile.profileId,
-                                }}"
-                            >{{ currSlot.profile.name }}</router-link>
-                            <span v-if="currSlot.name === lobby.hostName"> (host)</span>
+                            <profile-item v-if="currSlot.profile" :profile="currSlot.profile"/>
+                            <span v-if="currSlot.name === lobby.hostName" class="overline"> (host)</span>
                         </v-list-item-title>
+
                         <v-list-item-subtitle v-text="currSlot.kind.toUpperCase()"/>
                     </v-list-item>
                 </v-list>
@@ -131,6 +112,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import MapItem from '@/components/MapItem.vue';
+import ProfileItem from '@/components/ProfileItem.vue';
 import * as starc from '@/starc-api/starc';
 import { SGuard } from '../helpers';
 
@@ -144,6 +126,7 @@ interface LobbyEvent {
 @Component({
     components: {
         MapItem,
+        ProfileItem,
     },
 })
 export default class LobbyView extends Vue {
@@ -256,6 +239,10 @@ export default class LobbyView extends Vue {
 
 .game-lobby-view {
     max-width: 1500px;
+
+    .profile-item {
+        display: inline-block;
+    }
 }
 
 .lobby-status {

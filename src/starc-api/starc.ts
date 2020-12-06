@@ -574,6 +574,7 @@ export interface GameLobbyData {
 
     lobbyTitle: string;
     hostName: string;
+    hostProfile?: Profile;
     slots?: GameLobbySlot[];
     joinHistory?: GameLobbyPlayerJoin[];
     titleHistory?: GameLobbyTitleRecord[];
@@ -832,6 +833,8 @@ function strToDate(data: any) {
             }
             else if (typeof data[key] === 'string') {
                 switch (key) {
+                    case 'closedAt':
+                    case 'createdAt':
                     case 'date':
                     case 'lastPlayedAt': {
                         data[key] = new Date(data[key]);
@@ -902,10 +905,10 @@ export class StarcAPI {
             region = GameRegion[region].toLowerCase() as DepotRegion;
         }
         if (region === 'cn') {
-            return `http://${region}.depot.battlenet.com.cn:1119/${hash}.${filetype}`;
+            return `http://${region}-s2-depot.battlenet.com.cn/${hash}.${filetype}`;
         }
         else {
-            return `http://${region}.depot.battle.net:1119/${hash}.${filetype}`;
+            return `http://${region}-s2-depot.classic.blizzard.com/${hash}.${filetype}`;
         }
     }
 
@@ -1005,7 +1008,12 @@ export class StarcAPI {
     }
 
     getLobbiesActive(params?: GameLobbyQueryParams) {
-        return this.axios.get<GameLobbyData[]>(`lobbies/active`, { params: params });
+        const transformers: AxiosTransformer[] = [].concat(this.axios.defaults.transformResponse as any);
+        transformers.push(strToDate);
+        return this.axios.get<GameLobbyData[]>(`lobbies/active`, {
+            params: params,
+            transformResponse: transformers
+        });
     }
 
     getLobbyDetails(regionId: number, bnetBucketId: number, bnetRecordId: number) {
