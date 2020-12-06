@@ -10,14 +10,36 @@ const routes: RouteConfig[] = [
         component: require('@/views/Home.vue').default,
     },
     {
+        path: '/info',
+        name: 'info',
+        component: require('@/views/Info/Base.vue').default,
+        children: [
+            {
+                path: 'about',
+                name: 'info_about',
+                component: require('@/views/Info/About.vue').default,
+            },
+            {
+                path: 'donate',
+                name: 'info_donate',
+                component: require('@/views/Info/Donate.vue').default,
+            },
+            {
+                path: 'discord-bot',
+                name: 'info_discord_bot',
+                component: require('@/views/Info/DiscordBot.vue').default,
+            },
+            {
+                path: 'contact',
+                name: 'info_contact',
+                component: require('@/views/Info/Contact.vue').default,
+            },
+        ],
+    },
+    {
         path: '/open-lobbies',
         name: 'open_lobbies',
         component: require('@/views/OpenLobbies.vue').default,
-    },
-    {
-        path: '/about',
-        name: 'about',
-        component: require('@/views/About.vue').default,
     },
     {
         path: '/account',
@@ -139,7 +161,16 @@ const router = new VueRouter({
         if (savedPosition) {
             return savedPosition
         }
-    }
-})
+    },
+});
+
+const DEFAULT_TITLE = 'StarCraft II Arcade database';
+router.afterEach((to, from) => {
+    // Use next tick to handle router history correctly
+    // see: https://github.com/vuejs/vue-router/issues/914#issuecomment-384477609
+    Vue.nextTick(() => {
+        document.title = to.meta?.title ?? DEFAULT_TITLE;
+    });
+});
 
 export default router

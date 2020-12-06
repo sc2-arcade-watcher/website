@@ -35,6 +35,24 @@
                                         {{ item.map.name }}
                                     </v-btn>
                                 </template>
+                                <template v-else-if="item.names && item.names.length">
+                                    <v-tooltip top transition="fade-transition">
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <span v-bind="attrs" v-on="on" class="grey--text body-1">
+                                                {{ item.names[0].name }}
+                                            </span>
+                                        </template>
+                                        <span>
+                                            <span class="d-block" v-for="mname in item.names" :key="mname.locale">
+                                                {{ mname.name }}
+                                                <span class="ml-3 font-weight-light float-right">{{ mname.locale }}</span>
+                                            </span>
+                                        </span>
+                                    </v-tooltip>
+                                </template>
+                                <template v-else>
+                                    <span class="grey--text body-1">(unknown)</span>
+                                </template>
                             </td>
                             <td class="match-type">
                                 <span class="text--secondary overline">{{ item.type }}</span>
@@ -127,7 +145,7 @@ import ProfileBaseView from './Base.vue';
 
 @Component
 export default class ProfileMatchHistoryView extends Vue {
-    private itemsPerPageArray = [20, 40, 60, 80, 100, 150, 200];
+    private itemsPerPageArray = [25, 50, 100, 100, 200];
     private currentPaginationParams!: starc.CursorPaginationQuery;
     private matchHistoryResponse: starc.ProfileMatchHistoryResponse | null = null;
 
@@ -200,29 +218,3 @@ export default class ProfileMatchHistoryView extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
-@import '~vuetify/src/styles/settings/_index';
-
-.match-type span {
-    font-weight: 500 !important;
-    letter-spacing: 1px !important;
-}
-
-.match-decision {
-    &-left {
-        color: map-get($grey, 'darken-1');
-    }
-    &-win {
-        color: map-get($green, 'base');
-    }
-    &-loss {
-        color: map-get($red, 'darken-1');
-    }
-    &-tie {
-        color: map-get($blue, 'lighten-3');
-    }
-    &-observer {
-        color: map-get($blue, 'darken-2');
-    }
-}
-</style>

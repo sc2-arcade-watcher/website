@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import * as dfns from 'date-fns';
 import { TYPE } from 'vue-toastification';
 import { AxiosError } from 'axios';
 
@@ -35,6 +36,31 @@ export function formatDescription(s: string) {
         return `<a href="${href}" target="_blank">${substring}</a>`;
     });
     return s;
+}
+
+export function formatDateDistanceToNow(d1: Date, options: { precisionLevel: number }) {
+    const d2 = new Date();
+    const secsDiff = (d2.getTime() - d1.getTime()) / 1000.0;
+    const out: string[] = [];
+
+    // if (secsDiff < 3600 || options?.includeSeconds) {
+    // }
+    out.push(`${(secsDiff % 60).toFixed(0).padStart(2, '0')}s`);
+
+    if (secsDiff >= 60) {
+        out.push(`${(secsDiff % 3600 / 60).toFixed(0).padStart(2, '0')}m`);
+    }
+    if (secsDiff >= 3600) {
+        out.push(`${(secsDiff % 86400 / 3600).toFixed(0).padStart(2, '0')}h`);
+    }
+    if (secsDiff >= 86400) {
+        out.push(`${(secsDiff / 86400).toFixed(0).padStart(2, '0')}d`);
+    }
+
+    return out.reverse().slice(0, Math.min(options?.precisionLevel ?? 2, out.length)).join(' ');
+    // return dfns.formatDistanceStrict(d1, d2, {
+    //     locale:
+    // })
 }
 
 export function isPromise(val: any): val is Promise<any> {

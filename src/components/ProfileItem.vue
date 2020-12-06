@@ -25,8 +25,8 @@
             </v-list-item-avatar>
             <span v-if="profile.name" v-html="profile.name"/>
             <span v-else v-html="`${$starc.profileHandle(author)}`"/>
+            <small v-if="showDiscriminator && profile.discriminator" v-html="`#${profile.discriminator}`" class="grey--text"></small>
         </router-link>
-        <small v-if="showDiscriminator && profile.discriminator" v-html="`#${profile.discriminator}`" class="grey--text"></small>
     </div>
 </template>
 

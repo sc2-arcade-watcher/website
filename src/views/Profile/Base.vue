@@ -1,42 +1,46 @@
 <template>
     <div>
-        <v-card v-if="profile" class="profile-card" raised>
-            <div class="d-flex flex-wrap flex-md-nowrap justify-space-between">
-                <div class="avatar-wrapper mr-3">
-                    <img
-                        class="avatar-img"
-                        v-if="profile.avatarUrl"
-                        :src="profile.avatarUrl"
-                    />
-                </div>
-                <div class="profile-head flex-grow-1">
-                    <h1 class="h1 font-weight-regular">
-                        <span v-if="profile.name">{{ profile.name }}</span>
-                        <span v-else>[ DELETED ]</span>
-                        <small v-if="profile.discriminator" v-html="`#${profile.discriminator}`" class="grey--text"></small>
-                        <v-img class="d-inline-block my-2 float-right" :src="require(`@/assets/region-${profile.regionId}.png`)" width="24" height="24" />
-                    </h1>
-                    <p class="mb-0"><a :href="sc2ProfileURL" target="_blank">See on StarCraft2.com</a></p>
-                    <dl class="d-info row">
-                        <dt class="col-12 col-sm-3 col-md-2">Profile handle</dt>
-                        <dd class="col-12 col-sm-9 col-md-10">
-                            <span>{{ $starc.profileHandle(profile) }}</span>
-                        </dd>
-                        <dt class="col-12 col-sm-3 col-md-2">Last seen online</dt>
-                        <dd class="col-12 col-sm-9 col-md-10">
-                            <v-tooltip top transition="fade-transition">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <span class="font-weight-light" v-bind="attrs" v-on="on">
-                                        {{ $dfns.formatDistanceStrict(new Date(profile.lastOnlineAt), new Date(), {
-                                            addSuffix: true,
-                                            roundingMethod: 'floor'}) }}
-                                    </span>
-                                </template>
-                                <span>{{ $dfns.formatISO9075(new Date(profile.lastOnlineAt), { representation: 'complete' }) }}</span>
-                            </v-tooltip>
-                        </dd>
-                    </dl>
-                </div>
+        <v-card v-if="profile" class="profile-card d-flex flex-wrap flex-md-nowrap" raised>
+            <div class="avatar-wrapper">
+                <img
+                    class="avatar-img"
+                    v-if="profile.avatar"
+                    :src="$starc.profileAvatarUrl(profile.avatar)"
+                />
+            </div>
+            <div class="profile-head flex-grow-1">
+                <h1 class="h1 font-weight-regular">
+                    <span v-if="profile.name">{{ profile.name }}</span>
+                    <span v-else>[ DELETED ]</span>
+                    <small v-if="profile.discriminator" v-html="`#${profile.discriminator}`" class="grey--text"></small>
+                    <v-img class="d-inline-block my-2 float-right" :src="require(`@/assets/region-${profile.regionId}.png`)" width="24" height="24" />
+                </h1>
+                <p class="mb-0">
+                    <v-btn color="primary" small outlined text :href="sc2ProfileURL" target="_blank">
+                        See on StarCraft2.com
+                    </v-btn>
+                </p>
+            </div>
+            <div class="profile-details">
+                <dl class="d-info row">
+                    <dt class="col-12 col-sm-4 col-md-3">Profile handle</dt>
+                    <dd class="col-12 col-sm-8 col-md-9">
+                        <span>{{ $starc.profileHandle(profile) }}</span>
+                    </dd>
+                    <dt class="col-12 col-sm-4 col-md-3">Last seen online</dt>
+                    <dd class="col-12 col-sm-8 col-md-9">
+                        <v-tooltip top transition="fade-transition">
+                            <template v-slot:activator="{ on, attrs }">
+                                <span class="font-weight-light" v-bind="attrs" v-on="on">
+                                    {{ $dfns.formatDistanceStrict(new Date(profile.lastOnlineAt), new Date(), {
+                                        addSuffix: true,
+                                        roundingMethod: 'floor'}) }}
+                                </span>
+                            </template>
+                            <span>{{ $dfns.formatISO9075(new Date(profile.lastOnlineAt), { representation: 'complete' }) }}</span>
+                        </v-tooltip>
+                    </dd>
+                </dl>
             </div>
         </v-card>
 
@@ -116,7 +120,7 @@ export default class ProfileBaseView extends Vue {
     }
 
     private get sc2ProfileURL() {
-        return `https://starcraft2.com/en-us/profile/${this.profile!.regionId}/${this.profile!.realmId}/${this.profile!.profileId}`;
+        return `https://starcraft2.com/profile/${this.profile!.regionId}/${this.profile!.realmId}/${this.profile!.profileId}`;
     }
 
     @SGuard()
@@ -155,7 +159,30 @@ export default class ProfileBaseView extends Vue {
 
 <style lang="scss">
 .profile-card {
+    overflow: hidden;
+
+    >div {
+        margin-right: 1rem;
+    }
+
+    .avatar-wrapper,
+    .profile-details {
+        display: flex;
+        align-items: center;
+    }
+
     .avatar-wrapper {
+        img {
+            display: block;
+        }
+    }
+
+    .profile-head {
+        max-width: 340px;
+    }
+
+    .profile-details {
+        flex-grow: 1;
     }
 }
 </style>

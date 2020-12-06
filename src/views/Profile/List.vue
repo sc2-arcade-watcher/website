@@ -195,6 +195,10 @@ export default class ProfileListView extends Vue {
         { value: 'lastOnlineAt,asc', text: 'Last online: Oldest' },
         { value: 'name,asc', text: 'Name: A-Z' },
         { value: 'name,desc', text: 'Name: Z-A' },
+        { value: 'profileId,asc', text: 'Profile ID: Lowest' },
+        { value: 'profileId,desc', text: 'Profile ID: Highest' },
+        { value: 'id,asc', text: 'Internal DB ID: Lowest' },
+        { value: 'id,desc', text: 'Internal DB ID: Highest' },
     ];
     private sortByValue!: string;
 

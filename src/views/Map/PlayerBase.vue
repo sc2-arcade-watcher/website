@@ -1,4 +1,3 @@
-
 <template>
     <v-card class="card-t1">
         <v-card-text class="py-1">
@@ -100,13 +99,19 @@
                         <tr>
                             <th class="overline px-0"></th>
                             <th class="overline">Player</th>
-                            <th class="overline">
-                                <abbr title="number of joined Public Lobbies (% of started)">PL (s)</abbr>
+                            <th class="overline text-right">
+                                <abbr title="time spent waiting in lobbies">TSWL</abbr>
                             </th>
-                            <th class="overline">
-                                <abbr title="number of Hosted Public Lobbies (% of started)">HPL (s)</abbr>
+                            <th class="overline text-right">
+                                <abbr title="number of joined Public Lobbies">PL</abbr>
                             </th>
-                            <th class="overline">Last played</th>
+                            <th class="overline text-right">
+                                <abbr title="Time spent waiting in Self Hosted Lobbies">TSHL</abbr>
+                            </th>
+                            <th class="overline text-right">
+                                <abbr title="number of Hosted Public Lobbies">HPL</abbr>
+                            </th>
+                            <th class="overline text-right">Last played</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,30 +122,54 @@
                             <td>
                                 <profile-item :profile="item.profile"/>
                             </td>
-                            <td>
-                                <span class="body-1 font-weight-bold red--text text--lighten-2">
-                                    {{ item.lobbiesJoined }}
-                                    <small
-                                        class="font-weight-regular v-top"
-                                        v-if="item.lobbiesStarted > 0"
-                                        v-html="'(' + (item.lobbiesStarted / item.lobbiesJoined * 100).toFixed(0) + '%)'"
-                                    />
+                            <td class="text-right">
+                                <span class="text--secondary">
+                                    {{ formatRelativeTime(item.timeSpentWaiting) }}
                                 </span>
                             </td>
-                            <td>
-                                <span class="body-1 font-weight-bold lime--text text--lighten-2">
-                                    {{ item.lobbiesHosted }}
-                                    <small
-                                        class="font-weight-regular v-top"
-                                        v-if="item.lobbiesHostedStarted > 0"
-                                        v-html="'(' + (item.lobbiesHostedStarted / item.lobbiesHosted * 100).toFixed(0) + '%)'"
-                                    />
-                                </span>
-                            </td>
-                            <td>
+                            <td class="text-right">
                                 <v-tooltip top transition="fade-transition">
                                     <template v-slot:activator="{ on, attrs }">
-                                        <span class="font-weight-light" v-bind="attrs" v-on="on">
+                                        <span class="body-1 font-weight-bold red--text text--lighten-2" v-bind="attrs" v-on="on">
+                                            {{ item.lobbiesJoined }}
+                                        </span>
+                                    </template>
+                                    <span>
+                                        <span
+                                            class="red--text text--lighten-2"
+                                            v-if="item.lobbiesStarted > 0"
+                                            v-html="(item.lobbiesStarted / item.lobbiesJoined * 100).toFixed(1) + '% of which have started'"
+                                        />
+                                    </span>
+                                </v-tooltip>
+                            </td>
+                            <td class="text-right">
+                                <span class="text--secondary">
+                                    {{ formatRelativeTime(item.timeSpentWaitingAsHost) }}
+                                </span>
+                            </td>
+                            <td class="text-right">
+                                <v-tooltip top transition="fade-transition">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <span class="body-1 font-weight-bold lime--text text--lighten-2" v-bind="attrs" v-on="on">
+                                            {{ item.lobbiesHosted }}
+                                        </span>
+                                    </template>
+                                    <span>
+                                        <span
+                                            class="lime--text text--lighten-2"
+                                            v-if="item.lobbiesHostedStarted > 0"
+                                        >
+                                            <strong>{{ (item.lobbiesHostedStarted / item.lobbiesHosted * 100).toFixed(1) }}%</strong>
+                                            of which have started
+                                        </span>
+                                    </span>
+                                </v-tooltip>
+                            </td>
+                            <td class="text-right">
+                                <v-tooltip top transition="fade-transition">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <span class="font-weight-light blue--text text--lighten-3" v-bind="attrs" v-on="on">
                                             {{ $dfns.formatDistanceStrict(new Date(item.lastPlayedAt), new Date(), {
                                                 addSuffix: true,
                                                 roundingMethod: 'floor'}) }}
@@ -242,6 +271,13 @@ export default class MapPlayerBaseView extends Vue {
     ];
     private sortByValue!: string;
     private menuLastPlayedMin: boolean = false;
+
+    private formatRelativeTime(seconds: number) {
+        if (seconds <= 0) return 'none';
+        return this.$dfns.formatDistance(new Date(), this.$dfns.addSeconds(new Date(), seconds), {
+            includeSeconds: true,
+        });
+    }
 
     @SGuard()
     private async refreshList() {

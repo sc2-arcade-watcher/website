@@ -72,6 +72,14 @@
     vertical-align: middle;
 }
 
+.img-fluid {
+    max-width: 100%;
+}
+
+.clear {
+    clear: both;
+}
+
 dl.d-info {
     dt, dd {
         border-top: 1px dashed #333;
@@ -110,8 +118,12 @@ dl.d-info {
 // ## 
 // =================================
 
+.profile-item {
+
+}
+
 .player-link {
-    display: inline-block;
+    white-space: nowrap;
     text-decoration: none;
     margin-top: 0.10rem;
     margin-bottom: 0.10rem;
@@ -139,8 +151,29 @@ dl.d-info {
         display: inline-block;
         margin-left: 0.5rem;
         font-weight: 500;
-        font-size: 1.2em;
-        letter-spacing: 1px;
+        font-size: 1.1em;
+        letter-spacing: 0.3px;
+    }
+}
+
+.profile-item.small .player-link {
+    margin-top: 0;
+    margin-bottom: 0;
+    
+    .v-avatar {
+        height: 28px !important;
+        min-width: 28px !important;
+        width: 28px !important;
+    }
+
+    .avatar-img {
+        height: 28px;
+    }
+
+    span {
+        margin-left: 0.3rem;
+        font-size: 0.9em;
+        letter-spacing: 0;
     }
 }
 
@@ -168,5 +201,19 @@ dl.d-info {
     }
     &-observer {
         color: map-get($blue, 'darken-2');
+    }
+}
+
+// =================================
+// ## INFO
+// =================================
+
+.info-p {
+    h2.headline:not(:last-child) {
+        margin-bottom: 1rem;
+    }
+
+    h3.headline:not(:last-child) {
+        margin-bottom: 1rem;
     }
 }

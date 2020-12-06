@@ -5,7 +5,7 @@
         </v-overlay>
 
         <v-app-bar
-            class="d-none d-sm-block flex-grow-0"
+            class="d-none d-md-block flex-grow-0"
         >
             <router-link :to="{ name: 'home' }">
                 <div class="d-flex align-center">
@@ -30,18 +30,22 @@
             </router-link>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-                <v-btn
+                <template
                     v-for="(item, i) in nav"
-                    :key="i"
-                    :to="item.location"
-                    text
-                >{{ item.text }}</v-btn>
+                >
+                    <v-btn
+                        :key="i"
+                        :to="item.location"
+                        text
+                    >{{ item.text }}</v-btn>
+                    <v-divider vertical :key="`d${i}`" v-if="i < nav.length - 1"/>
+                </template>
             </v-toolbar-items>
             <user-nav/>
         </v-app-bar>
 
         <v-app-bar
-            class="d-block d-sm-none flex-grow-0"
+            class="d-block d-md-none flex-grow-0"
             dense
         >
             <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
@@ -170,9 +174,16 @@ export default class App extends Vue {
         },
         {
             icon: null,
-            text: 'Global stats',
+            text: 'Stats',
             location: {
                 name: 'stats',
+            },
+        },
+        {
+            icon: null,
+            text: 'About',
+            location: {
+                name: 'info_about',
             },
         },
     ];

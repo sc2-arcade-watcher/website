@@ -37,7 +37,7 @@
                 <v-list subheader v-for="currTeam in teamSlots" :key="currTeam.team" dense>
                     <v-subheader class="overline" style="height: 26px; background: rgba(255,255,255,0.05);">{{ currTeam.name }}</v-subheader>
                     <v-list-item v-for="currSlot in currTeam.slots" :key="currSlot.slotNumber">
-                        <v-list-item-avatar tile v-if="currSlot.kind === 'human'" style="border: 1px solid rgba(255,255,255,0.1);">
+                        <v-list-item-avatar tile v-if="false && currSlot.kind === 'human'" style="border: 1px solid rgba(255,255,255,0.1);">
                             <v-img v-if="currSlot.profile && currSlot.profile.avatarUrl" :src="currSlot.profile.avatarUrl"></v-img>
                             <v-avatar
                                 v-else
