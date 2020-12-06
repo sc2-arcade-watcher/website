@@ -241,16 +241,6 @@ export default class MapBaseView extends Vue {
 
     private async created() {
         await this.loadMap();
-        if (this.$route.name === 'map_base') {
-            this.$vuetify.goTo(this.$parent);
-            await this.$router.replace({
-                name: 'map_details',
-                params: {
-                    regionId: this.$route.params.regionId,
-                    mapId: this.$route.params.mapId,
-                },
-            });
-        }
     }
 
     @Watch('$route')
@@ -261,15 +251,6 @@ export default class MapBaseView extends Vue {
             this.mapInfo.bnetId !== Number(this.$route.params.mapId)
         ) {
             await this.loadMap();
-            if (this.$route.name === 'map_base') {
-                await this.$router.replace({
-                    name: 'map_details',
-                    params: {
-                        regionId: this.$route.params.regionId,
-                        mapId: this.$route.params.mapId,
-                    },
-                });
-            }
         }
     }
 }

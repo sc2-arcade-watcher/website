@@ -106,7 +106,7 @@
                                     color="primary accent-1"
                                     style="text-transform: none !important;"
                                     :title="item.map ? item.map.name : ''"
-                                    :to="{ name: 'map_base', params: { regionId: item.regionId, mapId: item.mapBnetId } }"
+                                    :to="{ name: 'map_details', params: { regionId: item.regionId, mapId: item.mapBnetId } }"
                                 >
                                     <v-img
                                         v-if="item.map"
@@ -129,7 +129,7 @@
                                     color="deep-orange lighten-2"
                                     style="text-transform: none !important; padding-left: 6px; padding-right: 6px;"
                                     :title="item.extMod ? item.extMod.name : ''"
-                                    :to="{ name: 'map_base', params: { regionId: item.regionId, mapId: item.extModBnetId } }"
+                                    :to="{ name: 'map_details', params: { regionId: item.regionId, mapId: item.extModBnetId } }"
                                 >
                                     <v-icon x-small color="grey lighten-1" class="mr-1">fas fa-plus</v-icon>
                                     <span class="name" v-if="item.extMod">{{ item.extMod.name }}</span>

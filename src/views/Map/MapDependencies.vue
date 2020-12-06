@@ -8,7 +8,7 @@
         >
             <v-list-item-title>
                 <router-link :to="{
-                    name: 'map_base',
+                    name: 'map_details',
                     params: {
                         regionId: item.map.regionId,
                         mapId: item.map.bnetId,

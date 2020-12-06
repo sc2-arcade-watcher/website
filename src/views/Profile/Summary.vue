@@ -14,12 +14,10 @@ export default class ProfileSummaryView extends Vue {
     private profileSummary: any | null = null;
 
     @SGuard({
+        supressErrorCodes: [404],
         onHttpError: function (this, err) {
             if (err.response!.status === 403) {
                 (this.$parent as ProfileBaseView).isAccessRestricted = true;
-                return true;
-            }
-            if (err.response!.status === 404) {
                 return true;
             }
         }
@@ -33,7 +31,7 @@ export default class ProfileSummaryView extends Vue {
     }
 
     private async created() {
-        // await this.fetchSummary();
+        await this.fetchSummary();
     }
 }
 </script>

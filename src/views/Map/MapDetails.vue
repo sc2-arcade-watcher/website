@@ -282,6 +282,7 @@ export default class MapInfoView extends Vue {
     }
 
     @SGuard({
+        supressErrorCodes: [404],
         onHttpError: function (this, err) {
             if (err.response!.status === 403) {
                 (this.$parent as MapBaseView).isAccessRestricted = true;

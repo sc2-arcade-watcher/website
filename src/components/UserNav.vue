@@ -26,7 +26,7 @@
                 <v-list-item
                     v-for="(profile, i) in $store.battleAccount.profiles"
                     :key="i"
-                    :to="{ name: 'profile_base', params: { regionId: profile.regionId, realmId: profile.realmId, profileId: profile.profileId } }"
+                    :to="{ name: 'profile_summary', params: { regionId: profile.regionId, realmId: profile.realmId, profileId: profile.profileId } }"
                     @click="menuVisibile = false"
                     dense
                 >

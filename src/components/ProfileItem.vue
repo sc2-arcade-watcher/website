@@ -1,7 +1,7 @@
 <template>
     <div class="profile-item">
         <router-link
-            :to="{ name: 'profile_base', params: {
+            :to="{ name: 'profile_summary', params: {
                 regionId: profile.regionId,
                 realmId: profile.realmId,
                 profileId: profile.profileId

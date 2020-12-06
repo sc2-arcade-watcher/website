@@ -37,7 +37,7 @@
                                 color="primary lighten-1"
                                 style="text-transform: none !important; padding-left: 6px; padding-right: 6px;"
                                 :title="item.map.name"
-                                :to="{ name: 'map_base', params: { regionId: item.map.regionId, mapId: item.map.bnetId } }"
+                                :to="{ name: 'map_details', params: { regionId: item.map.regionId, mapId: item.map.bnetId } }"
                             >
                                 <v-img
                                     :src="$starc.depotImage(item.map.iconHash, item.map.regionId).url"
@@ -59,7 +59,7 @@
                                 color="deep-orange lighten-2"
                                 style="text-transform: none !important; padding-left: 6px; padding-right: 6px;"
                                 :title="item.extMod.name"
-                                :to="{ name: 'map_base', params: { regionId: item.extMod.regionId, mapId: item.extMod.bnetId } }"
+                                :to="{ name: 'map_details', params: { regionId: item.extMod.regionId, mapId: item.extMod.bnetId } }"
                             >
                                 <v-icon x-small color="grey lighten-1" left>fas fa-plus</v-icon>
                                 <!-- <v-img

@@ -2,7 +2,7 @@
     <v-card
         class="map-item"
         tile
-        :to="{ name: 'map_base', params: { regionId: map.regionId, mapId: map.bnetId } }"
+        :to="{ name: 'map_details', params: { regionId: map.regionId, mapId: map.bnetId } }"
     >
         <v-img
             :src="$starc.depotImage(map.iconHash, map.regionId).url"

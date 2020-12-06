@@ -20,7 +20,9 @@ SetEnvIf X-Forwarded-Proto "https" HTTPS=on
     ErrorDocument 503 /maintenance.html
 
     # app redirects
-    RewriteRule ^/map/([0-9]+)/([0-9]+)/recent-lobbies(.*)$ /map/$1/$2/lobbies-history$3 [R=301,L]
+    RewriteRule ^map/([0-9]+)/([0-9]+)/recent-lobbies(.*)$ /map/$1/$2/lobbies-history$3 [R=301,L]
+    RewriteRule ^map/([0-9]+)/([0-9]+)/details$ /map/$1/$2/ [R=301,L]
+    RewriteRule ^profile/([0-9]+)/([0-9]+)/([0-9]+)/summary$ /profile/$1/$2/$3/ [R=301,L]
 
     # Redirect everything else to index.html
     RewriteBase /

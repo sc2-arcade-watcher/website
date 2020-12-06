@@ -71,7 +71,7 @@
                             <v-list-item-subtitle class="profile">
                                 <router-link
                                     v-if="jevent.profile"
-                                    :to="{ name: 'profile_base', params: {
+                                    :to="{ name: 'profile_summary', params: {
                                         regionId: jevent.profile.regionId,
                                         realmId: jevent.profile.realmId,
                                         profileId: jevent.profile.profileId,

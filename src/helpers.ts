@@ -78,6 +78,7 @@ export function isAxiosError(err: any): err is AxiosError {
 type TOnHttpError<T = any> = (this: T, err: AxiosError) => boolean | void;
 
 export function SGuard<T extends Vue>(options?: {
+    supressErrorCodes?: number[],
     onHttpError?: TOnHttpError<T>;
 }) {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
@@ -99,7 +100,10 @@ export function SGuard<T extends Vue>(options?: {
                 let msg: string[] = [];
 
                 if (isAxiosError(err) && err.response) {
-                    if (options?.onHttpError && options?.onHttpError.call(this as any, err) === true) {
+                    if (
+                        (options?.supressErrorCodes?.find(x => x === err.response.status)) ||
+                        (options?.onHttpError && options?.onHttpError.call(this as any, err) === true)
+                    ) {
                         // supress
                     }
                     else {

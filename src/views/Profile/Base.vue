@@ -146,12 +146,6 @@ export default class ProfileBaseView extends Vue {
             this.profile.profileId !== Number(this.$route.params.profileId)
         ) {
             await this.loadProfile();
-            if (this.$route.name === 'profile_base') {
-                await this.$router.replace({
-                    name: 'profile_summary',
-                    params: this.$route.params,
-                });
-            }
         }
     }
 }
