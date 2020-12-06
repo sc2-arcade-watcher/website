@@ -103,8 +103,13 @@ export function SGuard<T extends Vue>(options?: {
                         // supress
                     }
                     else {
-                        msg.push(`[${err.response.status}] ${err.response.statusText}`)
+                        if (err.response.status === 503) {
+                            window.setTimeout(() => {
+                                window.location.href = '/';
+                            }, 500);
+                        }
 
+                        msg.push(`[${err.response.status}] ${err.response.statusText}`)
                         if (typeof err.response.data === 'object') {
                             msg.push(err.response.data.message);
                         }

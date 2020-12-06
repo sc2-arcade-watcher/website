@@ -854,11 +854,20 @@ export class StarcAPI {
         this.axios = Axios.create(Object.assign<Partial<AxiosRequestConfig>, AxiosRequestConfig>({
             baseURL: process.env.VUE_APP_STARC_WEBAPI_URL,
             raxConfig: {
-                retry: 3,
-                statusCodesToRetry: [[100, 199], [429, 429], [501, 599]],
+                retry: 5,
+                // shouldRetry: (err) => {
+                //     if (err.response && err.response.status === 503) {
+                //         const cfg = rax.getConfig(err);
+                //         console.log(`Retry attempt #${cfg?.currentRetryAttempt}`);
+                //         return true;
+                //     }
+                //     return false;
+                // },
+                statusCodesToRetry: [[429, 429], [501, 599]],
             },
         }, config));
-        const interceptorId = rax.attach(this.axios);
+        this.axios.defaults.raxConfig!.instance = this.axios;
+        rax.attach(this.axios);
     }
 
     depotImage(img: MapImage | string, region: DepotRegion | number): MapImageResolved {
@@ -905,10 +914,10 @@ export class StarcAPI {
             region = GameRegion[region].toLowerCase() as DepotRegion;
         }
         if (region === 'cn') {
-            return `http://${region}-s2-depot.battlenet.com.cn/${hash}.${filetype}`;
+            return `https://${region}-s2-depot.battlenet.com.cn/${hash}.${filetype}`;
         }
         else {
-            return `http://${region}-s2-depot.classic.blizzard.com/${hash}.${filetype}`;
+            return `https://${region}-s2-depot.classic.blizzard.com/${hash}.${filetype}`;
         }
     }
 
