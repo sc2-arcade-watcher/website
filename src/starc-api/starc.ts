@@ -921,6 +921,10 @@ export class StarcAPI {
         }
     }
 
+    getInfoDonations() {
+        return this.axios.get(`content/donations`);
+    }
+
     accountAuthBnet(params: AccountAuthBnetParams) {
         return this.axios.post<AccountAuthResponse>(`account/auth/bnet`, params);
     }

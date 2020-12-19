@@ -13,9 +13,14 @@
 // ## CONTAINER
 // =================================
 
-.container:not(.container--fluid) {
-    @media #{map-get($display-breakpoints, 'xs-only')} {
+@media #{map-get($display-breakpoints, 'xs-only')} {
+    .container:not(.container--fluid) {
         padding: 5px;
+
+        .row {
+            margin-left: -5px;
+            margin-right: -5px;
+        }
     }
 }
 
