@@ -38,7 +38,7 @@ export function formatDescription(s: string) {
     return s;
 }
 
-export function formatDateDistanceToNow(d1: Date, options: { precisionLevel: number }) {
+export function formatDateDistanceToNow(d1: Date, options?: { precisionLevel: number }) {
     const d2 = new Date();
     const secsDiff = (d2.getTime() - d1.getTime()) / 1000.0;
     const out: string[] = [];

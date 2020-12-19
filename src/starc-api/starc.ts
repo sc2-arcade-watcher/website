@@ -914,7 +914,7 @@ export class StarcAPI {
             region = GameRegion[region].toLowerCase() as DepotRegion;
         }
         if (region === 'cn') {
-            return `https://${region}-s2-depot.battlenet.com.cn/${hash}.${filetype}`;
+            return `http://${region}-s2-depot.battlenet.com.cn/${hash}.${filetype}`;
         }
         else {
             return `https://${region}-s2-depot.classic.blizzard.com/${hash}.${filetype}`;
@@ -1006,7 +1006,13 @@ export class StarcAPI {
     }
 
     getMapPlayerBase(regionId: number, mapId: number, params?: MapPlayerBaseParams & CursorPaginationQuery) {
-        return this.axios.get<MapPlayerBaseResponse>(`maps/${regionId}/${mapId}/player-base`, { params: params });
+        const transformers: AxiosTransformer[] = [].concat(this.axios.defaults.transformResponse as any);
+        transformers.push(strToDate);
+
+        return this.axios.get<MapPlayerBaseResponse>(`maps/${regionId}/${mapId}/player-base`, {
+            params: params,
+            transformResponse: transformers,
+        });
     }
 
     getMapMatchHistory(params: MapMatchHistoryParams & CursorPaginationQuery) {

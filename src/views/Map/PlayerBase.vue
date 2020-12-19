@@ -37,7 +37,7 @@
                             clearable
                             dense
                             hide-details
-                            label="Last played min."
+                            label="Last time played min."
                             prepend-icon="mdi-calendar"
                             readonly
                             v-model="queryParams.lastPlayedMin"
@@ -100,18 +100,65 @@
                             <th class="overline px-0"></th>
                             <th class="overline">Player</th>
                             <th class="overline text-right">
-                                <abbr title="time spent waiting in lobbies">TSWL</abbr>
+                                <v-tooltip top transition="fade-transition">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <span v-bind="attrs" v-on="on">
+                                            <v-icon size="20">mdi-database-clock</v-icon>
+                                        </span>
+                                    </template>
+                                    <span>Time spent waiting in public lobbies</span>
+                                </v-tooltip>
                             </th>
                             <th class="overline text-right">
-                                <abbr title="number of joined Public Lobbies">PL</abbr>
+                                <v-tooltip top transition="fade-transition">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <span v-bind="attrs" v-on="on">
+                                            <v-icon size="20">mdi-lightning-bolt</v-icon>
+                                        </span>
+                                    </template>
+                                    <span>Number of public games in total</span>
+                                </v-tooltip>
                             </th>
                             <th class="overline text-right">
-                                <abbr title="Time spent waiting in Self Hosted Lobbies">TSHL</abbr>
+                                <v-tooltip top transition="fade-transition">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <span v-bind="attrs" v-on="on">
+                                            <v-icon size="20">mdi-calendar-range-outline</v-icon>
+                                        </span>
+                                    </template>
+                                    <span>Average number of public games per day</span>
+                                </v-tooltip>
                             </th>
                             <th class="overline text-right">
-                                <abbr title="number of Hosted Public Lobbies">HPL</abbr>
+                                <v-tooltip top transition="fade-transition">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <span v-bind="attrs" v-on="on">
+                                            <v-icon size="20">mdi-routes-clock</v-icon>
+                                        </span>
+                                    </template>
+                                    <span>Time spent waiting in self hosted public lobbies</span>
+                                </v-tooltip>
                             </th>
-                            <th class="overline text-right">Last played</th>
+                            <th class="overline text-right">
+                                <v-tooltip top transition="fade-transition">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <span v-bind="attrs" v-on="on">
+                                            <v-icon size="20">mdi-lighthouse-on</v-icon>
+                                        </span>
+                                    </template>
+                                    <span>Number of hosted public games in total</span>
+                                </v-tooltip>
+                            </th>
+                            <th class="overline text-right">
+                                <v-tooltip top transition="fade-transition">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <span v-bind="attrs" v-on="on">
+                                            <v-icon size="20">mdi-table-eye</v-icon>
+                                        </span>
+                                    </template>
+                                    <span>Last time seen in public game</span>
+                                </v-tooltip>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -123,36 +170,66 @@
                                 <profile-item :profile="item.profile"/>
                             </td>
                             <td class="text-right">
-                                <span class="text--secondary">
+                                <span class="text--secondary" style="font-family: monospace;">
                                     {{ formatRelativeTime(item.timeSpentWaiting) }}
                                 </span>
                             </td>
                             <td class="text-right">
                                 <v-tooltip top transition="fade-transition">
                                     <template v-slot:activator="{ on, attrs }">
-                                        <span class="body-1 font-weight-bold red--text text--lighten-2" v-bind="attrs" v-on="on">
-                                            {{ item.lobbiesJoined }}
+                                        <span v-bind="attrs" v-on="on">
+                                            <span
+                                                class="body-1 font-weight-bold red--text text--lighten-2"
+                                                v-if="item.lobbiesStarted > 0"
+                                            >
+                                                {{ item.lobbiesStarted }}
+                                            </span>
+                                            <span class="font-weight-medium text--secondary" v-else>
+                                                0
+                                            </span>
                                         </span>
                                     </template>
                                     <span>
                                         <span
                                             class="red--text text--lighten-2"
                                             v-if="item.lobbiesStarted > 0"
-                                            v-html="(item.lobbiesStarted / item.lobbiesJoined * 100).toFixed(1) + '% of which have started'"
-                                        />
+                                        >
+                                            <strong>{{ (item.lobbiesStarted / item.lobbiesJoined * 100).toFixed(1) }}%</strong>
+                                            have started
+                                            (out of <strong>{{ item.lobbiesJoined }}</strong> total joined)
+                                        </span>
                                     </span>
                                 </v-tooltip>
                             </td>
                             <td class="text-right">
-                                <span class="text--secondary">
+                                <span
+                                    class="body-2 font-weight-medium red--text text--lighten-3"
+                                    v-if="item.lobbiesStartedDiffDays > 0"
+                                >
+                                    {{ (item.lobbiesStarted / item.lobbiesStartedDiffDays).toFixed(1) }}
+                                </span>
+                                <span class="font-weight-medium text--secondary" v-else>
+                                    0
+                                </span>
+                            </td>
+                            <td class="text-right">
+                                <span class="text--secondary" style="font-family: monospace;">
                                     {{ formatRelativeTime(item.timeSpentWaitingAsHost) }}
                                 </span>
                             </td>
                             <td class="text-right">
                                 <v-tooltip top transition="fade-transition">
                                     <template v-slot:activator="{ on, attrs }">
-                                        <span class="body-1 font-weight-bold lime--text text--lighten-2" v-bind="attrs" v-on="on">
-                                            {{ item.lobbiesHosted }}
+                                        <span v-bind="attrs" v-on="on">
+                                            <span
+                                                class="body-1 font-weight-bold lime--text text--lighten-2"
+                                                v-if="item.lobbiesHostedStarted > 0"
+                                            >
+                                                {{ item.lobbiesHostedStarted }}
+                                            </span>
+                                            <span class="font-weight-medium text--secondary" v-else>
+                                                0
+                                            </span>
                                         </span>
                                     </template>
                                     <span>
@@ -161,21 +238,30 @@
                                             v-if="item.lobbiesHostedStarted > 0"
                                         >
                                             <strong>{{ (item.lobbiesHostedStarted / item.lobbiesHosted * 100).toFixed(1) }}%</strong>
-                                            of which have started
+                                            have started
+                                            (out of <strong>{{ item.lobbiesHosted }}</strong> total hosted)
                                         </span>
                                     </span>
                                 </v-tooltip>
                             </td>
                             <td class="text-right">
-                                <v-tooltip top transition="fade-transition">
+                                <span class="font-weight-light text--secondary" v-if="!item.lastPlayedAt.getTime()">Never</span>
+                                <span
+                                    class="green--text text--darken-1"
+                                    v-else-if="(new Date()).getTime() - item.lastPlayedAt.getTime() < 3600 * 24 * 1000"
+                                >
+                                    Today
+                                </span>
+                                <v-tooltip top transition="fade-transition" v-else-if="item.lastPlayedAt.getTime()">
                                     <template v-slot:activator="{ on, attrs }">
                                         <span class="font-weight-light blue--text text--lighten-3" v-bind="attrs" v-on="on">
-                                            {{ $dfns.formatDistanceStrict(new Date(item.lastPlayedAt), new Date(), {
+                                            {{ $dfns.formatDistanceToNowStrict(item.lastPlayedAt, {
                                                 addSuffix: true,
-                                                roundingMethod: 'floor'}) }}
+                                                unit: 'day',
+                                                roundingMethod: 'round'}) }}
                                         </span>
                                     </template>
-                                    <span>{{ $dfns.formatISO9075(new Date(item.lastPlayedAt), { representation: 'complete' }) }}</span>
+                                    <span>{{ $dfns.formatISO9075(item.lastPlayedAt, { representation: 'complete' }) }}</span>
                                 </v-tooltip>
                             </td>
                         </tr>
@@ -256,27 +342,25 @@ import { subDays, formatISO } from 'date-fns';
     },
 })
 export default class MapPlayerBaseView extends Vue {
-    private itemsPerPageArray = [50, 100, 150, 200, 300, 400, 500];
+    private itemsPerPageArray = [100, 200, 300, 400, 500];
     private queryParams!: starc.MapPlayerBaseParams & starc.CursorPaginationQuery;
     private playerBaseResponse: starc.MapPlayerBaseResponse | null = null;
     private sortByList = [
         { value: 'lobbiesStarted,desc', text: 'Lobbies started' },
-        { value: 'lobbiesHostedStarted,desc', text: 'Lobbies hosted' },
+        { value: 'lobbiesHostedStarted,desc', text: 'Lobbies hosted started' },
         // { value: 'lobbiesStarted,desc', text: 'Lobbies started: Highest first' },
         // { value: 'lobbiesStarted,asc', text: 'Lobbies started: Lowest first' },
         // { value: 'lobbiesHostedStarted,desc', text: 'Lobbies hosted: Highest first' },
         // { value: 'lobbiesHostedStarted,asc', text: 'Lobbies hosted: Lowest first' },
-        { value: 'name,asc', text: 'Name: A-Z' },
-        { value: 'name,desc', text: 'Name: Z-A' },
+        // { value: 'name,asc', text: 'Name: A-Z' },
+        // { value: 'name,desc', text: 'Name: Z-A' },
     ];
     private sortByValue!: string;
     private menuLastPlayedMin: boolean = false;
 
     private formatRelativeTime(seconds: number) {
         if (seconds <= 0) return 'none';
-        return this.$dfns.formatDistance(new Date(), this.$dfns.addSeconds(new Date(), seconds), {
-            includeSeconds: true,
-        });
+        return this.$helpers.formatDateDistanceToNow(this.$dfns.addSeconds(new Date(), -seconds));
     }
 
     @SGuard()
@@ -334,7 +418,7 @@ export default class MapPlayerBaseView extends Vue {
         this.renavigate();
     }
 
-    @Debounce({ time: 400 })
+    @Debounce({ time: 800 })
     private onInput() {
         if (
             this.queryParams.name === String(this.$route.query.name ?? '')
