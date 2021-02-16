@@ -35,17 +35,17 @@
                                         {{ item.map.name }}
                                     </v-btn>
                                 </template>
-                                <template v-else-if="item.names && item.names.length">
+                                <template v-else-if="item.mapNames">
                                     <v-tooltip top transition="fade-transition">
                                         <template v-slot:activator="{ on, attrs }">
                                             <span v-bind="attrs" v-on="on" class="grey--text body-1">
-                                                {{ item.names[0].name }}
+                                                {{ Object.values(item.mapNames)[0] }}
                                             </span>
                                         </template>
                                         <span>
-                                            <span class="d-block" v-for="mname in item.names" :key="mname.locale">
-                                                {{ mname.name }}
-                                                <span class="ml-3 font-weight-light float-right">{{ mname.locale }}</span>
+                                            <span class="d-block" v-for="locale in Object.keys(item.mapNames)" :key="locale">
+                                                {{ locale }}
+                                                <span class="ml-3 font-weight-light float-right">{{ item.mapNames[locale] }}</span>
                                             </span>
                                         </span>
                                     </v-tooltip>

@@ -236,6 +236,43 @@ export enum GameRegion {
     CN = 5,
 }
 
+export enum GameLocaleFlag {
+    None = 0,
+    enUS = 0x2,
+    koKR = 0x4,
+    frFR = 0x10,
+    deDE = 0x20,
+    zhCN = 0x40,
+    esES = 0x80,
+    zhTW = 0x100,
+    enGB = 0x200,
+    esMX = 0x1000,
+    ruRU = 0x2000,
+    ptBR = 0x4000,
+    itIT = 0x8000,
+    ptPT = 0x10000,
+    enSG = 0x20000000,
+    plPL = 0x40000000,
+}
+
+export type GameLocaleType =
+    'deDE' |
+    'enGB' |
+    'esES' |
+    'frFR' |
+    'itIT' |
+    'plPL' |
+    'ptPT' |
+    'ruRU' |
+    'zhCN' |
+    'zhTW' |
+    'koKR' |
+    'enSG' |
+    'enUS' |
+    'esMX' |
+    'ptBR'
+;
+
 export enum GameLocale {
     deDE = 'deDE',
     enGB = 'enGB',
@@ -750,10 +787,7 @@ export type ProfileMatchEntry = {
     type: MatchType;
     decision: MatchDecision;
     map?: Map;
-    names?: {
-        locale: GameLocale;
-        name: string;
-    }[];
+    mapNames?: {[key in GameLocale]: string};
 };
 
 export type ProfileMatchHistoryResponse = CursorPaginationResult<ProfileMatchEntry>;
@@ -975,7 +1009,7 @@ export class StarcAPI {
         const transformers: AxiosTransformer[] = [].concat(this.axios.defaults.transformResponse as any);
         transformers.push(strToDate);
 
-        const queryParams = Object.assign({}, params);
+        const queryParams: Partial<typeof params> = Object.assign({}, params);
         delete queryParams.regionId;
         delete queryParams.realmId;
         delete queryParams.profileId;
@@ -1020,7 +1054,7 @@ export class StarcAPI {
     }
 
     getMapMatchHistory(params: MapMatchHistoryParams & CursorPaginationQuery) {
-        const qp = Object.assign({}, params);
+        const qp: Partial<typeof params> = Object.assign({}, params);
         delete qp.regionId;
         delete qp.mapId;
         return this.axios.get<MapMatchHistoryResponse>(`maps/${params.regionId}/${params.mapId}/match-history`, { params: qp });
