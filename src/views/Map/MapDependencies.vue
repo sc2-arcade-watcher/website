@@ -31,6 +31,9 @@
                 {{ $dfns.lightFormat(new Date(item.mapHeader.uploadedAt), 'yyyy-MM-dd HH:mm') }}
             </v-list-item-subtitle>
             <v-list-item-subtitle class="text-sm-right justify-sm-end">
+                <small>{{ item.mapHeader.archiveFilename }}</small>
+            </v-list-item-subtitle>
+            <v-list-item-subtitle class="text-sm-right justify-sm-end">
                 <!-- <v-img :src="require('../../assets/ui_battlenet_glues_login_blizzlogo.png')" class="d-inline-block" max-width="56" v-if="item.tags.indexOf('BLIZ') !== -1"/> -->
                 <!-- <v-chip small color="primary" outlined dense v-if="item.tags.indexOf('BLIZ') !== -1">BLIZ</v-chip> -->
                 <small
