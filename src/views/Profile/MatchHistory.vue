@@ -83,9 +83,10 @@
                                     <span class="font-weight-light text--secondary overline"></span>
                                 </template>
                             </td>
-                            <td>
+                            <td class="pr-2">
                                 <template v-if="item.lobby">
                                     <v-btn
+                                        class="float-right"
                                         tile
                                         small
                                         text

@@ -5,9 +5,10 @@
                 <tr>
                     <th></th>
                     <th v-if="showMapModColumn">Map / Mod</th>
-                    <th>Host</th>
+                    <th>Variant</th>
                     <th>Players</th>
-                    <th>Date</th>
+                    <th>Closed at</th>
+                    <th>Match info</th>
                     <th></th>
                 </tr>
             </thead>
@@ -33,19 +34,17 @@
                                 tile
                                 large
                                 text
-                                class="overline my-1"
-                                color="primary lighten-1"
-                                style="text-transform: none !important; padding-left: 6px; padding-right: 6px;"
+                                color="primary accent-1"
+                                style="text-transform: none !important; padding-left: 0; padding-right: 10px;"
                                 :title="item.map.name"
                                 :to="{ name: 'map_details', params: { regionId: item.map.regionId, mapId: item.map.bnetId } }"
                             >
                                 <v-img
                                     :src="$starc.depotImage(item.map.iconHash, item.map.regionId).url"
-                                    width="90"
-                                    min-width="90"
-                                    max-height="46"
+                                    max-width="70"
+                                    height="35"
                                     contain
-                                    class="float-left my-0 mr-2"
+                                    class="float-left my-0"
                                 />
                                 <span v-if="!item.extMod">{{ item.map.name }}</span>
                             </v-btn>
@@ -74,31 +73,45 @@
                         </template>
                     </td>
                     <td class="text--secondary overline text-no-wrap">
-                        <span style="vertical-align: middle;">{{ item.hostName }}</span>
-                        <v-tooltip top transition="fade-transition" v-if="item.lobbyTitle">
-                            <template v-slot:activator="{ on, attrs }">
-                                <span v-bind="attrs" v-on="on">
-                                    <v-btn color="primary" text x-small min-width="20"><v-icon x-small>fas fa-info</v-icon></v-btn>
-                                </span>
-                            </template>
-                            <span>{{ item.lobbyTitle }}</span>
-                        </v-tooltip>
+                        <span v-if="item.mapVariantMode">{{ item.mapVariantMode }}</span>
+                        <span v-else>[{{ item.mapVariantIndex }}]</span>
                     </td>
                     <td>
-                        <v-tooltip top v-if="item.slots.length">
-                            <template v-slot:activator="{ on, attrs }">
-                                <span v-bind="attrs" v-on="on" class="overline teal--text text--lighten-2">
-                                    {{ item.slots.filter(x => x.kind === 'human').length }}/{{ item.slots.filter(x => x.kind !== 'ai').length }}
-                                </span>
-                            </template>
-                            <ol>
-                                <li v-for="slot in item.slots.filter(x => x.kind !== 'open')" :key="slot.slotNumber">
-                                    <span v-if="slot.kind === 'ai'">AI</span>
-                                    <span v-else><strong>{{ slot.name }}</strong></span>
-                                </li>
-                            </ol>
-                        </v-tooltip>
-                        <span v-else></span>
+                        <template v-if="item.status === 'started'">
+                            <v-tooltip top v-if="item.slots && item.slots.length">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <span v-bind="attrs" v-on="on" class="overline teal--text text--lighten-2">
+                                        {{ item.slots.filter(x => x.kind === 'human').length }}/{{ item.slots.filter(x => x.kind !== 'ai').length }}
+                                    </span>
+                                </template>
+                                <ol>
+                                    <li v-for="slot in item.slots.filter(x => x.kind !== 'open')" :key="slot.slotNumber">
+                                        <span v-if="slot.kind === 'ai'">AI</span>
+                                        <span v-else><strong>{{ slot.name }}</strong></span>
+                                    </li>
+                                </ol>
+                            </v-tooltip>
+                            <div v-else>
+                                <v-tooltip top transition="fade-transition">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <span v-bind="attrs" v-on="on">
+                                            <span class="overline teal--text text--lighten-2">{{ item.slotsHumansTaken }}/{{ item.slotsHumansTotal }}</span>
+                                            <v-icon color="primary" right v-if="item.lobbyTitle" x-small>fas fa-info</v-icon>
+                                        </span>
+                                    </template>
+                                    <div v-if="item.hostName">
+                                        <span class="overline d-inline-block pr-1">Host:</span>
+                                        <span class="body-2 font-weight-normal text--secondary">{{ item.hostName }}</span>
+                                    </div>
+                                    <div v-if="item.lobbyTitle">
+                                        <span class="overline d-inline-block pr-1">Lobby name:</span>
+                                        <span class="body-2 font-weight-normal text--secondary">{{ item.lobbyTitle }}</span>
+                                    </div>
+                                </v-tooltip>
+                            </div>
+                        </template>
+                        <template v-else>
+                        </template>
                     </td>
                     <td class="text-no-wrap font-weight-light">
                         <v-tooltip top transition="fade-transition" v-if="item.closedAt !== null">
@@ -112,8 +125,29 @@
                             <span>{{ $dfns.formatISO9075(new Date(item.closedAt), { representation: 'complete' }) }}</span>
                         </v-tooltip>
                     </td>
-                    <td class="pr-1">
+                    <td>
+                        <template v-if="item.status === 'started'">
+                            <template v-if="item.match && item.match.completedAt">
+                                <span class="overline primary--text text--lighten-2">{{ $helpers.formatDateDistance(item.match.completedAt, item.closedAt, { lowestTier: 'm' }) }} <v-icon x-small color="grey">fa-clock</v-icon></span>
+                                <template v-if="profileSelf && getMatchPlayerResult(item, profileSelf)">
+                                    <small class="text--secondary d-inline-block px-2">|</small>
+                                    <span :class="`overline font-weight-bold match-decision-${getMatchPlayerResult(item, profileSelf).decision}`">{{ getMatchPlayerResult(item, profileSelf).decision }}</span>
+                                </template>
+                            </template>
+                            <template v-else-if="item.match">
+                                <small class="font-weight-normal red--text">E({{ item.match.result }})</small>
+                            </template>
+                            <template v-else-if="(Date.now() - item.closedAt.getTime()) / 1000 < 3600 * 10">
+                                <small class="font-weight-normal text--secondary">Ongoing</small>
+                            </template>
+                            <template v-else>
+                                <v-icon color="grey" x-small title="Not available">fa fa-times</v-icon>
+                            </template>
+                        </template>
+                    </td>
+                    <td class="pr-2">
                         <v-btn
+                            class="float-right"
                             tile
                             small
                             text
@@ -127,6 +161,7 @@
                                 },
                             }"
                         >
+                            <v-icon small left>mdi-page-next-outline</v-icon>
                             Details
                         </v-btn>
                     </td>
@@ -147,8 +182,21 @@ export default class LobbyHistoryList extends Vue {
         required: true,
     })
     readonly lobbiesHistory!: starc.GameLobbyData[];
+
+    @Prop({
+        required: false,
+    })
+    readonly profileSelf?: starc.ProfileBaseParams;
+
     private mapId: number | null = null;
     private showMapModColumn = true;
+
+    private getMatchPlayerResult(lobby: starc.GameLobbyData, profile: starc.ProfileBaseParams) {
+        if (!lobby.match) return;
+        return lobby.match?.profileMatches.find(x => {
+            return x.profile.realmId === profile.realmId && x.profile.profileId === profile.profileId;
+        });
+    }
 
     created() {
         this.mapId = Number(this.$route.params.mapId);

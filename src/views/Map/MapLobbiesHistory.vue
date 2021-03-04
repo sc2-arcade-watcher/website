@@ -85,6 +85,7 @@ export default class MapLobbiesHistoryView extends Vue {
             ... {
                 regionId: Number(this.$route.params.regionId),
                 mapId: Number(this.$route.params.mapId),
+                includeMatchResult: true,
             },
             ...this.currentPaginationParams,
         })).data;

@@ -1,7 +1,7 @@
 <template>
     <v-card class="card-t1">
         <div v-if="lobbyHistoryResponse && lobbyHistoryResponse.results.length > 0">
-            <lobby-history-list :lobbies-history="lobbyHistoryResponse.results"/>
+            <lobby-history-list :lobbies-history="lobbyHistoryResponse.results" :profileSelf="profileSelf"/>
 
             <v-container fluid>
                 <v-divider/>
@@ -78,6 +78,7 @@ export default class ProfileLobbiesHistoryView extends Vue {
     private itemsPerPageArray = [20, 40, 60, 80, 100, 150, 200];
     private currentPaginationParams!: starc.CursorPaginationQuery;
     private lobbyHistoryResponse: starc.LobbyHistoryListResponse | null = null;
+    private profileSelf!: starc.ProfileBaseParams;
 
     @SGuard({
         onHttpError: function (this, err) {
@@ -88,14 +89,12 @@ export default class ProfileLobbiesHistoryView extends Vue {
         }
     })
     private async refreshList() {
-        const profParams = {
-            regionId: Number(this.$route.params.regionId),
-            realmId: Number(this.$route.params.realmId),
-            profileId: Number(this.$route.params.profileId),
-        };
         this.lobbyHistoryResponse = (await this.$starc.getMapLobbiesHistory({
             ... {
-                profileHandle: this.$starc.profileHandle(profParams),
+                profileHandle: this.$starc.profileHandle(this.profileSelf),
+                includeMapInfo: true,
+                includeMatchResult: true,
+                includeMatchPlayers: true,
             },
             ...this.currentPaginationParams,
         })).data;
@@ -117,6 +116,12 @@ export default class ProfileLobbiesHistoryView extends Vue {
     }
 
     private applyParamsFromRouteQuery() {
+        this.profileSelf = {
+            regionId: Number(this.$route.params.regionId),
+            realmId: Number(this.$route.params.realmId),
+            profileId: Number(this.$route.params.profileId),
+        };
+
         this.currentPaginationParams = {
             before: this.$route.query?.before ? String(this.$route.query?.before) : void 0,
             after: this.$route.query?.after ? String(this.$route.query?.after) : void 0,

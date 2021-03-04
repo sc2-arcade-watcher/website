@@ -618,6 +618,8 @@ export interface GameLobbyData {
     slots?: GameLobbySlot[];
     joinHistory?: GameLobbyPlayerJoin[];
     titleHistory?: GameLobbyTitleRecord[];
+
+    match?: LobbyMatchSummary;
 }
 
 export type GameLobbyQueryParams = {
@@ -688,6 +690,13 @@ export type LobbyHistoryListParams = {
     profileHandle?: string;
     regionId?: number;
     mapId?: number;
+    includeMapInfo?: boolean;
+    includeSlots?: boolean;
+    includeSlotsProfile?: boolean;
+    includeSlotsJoinInfo?: boolean;
+    includeJoinHistory?: boolean;
+    includeMatchResult?: boolean;
+    includeMatchPlayers?: boolean;
 }
 
 export type LobbyHistoryListResponse = CursorPaginationResult<GameLobbyData>;
@@ -902,6 +911,7 @@ function strToDate(data: any) {
                     case 'closedAt':
                     case 'createdAt':
                     case 'date':
+                    case 'completedAt':
                     case 'lastPlayedAt': {
                         data[key] = new Date(data[key]);
                         break;
@@ -1110,7 +1120,12 @@ export class StarcAPI {
     }
 
     getMapLobbiesHistory(params?: LobbyHistoryListParams & CursorPaginationQuery) {
-        return this.axios.get<LobbyHistoryListResponse>(`lobbies/history`, { params: params });
+        const transformers: AxiosTransformer[] = [].concat(this.axios.defaults.transformResponse as any);
+        transformers.push(strToDate);
+        return this.axios.get<LobbyHistoryListResponse>(`lobbies/history`, {
+            params: params,
+            transformResponse: transformers
+        });
     }
 
     getStatsRegions(params?: StatsQueryOptions) {
