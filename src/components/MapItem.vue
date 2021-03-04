@@ -84,7 +84,8 @@ export default class MapItem extends Vue {
 .map-item {
     display: flex;
     flex-direction: column;
-    max-width: 300px;
+    min-width: 200px;
+    max-width: 260px;
 
     .map-icon {
         // max-height: 150px;

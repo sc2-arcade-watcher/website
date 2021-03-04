@@ -547,7 +547,7 @@ export type ProfileBaseParams = {
 export interface Profile extends ProfileBaseParams {
     name: string | null;
     discriminator: number;
-    avatarURL: string | null;
+    avatar: string | null;
 }
 
 interface GameLobbyTitleRecord {
@@ -624,6 +624,30 @@ export type GameLobbyQueryParams = {
     includeJoinHistory?: boolean;
     recentlyClosedThreshold?: number;
 }
+
+// ===
+// ===
+
+export enum LobbyMatchResult {
+    Success = 0,
+    MapInfoMissing = 1,
+    SlotsDataMissing = 2,
+    HumanSlotCountMissmatch = 3,
+    HumanSlotProfileMissing = 4,
+    Unknown = 255,
+}
+
+export type LobbyMatchSummary = {
+    result: LobbyMatchResult;
+    completedAt: Date;
+    profileMatches: {
+        decision: MatchDecision;
+        profile: Profile;
+    }[];
+}
+
+// ===
+// ===
 
 export interface StatsRegionsData {
     date: string[];
@@ -1071,6 +1095,10 @@ export class StarcAPI {
 
     getLobbyDetails(regionId: number, bnetBucketId: number, bnetRecordId: number) {
         return this.axios.get<GameLobbyData>(`lobbies/${regionId}/${bnetBucketId}/${bnetRecordId}`);
+    }
+
+    getLobbyMatchSummary(regionId: number, bnetBucketId: number, bnetRecordId: number) {
+        return this.axios.get<LobbyMatchSummary>(`lobbies/${regionId}/${bnetBucketId}/${bnetRecordId}/match`);
     }
 
     getMapLobbiesHistory(params?: LobbyHistoryListParams & CursorPaginationQuery) {
