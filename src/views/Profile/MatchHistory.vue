@@ -9,6 +9,7 @@
                             <th>Type</th>
                             <th>Result</th>
                             <th>Date</th>
+                            <th>Info</th>
                             <th>Lobby</th>
                         </tr>
                     </thead>
@@ -72,7 +73,37 @@
                                     <span>{{ $dfns.formatISO9075(new Date(item.date), { representation: 'complete' }) }}</span>
                                 </v-tooltip>
                             </td>
-                            <td></td>
+                            <td>
+                                <template v-if="item.lobby">
+                                    <span class="overline green--text text--lighten-2"><v-icon x-small color="grey">fa-users</v-icon> {{ item.lobby.slotsHumansTaken }}</span>
+                                    <small class="text--secondary d-inline-block px-2">|</small>
+                                    <span class="overline primary--text text--lighten-2">{{ $helpers.formatDateDistance(item.date, item.lobby.closedAt, { lowestTier: 'm' }) }} <v-icon x-small color="grey">fa-clock</v-icon></span>
+                                </template>
+                                <template v-else>
+                                    <span class="font-weight-light text--secondary overline"></span>
+                                </template>
+                            </td>
+                            <td>
+                                <template v-if="item.lobby">
+                                    <v-btn
+                                        tile
+                                        small
+                                        text
+                                        color="primary"
+                                        :to="{
+                                            name: 'lobby',
+                                            params: {
+                                                regionId: item.lobby.regionId,
+                                                bnetBucketId: item.lobby.bnetBucketId,
+                                                bnetRecordId: item.lobby.bnetRecordId,
+                                            },
+                                        }"
+                                    >
+                                        <v-icon small left>mdi-page-next-outline</v-icon>
+                                        Details
+                                    </v-btn>
+                                </template>
+                            </td>
                         </tr>
                     </tbody>
                 </template>

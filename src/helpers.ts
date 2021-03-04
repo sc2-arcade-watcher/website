@@ -38,18 +38,37 @@ export function formatDescription(s: string) {
     return s;
 }
 
-export function formatDateDistanceToNow(d1: Date, options?: { precisionLevel: number }) {
-    const d2 = new Date();
+enum FormatDateDistanceTier {
+    s = 0,
+    m = 1,
+    h = 2,
+    D = 3,
+    M = 4,
+}
+
+export interface FormatDateDistanceOptions {
+    precisionLevel?: number;
+    lowestTier?: keyof typeof FormatDateDistanceTier;
+}
+
+export function formatDateDistance(d2: Date, d1: Date, options?: FormatDateDistanceOptions) {
     const secsDiff = (d2.getTime() - d1.getTime()) / 1000.0;
     const out: string[] = [];
 
+    const lowestTierLevel = options?.lowestTier ? FormatDateDistanceTier[options.lowestTier] as number : 0;
     // if (secsDiff < 3600 || options?.includeSeconds) {
     // }
-    out.push(`${(secsDiff % 60).toFixed(0).padStart(2, '0')}s`);
+    if (lowestTierLevel <= 0) {
+        out.push(`${(secsDiff % 60).toFixed(0).padStart(2, '0')}s`);
+    }
 
     if (secsDiff >= 60) {
         out.push(`${(secsDiff % 3600 / 60).toFixed(0).padStart(2, '0')}m`);
     }
+    else if (lowestTierLevel > 0) {
+        out.push(`<0m`)
+    }
+
     if (secsDiff >= 3600) {
         out.push(`${(secsDiff % 86400 / 3600).toFixed(0).padStart(2, '0')}h`);
     }
@@ -61,6 +80,10 @@ export function formatDateDistanceToNow(d1: Date, options?: { precisionLevel: nu
     // return dfns.formatDistanceStrict(d1, d2, {
     //     locale:
     // })
+}
+
+export function formatDateDistanceToNow(d1: Date, options?: FormatDateDistanceOptions) {
+    return formatDateDistance(new Date(), d1, options);
 }
 
 export function isPromise(val: any): val is Promise<any> {

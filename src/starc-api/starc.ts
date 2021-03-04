@@ -600,6 +600,9 @@ export interface GameLobbyData {
     closedAt: Date;
     status: GameLobbyStatus;
 
+    slotsHumansTaken: number;
+    slotsHumansTotal: number;
+
     mapBnetId: number;
     extModBnetId: number;
     multiModBnetId: number;
@@ -806,12 +809,17 @@ export enum MatchType {
     FreeForAll = 'ffa',
 }
 
+export type ProfileMatchLobby = Pick<GameLobbyData,
+    'regionId' | 'bnetBucketId' | 'bnetRecordId' | 'createdAt' | 'closedAt' | 'slotsHumansTaken'
+>;
+
 export type ProfileMatchEntry = {
     date: Date;
     type: MatchType;
     decision: MatchDecision;
     map?: Map;
     mapNames?: {[key in GameLocale]: string};
+    lobby: ProfileMatchLobby;
 };
 
 export type ProfileMatchHistoryResponse = CursorPaginationResult<ProfileMatchEntry>;
