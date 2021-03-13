@@ -32,7 +32,6 @@ SetEnvIf X-Forwarded-Proto "https" HTTPS=on
     RewriteRule . /index.html [L]
 </IfModule>
 
-# Specifying no-cache or max-age=0 indicates that clients can cache a resource and must revalidate each time before using it. This means HTTP request occurs each time, but it can skip downloading HTTP body if the content is valid.
 <FilesMatch "\.(html)$">
-Header set Cache-Control "no-cache, max-age=0"
+    Header set Cache-Control "public, max-age=600, stale-while-revalidate=30"
 </FilesMatch>
