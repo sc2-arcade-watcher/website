@@ -12,7 +12,7 @@
                 <div class="d-flex flex-wrap flex-lg-nowrap align-center justify-space-around">
                     <v-btn
                         color="blue-grey darken-3"
-                        href="https://github.com/sc2-arcade-watcher/server/issues"
+                        href="https://github.com/sc2-arcade-watcher/issue-tracker/issues?q=is%3Aissue+"
                         target="_blank"
                     >
                         <v-icon left>fab fa-github</v-icon>
