@@ -186,12 +186,12 @@ export default class LobbyHistoryList extends Vue {
     @Prop({
         required: false,
     })
-    readonly profileSelf?: starc.ProfileBaseParams;
+    readonly profileSelf?: starc.ProfileBase;
 
     private mapId: number | null = null;
     private showMapModColumn = true;
 
-    private getMatchPlayerResult(lobby: starc.GameLobbyData, profile: starc.ProfileBaseParams) {
+    private getMatchPlayerResult(lobby: starc.GameLobbyData, profile: starc.ProfileBase) {
         if (!lobby.match) return;
         return lobby.match?.profileMatches.find(x => {
             return x.profile.realmId === profile.realmId && x.profile.profileId === profile.profileId;

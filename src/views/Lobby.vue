@@ -148,7 +148,7 @@ import { SGuard, isAxiosError } from '../helpers';
 interface LobbyEvent {
     type: 'join' | 'left' | 'title' | 'open' | 'close' | 'completed';
     date: Date;
-    profile?: starc.Profile;
+    profile?: starc.ProfileBase;
     message?: string;
 }
 
@@ -239,7 +239,7 @@ export default class LobbyView extends Vue {
         return events;
     }
 
-    private getMatchPlayerResult(profile: starc.Profile) {
+    private getMatchPlayerResult(profile: starc.ProfileBase) {
         if (!this.matchSummary) return;
         return this.matchSummary?.profileMatches.find(x => {
             return x.profile.realmId === profile.realmId && x.profile.profileId === profile.profileId;

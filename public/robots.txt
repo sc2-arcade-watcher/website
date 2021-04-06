@@ -5,7 +5,8 @@ Disallow: /open-lobbies
 Disallow: /lobby/
 
 # map
-Disallow: /map/*/*/recent-lobbies
+Disallow: /map/*/*/lobbies-history
+Disallow: /map/*/*/match-history
 
 # profile
 Disallow: /profile/*/*/*/lobbies-history

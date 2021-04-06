@@ -78,7 +78,7 @@ export default class ProfileLobbiesHistoryView extends Vue {
     private itemsPerPageArray = [20, 40, 60, 80, 100, 150, 200];
     private currentPaginationParams!: starc.CursorPaginationQuery;
     private lobbyHistoryResponse: starc.LobbyHistoryListResponse | null = null;
-    private profileSelf!: starc.ProfileBaseParams;
+    private profileSelf!: starc.ProfileParams;
 
     @SGuard({
         onHttpError: function (this, err) {

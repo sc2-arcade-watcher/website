@@ -23,23 +23,22 @@
             </div>
             <div class="profile-details">
                 <dl class="d-info row">
-                    <dt class="col-12 col-sm-4 col-md-3">Profile handle</dt>
+                    <dt class="col-12 col-sm-4 col-md-3">Handle</dt>
                     <dd class="col-12 col-sm-8 col-md-9">
                         <span>{{ $starc.profileHandle(profile) }}</span>
                     </dd>
-                    <dt class="col-12 col-sm-4 col-md-3">Last seen online</dt>
-                    <dd class="col-12 col-sm-8 col-md-9">
-                        <v-tooltip top transition="fade-transition">
-                            <template v-slot:activator="{ on, attrs }">
-                                <span class="font-weight-light" v-bind="attrs" v-on="on">
-                                    {{ $dfns.formatDistanceStrict(new Date(profile.lastOnlineAt), new Date(), {
-                                        addSuffix: true,
-                                        roundingMethod: 'floor'}) }}
-                                </span>
-                            </template>
-                            <span>{{ $dfns.formatISO9075(new Date(profile.lastOnlineAt), { representation: 'complete' }) }}</span>
-                        </v-tooltip>
-                    </dd>
+                    <template v-if="profile.profileGameId">
+                        <dt class="col-12 col-sm-4 col-md-3">Game link</dt>
+                        <dd class="col-12 col-sm-8 col-md-9">
+                            <span>{{ $sTypes.profileGameLink(profile) }}</span>
+                        </dd>
+                    </template>
+                    <template v-if="profile.battleTag">
+                        <dt class="col-12 col-sm-4 col-md-3">Battle tag</dt>
+                        <dd class="col-12 col-sm-8 col-md-9">
+                            <span>{{ profile.battleTag }}</span>
+                        </dd>
+                    </template>
                 </dl>
             </div>
         </v-card>
@@ -85,7 +84,7 @@ import { SGuard } from '../../helpers';
 export default class ProfileBaseView extends Vue {
     public isAccessRestricted: boolean = false;
     private activeTab = null;
-    private profile: starc.Profile | null = null;
+    private profile: starc.ProfileInfo | null = null;
 
     private get tabs() {
         if (!this.profile) return [];

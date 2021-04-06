@@ -88,6 +88,7 @@
 dl.d-info {
     dt, dd {
         border-top: 1px dashed #333;
+        padding: 0.5rem 0.75rem !important;
     }
 
     dt:first-child, dt:first-child +dd {
@@ -95,7 +96,6 @@ dl.d-info {
     }
 
     dt {
-        padding-top: 0.75rem !important;
         font-size: 0.75rem !important;
         font-weight: 500;
         letter-spacing: 0.1666666667em !important;

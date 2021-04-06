@@ -39,7 +39,7 @@ export default class ProfileItem extends Vue {
     @Prop({
         required: true,
     })
-    readonly profile!: starc.Profile;
+    readonly profile!: starc.ProfileBase;
 
     @Prop({
         default: false,

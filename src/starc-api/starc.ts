@@ -210,7 +210,7 @@ export interface MapHeader {
 export interface Map {
     regionId: number;
     bnetId: number;
-    author: Profile | null;
+    author: ProfileBase | null;
     type: MapType;
     mainLocale: GameLocale;
     mainLocaleHash: string | null;
@@ -538,27 +538,58 @@ export interface MapDependencyInfo {
 // ===
 // ===
 
-export type ProfileBaseParams = {
+export type ProfileParams = {
     regionId: number;
     realmId: number;
     profileId: number;
 }
 
-export interface Profile extends ProfileBaseParams {
+export interface ProfileBase extends ProfileParams {
     name: string | null;
     discriminator: number;
     avatar: string | null;
 }
 
+export interface ProfileInfo extends ProfileBase {
+    profileGameId: BigInt;
+    battleTag: string;
+}
+
+export interface ProfileSummary {
+    profile: ProfileInfo & {
+        lastOnlineAt: Date;
+    };
+}
+
+export function profileGameLink(profile: ProfileInfo) {
+    if (!profile.profileGameId) return '';
+    // swap endianess
+    const a = BigInt(profile.profileGameId).toString(16).padStart(16, '0');
+    const b = [
+        a.substr(0, 2),
+        a.substr(2, 2),
+        a.substr(4, 2),
+        a.substr(6, 2),
+        a.substr(8, 2),
+        a.substr(10, 2),
+        a.substr(12, 2),
+        a.substr(14, 2)
+    ].reverse().join('');
+    return `battlenet://starcraft/profile/${profile.regionId}/${BigInt(`0x${b}`)}`;
+}
+
+// ===
+// ===
+
 interface GameLobbyTitleRecord {
     date: Date | string;
     hostName: string;
     title: string;
-    profile?: Profile;
+    profile?: ProfileBase;
 }
 
 interface GameLobbyPlayerJoin {
-    profile: Profile;
+    profile: ProfileBase;
     joinedAt: string;
     leftAt: string;
 }
@@ -573,7 +604,7 @@ export interface GameLobbySlot {
     slotNumber: number;
     team: number;
     kind: GameLobbySlotKind;
-    profile: Profile;
+    profile: ProfileBase;
     joinInfo?: GameLobbyPlayerJoin;
     name: string;
 }
@@ -614,7 +645,7 @@ export interface GameLobbyData {
 
     lobbyTitle: string;
     hostName: string;
-    hostProfile?: Profile;
+    hostProfile?: ProfileBase;
     slots?: GameLobbySlot[];
     joinHistory?: GameLobbyPlayerJoin[];
     titleHistory?: GameLobbyTitleRecord[];
@@ -647,7 +678,7 @@ export type LobbyMatchSummary = {
     completedAt: Date;
     profileMatches: {
         decision: MatchDecision;
-        profile: Profile;
+        profile: ProfileBase;
     }[];
 }
 
@@ -728,14 +759,14 @@ export type ProfileListParams = {
     orderDirection?: string;
 }
 
-export type ProfileListResponse = CursorPaginationResult<Profile>;
+export type ProfileListResponse = CursorPaginationResult<ProfileBase>;
 
 // ===
 // ===
 
 export type ProfileMapStats = {
     map?: Map;
-    profile?: Profile;
+    profile?: ProfileBase;
     lobbiesStarted: number;
     lobbiesStartedDiffDays: number;
     lobbiesJoined: number;
@@ -771,13 +802,16 @@ export type MapBaseParams = {
 export type MapMatchHistoryParams = MapBaseParams & {
     orderBy?: string;
     orderDirection?: string;
+    date?: number;
+    includeMatchResult?: boolean;
+    includeMatchLobby?: boolean;
 }
 
 export type MapMatchEntry = {
     date: Date;
     type: MatchType;
     decision: MatchDecision;
-    profile?: Profile;
+    profile?: ProfileBase;
 };
 
 export type MapMatchHistoryResponse = CursorPaginationResult<MapMatchEntry>;
@@ -785,7 +819,7 @@ export type MapMatchHistoryResponse = CursorPaginationResult<MapMatchEntry>;
 // ===
 // ===
 
-export type ProfileMatchHistoryParams = ProfileBaseParams & {
+export type ProfileMatchHistoryParams = ProfileParams & {
     orderBy?: string;
     orderDirection?: string;
 }
@@ -853,7 +887,7 @@ export interface AccountInfoResponse {
 export interface AccountBattleInfo {
     id: number;
     battleTag: string;
-    profiles: Profile[];
+    profiles: ProfileBase[];
 }
 
 export interface MapAuthorPreferences {
@@ -1025,11 +1059,11 @@ export class StarcAPI {
         return this.axios.get<ProfileListResponse>(`profiles`, { params });
     }
 
-    getProfile(params: ProfileBaseParams) {
-        return this.axios.get<Profile>(`profiles/${params.regionId}/${params.realmId}/${params.profileId}`);
+    getProfile(params: ProfileParams) {
+        return this.axios.get<ProfileInfo>(`profiles/${params.regionId}/${params.realmId}/${params.profileId}`);
     }
 
-    getProfileSummary(params: ProfileBaseParams) {
+    getProfileSummary(params: ProfileParams) {
         const transformers: AxiosTransformer[] = [].concat(this.axios.defaults.transformResponse as any);
         transformers.push(strToDate);
 
@@ -1038,7 +1072,7 @@ export class StarcAPI {
         });
     }
 
-    getProfileMostPlayed(params: ProfileBaseParams) {
+    getProfileMostPlayed(params: ProfileParams) {
         const transformers: AxiosTransformer[] = [].concat(this.axios.defaults.transformResponse as any);
         transformers.push(strToDate);
 
