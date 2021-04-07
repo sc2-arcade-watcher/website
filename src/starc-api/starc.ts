@@ -870,6 +870,25 @@ export type ProfileMatchHistoryResponse = CursorPaginationResult<ProfileMatchEnt
 // ===
 // ===
 
+export type MapUserReviewsParams = MapBaseParams & {
+    orderBy?: string;
+    orderDirection?: string;
+}
+
+export type MapUserReview = {
+    author: ProfileBase;
+    createdAt: Date;
+    updatedAt: Date;
+    rating: number;
+    helpfulCount: number;
+    body: string;
+};
+
+export type MapUserReviewsResponse = CursorPaginationResult<MapUserReview>;
+
+// ===
+// ===
+
 export interface AccountAuthBnetParams {
     redirectUri: string;
     code: string;
@@ -944,6 +963,7 @@ function strToDate(data: any) {
                 switch (key) {
                     case 'closedAt':
                     case 'createdAt':
+                    case 'updatedAt':
                     case 'date':
                     case 'completedAt':
                     case 'lastPlayedAt': {
@@ -1125,6 +1145,20 @@ export class StarcAPI {
 
         return this.axios.get<MapPlayerBaseResponse>(`maps/${regionId}/${mapId}/player-base`, {
             params: params,
+            transformResponse: transformers,
+        });
+    }
+
+    getMapUserReviews(params: MapUserReviewsParams & CursorPaginationQuery) {
+        const transformers: AxiosTransformer[] = [].concat(this.axios.defaults.transformResponse as any);
+        transformers.push(strToDate);
+
+        const queryParams: Partial<typeof params> = Object.assign({}, params);
+        delete queryParams.regionId;
+        delete queryParams.mapId;
+
+        return this.axios.get<MapUserReviewsResponse>(`maps/${params.regionId}/${params.mapId}/reviews`, {
+            params: queryParams,
             transformResponse: transformers,
         });
     }

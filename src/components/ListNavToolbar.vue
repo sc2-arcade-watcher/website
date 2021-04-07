@@ -1,8 +1,36 @@
 <template>
     <v-container fluid>
-        <v-divider/>
         <v-col>
-            <v-row class="mt-2" align="center" justify="center">
+            <v-row align="center" justify="center">
+                <template v-if="sortOptions.length">
+                    <span class="grey--text">Sort by</span>
+                    <v-menu offset-y>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                                dark
+                                text
+                                color="primary"
+                                class="ml-2"
+                                v-bind="attrs"
+                                v-on="on"
+                            >
+                                <span v-if="sortByIndex >= 0" v-html="sortOptions[sortByIndex].text"/>
+                                <span v-else v-html="`???`"/>
+                                <v-icon>mdi-chevron-down</v-icon>
+                            </v-btn>
+                        </template>
+                        <v-list dense class="py-0">
+                            <v-list-item
+                                v-for="(item, index) in sortOptions"
+                                :key="index"
+                                @click="updateSortByOption(index)"
+                            >
+                                <v-list-item-title>{{ item.text }}</v-list-item-title>
+                            </v-list-item>
+                        </v-list>
+                    </v-menu>
+                </template>
+
                 <span class="grey--text">Items per page</span>
                 <v-menu offset-y>
                     <template v-slot:activator="{ on, attrs }">
@@ -69,6 +97,12 @@ export default class ListNavToolbar extends Vue {
     readonly itemsPerPageArray!: number[];
 
     @Prop({
+        required: false,
+        default: () => [],
+    })
+    readonly sortOptions!: { value: string; text: string; }[];
+
+    @Prop({
         required: true,
     })
     readonly currentPaginationParams!: starc.CursorPaginationQuery;
@@ -78,18 +112,48 @@ export default class ListNavToolbar extends Vue {
     })
     readonly currentPaginationResult!: starc.CursorPaginationResult<any>;
 
-    private renavigate() {
-        this.$router.push({
+    private sortByValue: string | null = null;
+
+    get sortByIndex(): number | null {
+        if (this.sortByValue === null) return null;
+        const idx = this.sortOptions.findIndex(x => x.value === this.sortByValue);
+        return idx;
+    }
+
+    private created() {
+        this.updateState();
+    }
+
+    private updateState() {
+        if (this.sortOptions.length > 0) {
+            this.sortByValue = [
+                (this.currentPaginationParams as any).orderBy, (this.currentPaginationParams as any).orderDirection
+            ].join(',');
+        }
+    }
+
+    private async renavigate() {
+        await this.$router.push({
             name: this.$route.name!,
             query: {
                 ...this.$helpers.stringifyQueryParams(this.currentPaginationParams),
             },
         });
-        this.$vuetify.goTo(this.$parent);
+        await this.$vuetify.goTo(this.$parent);
     }
 
     private updateItemsPerPage(n: number) {
         this.currentPaginationParams.limit = n;
+        this.renavigate();
+    }
+
+    private updateSortByOption(idx: number) {
+        this.sortByValue = this.sortOptions[idx].value;
+        const tmp = this.sortByValue.split(',');
+        (this.currentPaginationParams as any).orderBy = tmp[0];
+        (this.currentPaginationParams as any).orderDirection = tmp[1];
+        this.currentPaginationParams.before = void 0;
+        this.currentPaginationParams.after = void 0;
         this.renavigate();
     }
 
@@ -112,6 +176,11 @@ export default class ListNavToolbar extends Vue {
         }
         else return;
         this.renavigate();
+    }
+
+    @Watch('currentPaginationParams')
+    private onPaginationParams() {
+        this.updateState();
     }
 }
 </script>

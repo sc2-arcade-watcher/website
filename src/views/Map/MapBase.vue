@@ -186,6 +186,15 @@ export default class MapBaseView extends Vue {
                     },
                 },
             },
+            {
+                name: 'Reviews',
+                route: {
+                    name: 'map_reviews', params: {
+                        regionId: this.$route.params.regionId,
+                        mapId: this.$route.params.mapId,
+                    },
+                },
+            },
         ];
 
         if (this.mapInfo.type !== starc.MapType.DependencyMod) {

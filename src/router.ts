@@ -91,6 +91,11 @@ const routes: RouteConfig[] = [
                 component: require('@/views/Map/MapDependencies.vue').default,
             },
             {
+                path: 'reviews',
+                name: 'map_reviews',
+                component: require('@/views/Map/MapReviews.vue').default,
+            },
+            {
                 path: 'stats',
                 name: 'map_stats',
                 component: require('@/views/Map/MapStats.vue').default,

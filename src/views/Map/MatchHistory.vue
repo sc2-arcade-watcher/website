@@ -41,6 +41,7 @@
                 </template>
             </v-simple-table>
 
+            <v-divider/>
             <list-nav-toolbar :current-pagination-result="matchHistoryResponse" :current-pagination-params="queryParams"/>
         </div>
 
