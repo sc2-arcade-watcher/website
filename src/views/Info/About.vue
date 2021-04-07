@@ -37,7 +37,7 @@
                     </v-list-item>
                 </v-list>
 
-                <p class="text-right body-1">
+                <p class="text-right body-2 text--secondary">
                     <em>sc2arcade.com</em> is developed and maintained by: Talv <router-link :to="{ name: 'info_contact' }">(contact)</router-link>
                 </p>
 
@@ -45,14 +45,21 @@
                 <h3 class="headline">Credits</h3>
                 <p>
                     <strong class="subtitle">Aduolu</strong>
-                    <ul>
+                    <ul class="body-2 text--secondary">
                         <li>Provides & maintains a secondary dedicated machine tailored for running customized SC2 clients - helps greatly in distributing the load and keeping the service working nearly 24/7.</li>
                         <li>Morale support during early prototyping :)</li>
                     </ul>
                 </p>
                 <p>
+                    <strong class="subtitle">DreamProtocol REMILIA</strong>
+                    <ul class="body-2 text--secondary">
+                        <li><em>A LOT</em> of help with hacking SC2 client.</li>
+                        <li>Good amount of recent improvements and additions (such as map reviews) is largely thanks to him.</li>
+                    </ul>
+                </p>
+                <p>
                     <strong class="subtitle">Nil</strong>
-                    <ul>
+                    <ul class="body-2 text--secondary">
                         <li>Help with optimizations concerning <a href="https://github.com/sc2-arcade-watcher/s2mdec" target="_blank">decoding of s2mh</a>.</li>
                         <li>Testing and feedback of the WebAPI.</li>
                         <li>Author of <a href="https://top.gg/bot/675998947374006283" target="_blank">Starcraft2ArcadeTracker</a>.</li>
@@ -61,13 +68,13 @@
                 </p>
                 <p>
                     <strong class="subtitle">MengLuoRJ</strong>
-                    <ul>
+                    <ul class="body-2 text--secondary">
                         <li>Provided CN region accounts, which allowed expansion of the service to China region.</li>
                     </ul>
                 </p>
                 <p>
                     <strong class="subtitle">SC2Mapster community</strong>
-                    <ul>
+                    <ul class="body-2 text--secondary">
                         <li>Feedback and general support.</li>
                     </ul>
                 </p>
