@@ -4,9 +4,7 @@
             <profile-item :profile="review.author" show-discriminator="true"/>
         </div>
         <div class="inner">
-            <div class="content">
-                {{ review.body }}
-            </div>
+            <div class="content">{{ review.body }}</div>
             <div class="meta">
                 <div class="rating">
                     <v-rating
@@ -83,9 +81,10 @@ export default class MapReviewItem extends Vue {
         display: flex;
         width: 200px;
         min-width: 200px;
+        padding: 0.5rem 0;
 
         text-align: center;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
     }
 
@@ -110,11 +109,14 @@ export default class MapReviewItem extends Vue {
         flex-grow: 1;
         display: flex;
         flex-direction: column;
+        max-width: 100%;
+        overflow-x: auto;
 
         >.content {
             flex-grow: 1;
             padding: 0.5rem;
             background: rgba(#fff, 0.025);
+            white-space: pre-wrap;
         }
 
         >.meta {
