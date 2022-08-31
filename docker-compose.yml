@@ -1,0 +1,28 @@
+# x-common-args: &common-args
+
+x-common-env: &common-env
+  # ENV: ${ENV:-development}
+  TZ: ${TZ:-UTC}
+  # NGINX_API_UPSTREAM: ${NGINX_API_UPSTREAM:??}
+  # NGINX_API_PROXY_HOST: ${NGINX_API_PROXY_HOST:??}
+
+services:
+  # redis:
+  #   image: redis:7.2.8-alpine
+  #   command: redis-server --bind redis --maxmemory 256mb --maxmemory-policy allkeys-lru --appendonly yes
+  #   hostname: redis
+  #   restart: unless-stopped
+
+  website:
+    build:
+      context: .
+      target: production-stage
+    environment:
+      <<: *common-env
+    image: starc/website_${APP_ENV}
+    container_name: starc-website
+    restart: unless-stopped
+    expose:
+      - 80/tcp
+      - 443/tcp
+      - 443/udp

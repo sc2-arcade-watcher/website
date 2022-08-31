@@ -1,0 +1,107 @@
+server {
+    listen ${NGINX_PORT};
+    listen ${NGINX_SECURE_PORT} ssl;
+
+    server_name _;
+
+    ssl_certificate /etc/nginx/ssl/website.crt;
+    ssl_certificate_key /etc/nginx/ssl/website.key;
+
+    client_max_body_size ${NGINX_UPLOAD_MAX_FILESIZE};
+
+    proxy_connect_timeout ${NGINX_PROXY_CONNECT_TIMEOUT};
+    proxy_send_timeout ${NGINX_PROXY_SEND_TIMEOUT};
+    proxy_read_timeout ${NGINX_PROXY_READ_TIMEOUT};
+
+    # set_real_ip_from  172.16.0.0/12;
+
+    # location ~ ^/(api|static)/ {
+    #     rewrite /(api|static)/(.*) /$2  break;
+    #     proxy_pass ${NGINX_API_UPSTREAM};
+    #     proxy_redirect off;
+
+    #     proxy_set_header Host ${NGINX_API_PROXY_HOST};
+    #     # proxy_set_header Host $host;
+    #     # proxy_set_header X-Real-IP $remote_addr;
+    #     # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    #     # proxy_set_header X-Forwarded-Proto $scheme;
+
+    #     proxy_buffer_size           128k;
+    #     proxy_buffers             4 256k;
+    #     proxy_busy_buffers_size     256k;
+    # }
+
+    location / {
+        root   /app;
+        index  index.html;
+        try_files $uri $uri/ /index.html;
+    }
+
+    charset UTF-8;
+    
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    gzip ${NGINX_GZIP};
+    gzip_comp_level ${NGINX_GZIP_COMP_LEVEL};
+    gzip_min_length 1100;
+    gzip_buffers 16 8k;
+    gzip_proxied any;
+    gzip_types
+        text/plain
+        text/css
+        text/js
+        text/xml
+        text/javascript
+        application/javascript
+        application/x-javascript
+        application/json
+        application/xml
+        application/rss+xml
+        application/rdf+xml
+        application/atom+xml
+        application/xhtml+xml
+        application/vnd.ms-fontobject
+        application/x-font-opentype
+        application/x-font-truetype
+        application/x-font-ttf
+        font/eot
+        font/otf
+        font/opentype
+        font/woff2
+        image/svg+xml
+        image/vnd.microsoft.icon
+    ;
+    gzip_vary on;
+
+    brotli ${NGINX_BROTLI};
+    brotli_comp_level ${NGINX_BROTLI_COMP_LEVEL};
+    brotli_types
+        text/plain
+        text/css
+        text/xml
+        text/javascript
+        application/json
+        application/javascript
+        application/vnd.ms-fontobject
+        application/xml
+        application/rss+xml
+        application/rdf+xml
+        application/atom+xml
+        application/xhtml+xml
+        application/x-javascript
+        application/x-font-truetype
+        application/x-font-opentype
+        application/x-font-ttf
+        font/eot
+        font/otf
+        font/opentype
+        font/woff2
+        image/x-icon
+        image/svg+xml
+        image/vnd.microsoft.icon
+        image/x-win-bitmap
+    ;
+}

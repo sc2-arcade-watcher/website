@@ -20,6 +20,9 @@ yarn-error.log*
 *.sln
 *.sw?
 
+# docker
+docker-compose.override*.yml
+
 # custom
 /deploy.sh
 /TODO.md

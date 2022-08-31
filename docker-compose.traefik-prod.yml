@@ -1,0 +1,17 @@
+services:
+  website:
+    networks:
+      - default
+      - webproxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=webproxy"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:??}-website.rule=Host(`$APP_TLD`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:??}-website.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:??}-website.tls=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:??}-website.middlewares=real-ip-cf@file"
+
+networks:
+  webproxy:
+    name: webproxy
+    external: true
