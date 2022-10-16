@@ -86,7 +86,7 @@
                 <v-subheader class="overline">Event log</v-subheader>
                 <v-list class="join-history">
                     <transition-group name="list" tag="div">
-                        <v-list-item v-for="(jevent, i) in joinEvents" :key="i" dense>
+                        <v-list-item v-for="(jevent, i) in joinEvents" :key="`${[jevent.type, jevent.date, jevent.profile ? jevent.profile.name : '', jevent.message].join(',')}`" dense>
                             <v-list-item-title class="meta">
                                 <v-icon color="green" x-small v-if="jevent.type === 'join'">fas fa-sign-in-alt</v-icon>
                                 <v-icon color="grey accent-2" x-small v-else-if="jevent.type === 'left'">fas fa-sign-out-alt</v-icon>

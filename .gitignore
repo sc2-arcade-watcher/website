@@ -2,9 +2,8 @@
 node_modules
 /dist
 
-# local env files
-.env.local
-.env.*.local
+/.env*
+!/.env.example
 
 # Log files
 npm-debug.log*
@@ -22,7 +21,3 @@ yarn-error.log*
 
 # docker
 docker-compose.override*.yml
-
-# custom
-/deploy.sh
-/TODO.md

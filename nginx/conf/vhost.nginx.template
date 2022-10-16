@@ -1,35 +1,17 @@
 server {
     listen ${NGINX_PORT};
-    listen ${NGINX_SECURE_PORT} ssl;
+    # listen ${NGINX_SECURE_PORT} ssl;
 
     server_name _;
 
-    ssl_certificate /etc/nginx/ssl/website.crt;
-    ssl_certificate_key /etc/nginx/ssl/website.key;
+    # ssl_certificate /etc/nginx/ssl/website.crt;
+    # ssl_certificate_key /etc/nginx/ssl/website.key;
 
     client_max_body_size ${NGINX_UPLOAD_MAX_FILESIZE};
 
     proxy_connect_timeout ${NGINX_PROXY_CONNECT_TIMEOUT};
     proxy_send_timeout ${NGINX_PROXY_SEND_TIMEOUT};
     proxy_read_timeout ${NGINX_PROXY_READ_TIMEOUT};
-
-    # set_real_ip_from  172.16.0.0/12;
-
-    # location ~ ^/(api|static)/ {
-    #     rewrite /(api|static)/(.*) /$2  break;
-    #     proxy_pass ${NGINX_API_UPSTREAM};
-    #     proxy_redirect off;
-
-    #     proxy_set_header Host ${NGINX_API_PROXY_HOST};
-    #     # proxy_set_header Host $host;
-    #     # proxy_set_header X-Real-IP $remote_addr;
-    #     # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    #     # proxy_set_header X-Forwarded-Proto $scheme;
-
-    #     proxy_buffer_size           128k;
-    #     proxy_buffers             4 256k;
-    #     proxy_busy_buffers_size     256k;
-    # }
 
     location / {
         root   /app;

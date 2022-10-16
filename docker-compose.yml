@@ -1,28 +1,21 @@
-# x-common-args: &common-args
-
-x-common-env: &common-env
-  # ENV: ${ENV:-development}
-  TZ: ${TZ:-UTC}
-  # NGINX_API_UPSTREAM: ${NGINX_API_UPSTREAM:??}
-  # NGINX_API_PROXY_HOST: ${NGINX_API_PROXY_HOST:??}
-
 services:
-  # redis:
-  #   image: redis:7.2.8-alpine
-  #   command: redis-server --bind redis --maxmemory 256mb --maxmemory-policy allkeys-lru --appendonly yes
-  #   hostname: redis
-  #   restart: unless-stopped
-
-  website:
-    build:
-      context: .
-      target: production-stage
-    environment:
-      <<: *common-env
-    image: starc/website_${APP_ENV}
-    container_name: starc-website
+  app:
+    container_name: ${COMPOSE_PROJECT_NAME:??}-app
     restart: unless-stopped
-    expose:
-      - 80/tcp
-      - 443/tcp
-      - 443/udp
+    environment:
+      VUE_APP_STARC_WEBAPI_URL: ${VUE_APP_STARC_WEBAPI_URL:-http://localhost:8090}
+      VUE_APP_STARC_STATIC_URL: ${VUE_APP_STARC_STATIC_URL:-http://localhost:8090}
+      VUE_APP_STARC_BATTLE_API_CLIENT_ID: ${VUE_APP_STARC_BATTLE_API_CLIENT_ID:??}
+    networks:
+      - webproxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=webproxy"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:??}-app.rule=Host(`$APP_HOST`, `www.$APP_HOST`) && (!PathPrefix(`/api`) && !PathPrefix(`/static`))"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:??}-app.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:??}-app.tls=true"
+
+networks:
+  webproxy:
+    name: webproxy
+    external: true

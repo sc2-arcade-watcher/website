@@ -5,6 +5,35 @@
             raised
         >
             <v-container>
+                <v-alert
+                    dense
+                    text
+                    color="white"
+                    icon="mdi-clock-fast"
+                    border="left"
+                >
+                    <h2 class="headline">This guidelines is outdated as of September 1, 2022</h2>
+                    <p>There was <a href="https://discord.com/blog/welcome-to-the-new-era-of-discord-apps" target="_blank">a major change in the Discord API</a> that significantly affected the bot, and the whole process of configuration.</p>
+                    <p>Fortunately.. <strong>there's a workaround!</strong>.. see below:</p>
+                </v-alert>
+                <p>Basically, @Arcade Watcher no longer receives/sees messages in which it isn't mentioned or tagged other way. Thus it's no longer capable of responding to casual commands.. its prompts system is a bit bugged too...</p>
+                <p>
+                <p>To be able to use the bot until I'll find the time to update it on my end, <strong>you need to use reply to message feature of Discord</strong>, when communicating with the bot. See examples:</p>
+                <div class="text-center">
+                    <v-img class="d-inline-block" :src="require('@/assets/info/discord-bot/discord-aw-workaround1.png')" alt="" />
+
+                    <v-img class="d-inline-block" :src="require('@/assets/info/discord-bot/discord-aw-workaround1.png') " alt="" />
+                </div>
+            </v-container>
+        </v-card>
+
+        <v-divider class="my-5" />
+
+        <v-card
+            tile
+            raised
+        >
+            <v-container>
                 <h2 class="headline">Discord bot - Arcade Watcher</h2>
                 <v-img
                     class="d-inline-block float-sm-right mx-1"

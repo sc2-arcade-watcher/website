@@ -7,17 +7,17 @@ root = true
 ; Choose between lf or rf on "end_of_line" property
 [*]
 indent_style = space
-# end_of_line = lf
+end_of_line = lf
 charset = utf-8
 indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
 
 [*.yml]
 indent_size = 2
 
-[*.{sh,ts,js,json,vue,md}]
-insert_final_newline = true
-trim_trailing_whitespace = true
-end_of_line = lf
+# [*.{sh,ts,js,json,vue,md}]
+# end_of_line = lf
 
 [*.md]
 trim_trailing_whitespace = false

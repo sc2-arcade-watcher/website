@@ -1,0 +1,10 @@
+services:
+  app:
+    build:
+      context: .
+      target: production-stage
+      args:
+        VUE_APP_STARC_WEBAPI_URL: ${VUE_APP_STARC_WEBAPI_URL:??}
+        VUE_APP_STARC_STATIC_URL: ${VUE_APP_STARC_STATIC_URL:??}
+    labels:
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:??}-app.middlewares=real-ip-cf@file,www-redirect@file"
