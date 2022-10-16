@@ -139,7 +139,7 @@ export default class ListNavToolbar extends Vue {
                 ...this.$helpers.stringifyQueryParams(this.currentPaginationParams),
             },
         });
-        await this.$vuetify.goTo(this.$parent);
+        await this.$vuetify.goTo(this.$parent!);
     }
 
     private updateItemsPerPage(n: number) {

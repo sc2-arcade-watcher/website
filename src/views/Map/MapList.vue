@@ -267,7 +267,7 @@ export default class MapListView extends Vue {
                 ...this.$helpers.stringifyQueryParams(this.currentPaginationParams),
             },
         })
-        this.$vuetify.goTo(this.$parent);
+        this.$vuetify.goTo(this.$parent!);
     }
 
     private pageGo(where: 'prev' | 'next') {

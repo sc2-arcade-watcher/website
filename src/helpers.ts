@@ -119,7 +119,7 @@ export function SGuard<T extends Vue>(options?: {
 
         descriptor.value = async function(this: Vue, ...args: any[]) {
             const l = this.$loading.show({
-                container: this.$parent.$refs.subLoadingContainer ? this.$el : void 0,
+                container: this.$parent!.$refs.subLoadingContainer ? this.$el : void 0,
             });
             let fnResult: any;
             try {
