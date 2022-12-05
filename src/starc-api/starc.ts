@@ -1044,7 +1044,7 @@ export class StarcAPI {
             region = GameRegion[region].toLowerCase() as DepotRegion;
         }
         if (region === 'cn') {
-            return `http://${region}-s2-depot.battlenet.com.cn/${hash}.${filetype}`;
+            return `http://${region}-sc2.depot.battlenet.com.cn:1119/${hash}.${filetype}`;
         }
         else {
             return `https://${region}-s2-depot.classic.blizzard.com/${hash}.${filetype}`;
