@@ -2,6 +2,11 @@ services:
   app:
     container_name: ${COMPOSE_PROJECT_NAME:??}-app
     restart: unless-stopped
+    build:
+      args:
+        VUE_APP_STARC_WEBAPI_URL: ${VUE_APP_STARC_WEBAPI_URL:-http://localhost:8090}
+        VUE_APP_STARC_STATIC_URL: ${VUE_APP_STARC_STATIC_URL:-http://localhost:8090}
+        VUE_APP_STARC_BATTLE_API_CLIENT_ID: ${VUE_APP_STARC_BATTLE_API_CLIENT_ID:??}
     environment:
       VUE_APP_STARC_WEBAPI_URL: ${VUE_APP_STARC_WEBAPI_URL:-http://localhost:8090}
       VUE_APP_STARC_STATIC_URL: ${VUE_APP_STARC_STATIC_URL:-http://localhost:8090}
