@@ -11,3 +11,8 @@ Disallow: /map/*/*/match-history
 # profile
 Disallow: /profile/*/*/*/lobbies-history
 Disallow: /profile/*/*/*/match-history
+
+# CN was retired
+Disallow: /map/5/*/
+Disallow: /profile/5/*
+Disallow: /lobby/5/*
